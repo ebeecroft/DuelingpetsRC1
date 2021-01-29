@@ -1,0 +1,52 @@
+<% provide(:h1, @equip.partner.name + "'s Equipment") %>
+<p id="notice"><%= notice %></p>
+<div class="pageformat">
+   <p>Capacity: <%= @equip.capacity %></p>
+   <br>
+   <div class="formlinks"><%= paginate @equipslots %></div>
+   <br>
+   <% @equipslots.each do |equipslot| %>
+      <p><div class="container"><%= button_to 'Edit', edit_equip_equipslot_path(equipslot.equip, equipslot), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [equipslot.equip, equipslot], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div></p>
+      <br>
+      <% if(!isEquipSlotEmpty(equipslot)) %>
+         <p><%= equipslot.name %></p>
+         <br>
+         <% if !equipslot.item1_id.nil? %>
+            <%= render 'showform', slotindex: "1", slot: equipslot %>
+         <% end %>
+         <% if !equipslot.item2_id.nil? %>
+            <%= render 'showform', slotindex: "2", slot: equipslot %>
+         <% end %>
+         <% if !equipslot.item3_id.nil? %>
+            <%= render 'showform', slotindex: "3", slot: equipslot %>
+         <% end %>
+         <% if !equipslot.item4_id.nil? %>
+            <%= render 'showform', slotindex: "4", slot: equipslot %>
+         <% end %>
+         <% if !equipslot.item5_id.nil? %>
+            <% if(!equipslot.item1_id.nil? && !equipslot.item2_id.nil? && !equipslot.item3_id.nil? && !equipslot.item4_id.nil?) %>
+               <br>
+               <br>
+            <% end %>
+            <%= render 'showform', slotindex: "5", slot: equipslot %>
+         <% end %>
+         <% if !equipslot.item6_id.nil? %>
+            <%= render 'showform', slotindex: "6", slot: equipslot %>
+         <% end %>
+         <% if !equipslot.item7_id.nil? %>
+            <%= render 'showform', slotindex: "7", slot: equipslot %>
+         <% end %>
+         <% if !equipslot.item8_id.nil? %>
+            <%= render 'showform', slotindex: "8", slot: equipslot %>
+            <br>
+            <br>
+         <% end %>
+      <% else %>
+         <p><%= equipslot.name %></p>
+         <br>
+      <% end %>
+   <% end %>
+   <p><%= button_to "New Equippouch", new_equip_equipslot_path(@equip), method: :get, class: "button submitbutton" %></p>
+</div>
+<br>
+<p class="formlinks"><%= link_to "Back", user_partner_path(@equip.partner.user, @equip.partner) %></p>

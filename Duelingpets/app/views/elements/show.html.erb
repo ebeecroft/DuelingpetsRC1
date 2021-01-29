@@ -1,0 +1,31 @@
+<% provide(:h1, @element.name) %>
+<p id="notice"><%= notice %></p>
+<div class="pageformat">
+   <% if current_user && (current_user.id == @element.user_id || current_user.pouch.privilege == "Admin") %>
+      <div class="container"><%= button_to 'Edit', edit_user_element_path(@element.user, @element), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [@element.user, @element], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+   <% end %>
+   <p>Created: <%= distance_of_time_in_words_to_now @element.created_on %> ago on (<%= @element.created_on.strftime("%B-%d-%Y") %>)</p>
+   <% if !@element.reviewed_on.nil? %>
+      <p>Reviewed: <%= distance_of_time_in_words_to_now @element.reviewed_on %> ago on (<%= @element.reviewed_on.strftime("%B-%d-%Y") %>)</p>
+   <% end %>
+   <p>Updated: <%= distance_of_time_in_words_to_now @element.updated_on %> ago on (<%= @element.updated_on.strftime("%B-%d-%Y") %>)</p>
+   <% if @element.itemart.to_s != "" %>
+      <br>
+      <p><%= image_tag(@element.itemart_url(:thumb)) %></p>
+   <% end %>
+   <br>
+   <p class="textindent"><%= textFormater("Multi", @element.description, "All").html_safe %></p>
+   <br>
+   <% if @element.user.userinfo.miniavatar.to_s != "" %>
+      <p><%= image_tag(@element.user.userinfo.miniavatar_url(:thumb)) %></p>
+   <% end %>
+   <p class="formlinks">Artist: <%= getUserPrivilege(@element.user) %><%= link_to @element.user.vname, user_path(@element.user) %></p>
+   <p>Status: <%= getActivity(@element.user) %>
+      <% if getActivity(@element.user) != "Online" && getActivity(@element.user) != "Inoperable" %>
+         for <%= distance_of_time_in_words_to_now getTime(@element.user) %>
+      <% end %>
+   </p>
+</div>
+<br>
+<p class="formlinks"><%= link_to "User Elements", user_elements_path(@element.user) %> |
+<%= link_to "Element List", elements_path %></p>

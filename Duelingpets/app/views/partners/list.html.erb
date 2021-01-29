@@ -1,0 +1,70 @@
+<% provide(:h1, "Partner List") %>
+<div class="formlinks"><%= paginate @partners %></div>
+<br>
+<div class="pageformat">
+   <% @partners.each_with_index do |partner, index| %>
+      <% if(index % 3 == 2) %>
+         <div class="container">
+      <% else %>
+         <!--Container space-->
+         <div class="container">
+      <% end %>
+         <div class="container"><p class="formlinks">Name: <%= link_to partner.name, user_partner_path(partner.user, partner) %></p></div> <div class="container"><%= button_to 'Edit', edit_user_partner_path(partner.user, partner), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [partner.user, partner], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+         <p>Adopted</p>
+         <p><%= distance_of_time_in_words_to_now partner.adopted_on %> ago on</p>
+         <p>(<%= partner.adopted_on.strftime("%B-%d-%Y") %>)</p>
+         <p>Updated</p>
+         <p><%= distance_of_time_in_words_to_now partner.updated_on %> ago on</p>
+         <p>(<%= partner.updated_on.strftime("%B-%d-%Y") %>)</p>
+         <% if partner.creature.image.to_s != "" %>
+            <br>
+            <p><%= image_tag(partner.creature.image_url(:thumb)) %></p>
+         <% end %>
+         <br>
+         <p>Creature: <%= partner.creature.name %></p>
+         <p>Phylevel: <%= partner.plevel %></p>
+         <p>Phyexp: <%= partner.pexp %></p>
+         <p>Hp: <%= partner.chp %>/<%= partner.hp %></p>
+         <p>Atk: <%= partner.atk %></p>
+         <p>Def: <%= partner.def %></p>
+         <p>Agi: <%= partner.agility %></p>
+         <p>Strength: <%= partner.strength %></p>
+         <p>Magilevel: <%= partner.mlevel %></p>
+         <p>Magiexp: <%= partner.mexp %></p>
+         <p>MP: <%= partner.cmp %>/<%= partner.mp %></p>
+         <p>Matk: <%= partner.matk %></p>
+         <p>Mdef: <%= partner.mdef %></p>
+         <p>Magi: <%= partner.magi %></p>
+         <p>Mstr: <%= partner.mstr %></p>
+         <p>Hunger: <%= partner.chunger %>/<%= partner.hunger %></p>
+         <p>Thirst: <%= partner.cthirst %>/<%= partner.thirst %></p>
+         <p>Fun: <%= partner.cfun %>/<%= partner.fun %></p>
+         <p>Lives: <%= partner.lives %></p>
+         <p>Adoptcost: <%= partner.adoptcost %></p>
+         <p>Cost: <%= partner.cost %></p>
+         <p>Rarity: <%= partner.creature.rarity %></p>
+         <p>Phytokens: <%= partner.phytokens %></p>
+         <p>Magitokens: <%= partner.magitokens %></p>
+         <p>Inbattle: <%= partner.inbattle %></p>
+         <p>Dead: <%= partner.dead %></p>
+         <p>Mainpet: <%= partner.activepet %></p>
+         <br>
+         <% if partner.user.userinfo.miniavatar.to_s != "" %>
+            <p><%= image_tag(partner.user.userinfo.miniavatar_url(:thumb)) %></p>
+         <% end %>
+         <p class="formlinks">Partner: <%= getUserPrivilege(partner.user) %><%= link_to partner.user.vname, user_path(partner.user) %></p>
+         <p>Status: <%= getActivity(partner.user) %>
+            <% if getActivity(partner.user) != "Online" && getActivity(partner.user) != "Inoperable" %>
+               for <%= distance_of_time_in_words_to_now getTime(partner.user) %>
+            <% end %>
+         </p>
+         <br>
+         <p class="textindent"><%= textFormater("Multi", partner.description, "All").html_safe %></p>
+      </div>
+      <% if index % 3 == 2 %>
+         <br>
+         <br>      
+      <% end %>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

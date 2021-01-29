@@ -1,0 +1,30 @@
+<% provide(:h1, "Manager panel") %>
+<div class="pageformat">
+   <p>Communications/Donations</p>
+   <p class="formlinks">PMbox index: <%= link_to "PMbox", pmboxes_path %></p>
+   <p class="formlinks">PM index: <%= link_to "PM", pms_path %></p>
+   <p class="formlinks">PMreply index: <%= link_to "PMreply", pmreplies_path %></p>
+   <p class="formlinks">Shoutbox index: <%= link_to "Shoutbox", shoutboxes_path %></p>
+   <p class="formlinks">Shout index: <%= link_to "Shout", shouts_path %></p>
+   <p class="formlinks">Donationbox index: <%= link_to "Donationbox", donationboxes_path %></p>
+   <p class="formlinks">Donor index: <%= link_to "Donor", donors_path %></p>
+   <p class="formlinks">Referral index: <%= link_to "Referral", referrals_path %></p>
+   <br>
+   <p>User attributes</p>
+   <p class="formlinks">User index: <%= link_to "User", users_path %></p>
+   <p class="formlinks">Pouch index: <%= link_to "Pouch", pouches_path %></p>
+   <p class="formlinks">Inventory index: <%= link_to "Inventory", inventories_path %></p>
+   <p class="formlinks">Inventoryslot index: <%= link_to "Inventoryslot", inventoryslots_path %></p>
+   <br>
+   <p>Webcontrols</p>
+   <p class="formlinks">Maintenancemode index: <%= link_to "Maintenancemode", maintenancemodes_path %></p>
+   <p class="formlinks">Blacklistedname index: <%= link_to "Blacklistedname", blacklistednames_path %></p>
+   <p class="formlinks">Blacklisteddomain index: <%= link_to "Blacklisteddomain", blacklisteddomains_path %></p>
+   <p class="formlinks">Suspendedtimelimit index: <%= link_to "Timelimit", suspendedtimelimits_path %></p>
+   <p class="formlinks">Registration index: <%= link_to "Registration", registrations_path %></p>
+   <p class="formlinks">Accounttype index: <%= link_to "Accounttype", accounttypes_path %></p>
+   <br>
+   <p><%= button_to gateValue, registrations_gate_path, method: :post, class: "button submitbutton" %></p>
+   <br>
+   <p class="formlinks"><%= link_to 'Back', root_path %></p>
+</div>

@@ -1,0 +1,47 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  movie_id: 1
+  tag1_id: 1
+  tag2_id: 1
+  tag3_id: 1
+  tag4_id: 1
+  tag5_id: 1
+  tag6_id: 1
+  tag7_id: 1
+  tag8_id: 1
+  tag9_id: 1
+  tag10_id: 1
+  tag11_id: 1
+  tag12_id: 1
+  tag13_id: 1
+  tag14_id: 1
+  tag15_id: 1
+  tag16_id: 1
+  tag17_id: 1
+  tag18_id: 1
+  tag19_id: 1
+  tag20_id: 1
+
+two:
+  movie_id: 1
+  tag1_id: 1
+  tag2_id: 1
+  tag3_id: 1
+  tag4_id: 1
+  tag5_id: 1
+  tag6_id: 1
+  tag7_id: 1
+  tag8_id: 1
+  tag9_id: 1
+  tag10_id: 1
+  tag11_id: 1
+  tag12_id: 1
+  tag13_id: 1
+  tag14_id: 1
+  tag15_id: 1
+  tag16_id: 1
+  tag17_id: 1
+  tag18_id: 1
+  tag19_id: 1
+  tag20_id: 1

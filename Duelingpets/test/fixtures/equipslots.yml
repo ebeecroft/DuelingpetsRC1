@@ -1,0 +1,59 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  equip_id: 1
+  item1_id: 1
+  curdur1: 1
+  startdur1: 1
+  item2_id: 1
+  curdur2: 1
+  startdur2: 1
+  item3_id: 1
+  curdur3: 1
+  startdur3: 1
+  item4_id: 1
+  curdur4: 1
+  startdur4: 1
+  item5_id: 1
+  curdur5: 1
+  startdur5: 1
+  item6_id: 1
+  curdur6: 1
+  startdur6: 1
+  item7_id: 1
+  curdur7: 1
+  startdur7: 1
+  item8_id: 1
+  curdur8: 1
+  startdur8: 1
+  activeslot: false
+
+two:
+  name: MyString
+  equip_id: 1
+  item1_id: 1
+  curdur1: 1
+  startdur1: 1
+  item2_id: 1
+  curdur2: 1
+  startdur2: 1
+  item3_id: 1
+  curdur3: 1
+  startdur3: 1
+  item4_id: 1
+  curdur4: 1
+  startdur4: 1
+  item5_id: 1
+  curdur5: 1
+  startdur5: 1
+  item6_id: 1
+  curdur6: 1
+  startdur6: 1
+  item7_id: 1
+  curdur7: 1
+  startdur7: 1
+  item8_id: 1
+  curdur8: 1
+  startdur8: 1
+  activeslot: false

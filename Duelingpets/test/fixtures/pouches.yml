@@ -1,0 +1,45 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  privilege: MyString
+  admin: false
+  demouser: false
+  banned: false
+  remember_token: MyString
+  expiretime: 2019-07-13 05:09:57
+  activated: false
+  signed_in_at: 2019-07-13 05:09:57
+  last_visited: 2019-07-13 05:09:57
+  signed_out_at: 2019-07-13 05:09:57
+  gone: false
+  amount: 1
+  emeraldamount: 1
+  dreyterriumamount: 1
+  pouchlevel: 1
+  bloglevel: 1
+  emeraldlevel: 1
+  dreyterriumlevel: 1
+  firstdreyterrium: false
+
+two:
+  user_id: 1
+  privilege: MyString
+  admin: false
+  demouser: false
+  banned: false
+  remember_token: MyString
+  expiretime: 2019-07-13 05:09:57
+  activated: false
+  signed_in_at: 2019-07-13 05:09:57
+  last_visited: 2019-07-13 05:09:57
+  signed_out_at: 2019-07-13 05:09:57
+  gone: false
+  amount: 1
+  emeraldamount: 1
+  dreyterriumamount: 1
+  pouchlevel: 1
+  bloglevel: 1
+  emeraldlevel: 1
+  dreyterriumlevel: 1
+  firstdreyterrium: false

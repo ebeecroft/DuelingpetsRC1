@@ -1,0 +1,28 @@
+<% provide(:h1, "New Registration") %>
+<div class="pageformat">
+   <p><%= image_tag(@artpage.art_url(:thumb)) %></p>
+   <p class="textindent"><%= textFormater("Multi", @artpage.message, "All").html_safe %></p>
+</div>
+<br>
+<%= form_for(:session, url: registrations_verify_path) do |form| %>
+   <div class="pageformat">
+      <p><%= form.label :color, "What is your favorite color?" %></p>
+      <p><%= form.text_field :color %></p>
+      <br>
+      <p>Birthday</p>
+      <p><%= form.label :month, "Month(nn)" %></p>
+      <p><%= form.number_field :month %></p>
+      <p><%= form.label :day, "Day(nn)" %></p>
+      <p><%= form.number_field :day %></p>
+      <p><%= form.label :year, "Year(nnnn)" %></p>
+      <p><%= form.number_field :year %></p>
+      <br>
+      <p><%= form.submit "Submit", class: "button submitbutton" %></p>
+   </div>
+<% end %>
+<br>
+<div class="pageformat">
+   <p class="formlinks">Have Token? <%= link_to "Tokenfinder", tokenfinder_path %></p>
+   <br>
+   <p class="formlinks"><%= link_to "Back", root_path %></p>
+</div>

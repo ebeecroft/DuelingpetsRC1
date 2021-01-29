@@ -1,0 +1,20 @@
+<% provide(:h1, "Ratecost List") %>
+<% if @ratecosts.count >= 10 %>
+   <div class="formlinks"><%= paginate @ratecosts %></div>
+   <br>
+<% end %>
+<% @ratecosts.each do |ratecost| %>
+   <div class="pageformat">
+      <p><div class="container"><%= ratecost.name %></div> <div class="container"><%= button_to 'Edit', edit_dragonhoard_ratecost_path(ratecost.dragonhoard, ratecost), method: :get, class: "button editbutton" %></div></p>
+      <div class="container">Amount: <%= ratecost.amount %></div> <div class="container"><%= button_to "Increase", ratecosts_inc_path(ratecost), method: :post, class: "button editbutton" %></div> <div class="container"><%= button_to "Decrease", ratecosts_dec_path(ratecost), method: :post, class: "button destroybutton" %></div>
+      <br>
+      <p>Econtype: <%= ratecost.econtype %></p>
+      <p>Baserate: <%= ratecost.baserate.name %></p>
+      <p>Dragonhoard: <%= ratecost.dragonhoard_id %></p>
+      <br>
+      <p>Created: <%= distance_of_time_in_words_to_now ratecost.created_on %> ago on (<%= ratecost.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now ratecost.updated_on %> ago on (<%= ratecost.updated_on.strftime("%B-%d-%Y") %>)</p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', dragonhoards_path %></p>

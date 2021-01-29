@@ -1,0 +1,220 @@
+<div class="pageformat">
+   <% if current_user.userinfo.mute_on %>
+      <p><%= button_to 'Unmute music', muteAudio_path(:pageType => "NewCreature"), method: :post, class: "button submitbutton" %></p>
+      <br>
+   <% else %>
+      <p><%= button_to 'Mute music', muteAudio_path(:pageType => "NewCreature"), method: :post, class: "button submitbutton" %></p>
+      <br>
+   <% end %>
+</div>
+<%= form_with(model: [@user, @creature], local: true) do |form| %>
+  <p class="centerpagecontent"><%= playMusicLoop("Creative", nil) %></p>
+  <% if @creature.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@creature.errors.count, "error") %> prohibited this creature from being saved:</h2>
+           <ul>
+              <% @creature.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :description %>
+    <%= form.text_area :description %>
+  </div>
+  <br>
+  <p class="pageformat">Physical Skills(gens 5 free points)</p>
+  <div class="pageformat">
+    <%= form.label :hp, "HP(min is 16)" %>
+    <%= form.number_field :hp %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :atk, "ATK(min is 2)" %>
+    <%= form.number_field :atk %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :def, "DEF(min is 2)" %>
+    <%= form.number_field :def %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :agility, "AGI(min is 2)" %>
+    <%= form.number_field :agility %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :strength, "STR(min is 4)" %>
+    <%= form.number_field :strength %>
+  </div>
+  <br>
+  <p class="pageformat">Magical Skills(gens 5 free points)</p>
+  <div class="pageformat">
+    <%= form.label :mp, "MP(min is 0)" %>
+    <%= form.number_field :mp %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :matk, "MATK(min is 0)" %>
+    <%= form.number_field :matk %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :mdef, "MDEF(min is 0)" %>
+    <%= form.number_field :mdef %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :magi, "MAGI(min is 0)" %>
+    <%= form.number_field :magi %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :mstr, "MSTR(min is 0)" %>
+    <%= form.number_field :mstr %>
+  </div>
+  <br>
+  <p class="pageformat">Stamina Skills(gens 4 free points)</p>
+  <div class="pageformat">
+    <%= form.label :hunger, "Hunger(min is 16)" %>
+    <%= form.number_field :hunger %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :thirst, "Thirst(min is 16)" %>
+    <%= form.number_field :thirst %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :fun, "Fun(min is 8)" %>
+    <%= form.number_field :fun %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :lives, "Lives(min is 0)" %>
+    <%= form.number_field :lives %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :creaturetype_id, "Select Creaturetype" %>
+    <%= form.collection_select(:creaturetype_id, @creaturetypes, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :element_id, "Select Element" %>
+    <%= form.collection_select(:element_id, @elements, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :starter %>
+    <%= form.check_box :starter %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :unlimitedlives %>
+    <%= form.check_box :unlimitedlives %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :rarity %>
+    <%= form.number_field :rarity %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :emeraldcost %>
+    <%= form.number_field :emeraldcost %>
+  </div>
+  <br>
+  <p class="pageformat">Creature image</p>
+  <div class="pageformat">
+     <%= image_tag @creature.image_url(:thumb).to_s if @creature.image? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :image %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_image_url, "or Image URL" %>
+     <%= form.text_field :remote_image_url %>
+     <%= form.hidden_field :image_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Activepet image</p>
+  <div class="pageformat">
+     <%= image_tag @creature.activepet_url(:thumb).to_s if @creature.activepet? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :activepet %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_activepet_url, "or Activepet URL" %>
+     <%= form.text_field :remote_activepet_url %>
+     <%= form.hidden_field :activepet_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Voiceogg files</p>
+  <div class="pageformat">
+     <%= audio_tag(@creature.voiceogg_url.to_s, :controls => true) if @creature.voiceogg? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :voiceogg %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_voiceogg_url, "or Voiceogg URL" %>
+     <%= form.text_field :remote_voiceogg_url %>
+     <%= form.hidden_field :voiceogg_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Voicemp3 files</p>
+  <div class="pageformat">
+     <%= audio_tag(@creature.voicemp3_url.to_s, :controls => true) if @creature.voicemp3? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :voicemp3 %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_voicemp3_url, "or Mp3 URL" %>
+     <%= form.text_field :remote_voicemp3_url %>
+     <%= form.hidden_field :voicemp3_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Ogg files</p>
+  <div class="pageformat">
+     <%= audio_tag(@creature.ogg_url.to_s, :controls => true) if @creature.ogg? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :ogg %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_ogg_url, "or Ogg URL" %>
+     <%= form.text_field :remote_ogg_url %>
+     <%= form.hidden_field :ogg_cache %>
+  </div>
+  <br>
+  <p class="pageformat">MP3 files</p>
+  <div class="pageformat">
+     <%= audio_tag(@creature.mp3_url.to_s, :controls => true) if @creature.mp3? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :mp3 %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_mp3_url, "or Mp3 URL" %>
+     <%= form.text_field :remote_mp3_url %>
+     <%= form.hidden_field :mp3_cache %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', user_path(@creature.user) %></p>
+<% end %>

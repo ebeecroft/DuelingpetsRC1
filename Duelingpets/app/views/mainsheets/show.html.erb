@@ -1,0 +1,59 @@
+<% provide(:h1, @mainsheet.title) %>
+<p id="notice"><%= notice %></p>
+<div class="pageformat">
+   <% if current_user && (current_user.id == @mainsheet.jukebox.user_id || current_user.pouch.privilege == "Admin") %>
+      <div class="container"><%= button_to 'Edit', edit_jukebox_mainsheet_path(@mainsheet.jukebox, @mainsheet), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [@mainsheet.jukebox, @mainsheet], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+   <% end %>
+   <p>Created: <%= distance_of_time_in_words_to_now @mainsheet.created_on %> ago on (<%= @mainsheet.created_on.strftime("%B-%d-%Y") %>)</p>
+   <p>Updated: <%= distance_of_time_in_words_to_now @mainsheet.updated_on %> ago on (<%= @mainsheet.updated_on.strftime("%B-%d-%Y") %>)</p>
+   <br>
+   <% if @mainsheet.user.userinfo.miniavatar.to_s != "" %>
+      <p><%= image_tag(@mainsheet.user.userinfo.miniavatar_url(:thumb)) %></p>
+   <% end %>
+   <p class="formlinks">Composer: <%= getUserPrivilege(@mainsheet.user) %><%= link_to @mainsheet.user.vname, user_path(@mainsheet.user) %></p>
+   <p>Jukebox: <%= @mainsheet.jukebox.name %></p>
+   <p>Total subsheets: <%= @mainsheet.subsheets.count %></p>
+   <p>Status: <%= getActivity(@mainsheet.user) %>
+      <% if getActivity(@mainsheet.user) != "Online" && getActivity(@mainsheet.user) != "Inoperable" %>
+         for <%= distance_of_time_in_words_to_now getTime(@mainsheet.user) %>
+      <% end %>
+   </p>
+   <br>
+   <p class="textindent"><%= textFormater("Multi", @mainsheet.description, "All").html_safe %></p>
+   <br>
+   <% if @subsheets.count >= 10 %>
+      <div class="formlinks"><%= paginate @subsheets %></div>
+      <br>
+   <% end %>
+   <% @subsheets.each do |subsheet| %>
+      <p class="formlinks"><%= link_to subsheet.title, mainsheet_subsheet_path(subsheet.mainsheet, subsheet) %></p>
+      <% if current_user && (current_user.id == subsheet.mainsheet.user_id || current_user.pouch.privilege == "Admin") %>
+         <div class="container"><%= button_to 'Edit', edit_mainsheet_subsheet_path(subsheet.mainsheet, subsheet), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [subsheet.mainsheet, subsheet], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <% end %>
+      <p>Created: <%= distance_of_time_in_words_to_now subsheet.created_on %> ago on (<%= subsheet.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now subsheet.updated_on %> ago on(<%= subsheet.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <br>
+      <% if !getSubsheetMusic(subsheet).nil? %>
+         <p><%= audio_tag(getMusicOrVideo("Sound", getSubsheetMusic(subsheet)), :controls => true) %></p>
+         <br>
+      <% end %>
+      <% if subsheet.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(subsheet.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Composer: <%= getUserPrivilege(subsheet.user) %><%= link_to subsheet.user.vname, user_path(subsheet.user) %></p>
+      <p>Total sounds: <%= subsheet.sounds.count %></p>
+      <p>Status: <%= getActivity(subsheet.user) %>
+         <% if getActivity(subsheet.user) != "Online" && getActivity(subsheet.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(subsheet.user) %>
+         <% end %>
+      </p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", subsheet.description, "All").html_safe %></p>
+      <br>
+   <% end %>
+   <% if(current_user && current_user.id == @mainsheet.user_id) %>
+      <p><%= button_to "New Subsheet", new_mainsheet_subsheet_path(@mainsheet), method: :get, class: "button submitbutton" %></p>
+      <br>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to "Back", user_jukebox_path(@mainsheet.jukebox.user, @mainsheet.jukebox) %></p>

@@ -1,0 +1,82 @@
+<% provide(:h1, "Monsterbattle List") %>
+<div class="formlinks"><%= paginate @monsterbattless %></div>
+<br>
+<% @monsterbattles.each do |monsterbattle| %>
+   <div class="pageformat">
+      <p>Started: <%= distance_of_time_in_words_to_now monsterbattle.started_on %> ago on (<%= monsterbattle.started_on.strftime("%B-%d-%Y") %>)</p>
+      <% if !monsterbattle.ended_on.nil? %>
+         <p>Ended: <%= distance_of_time_in_words_to_now monsterbattle.ended_on %> ago on (<%= monsterbattle.ended_on.strftime("%B-%d-%Y") %>)</p>
+      <% end %>
+      <br>
+      <p>Battleground stats</p>
+      <p>Round: <%= monsterbattle.round %></p>
+      <% if monsterbattle.battleover %>
+         <p>Tokens: <%= monsterbattle.tokens_earned %></p>
+         <p>Exp: <%= monsterbattle.exp_gained %></p>
+         <p>Dreyores: <%= monsterbattle.dreyore_earned %></p>
+         <p>Items: <%= monsterbattle.items_earned %></p>
+      <% end %>
+      <p>Battleover: <%= monsterbattle.battleover %></p>
+      <br>
+      <p>Partner</p>
+      <!-- Active pet goes up here--->
+      <p><%= monsterbattle.partner_name %></p>
+      <!-- Might change this later-->
+      <% if monsterbattle.fight.partner.creature.image.to_s != "" %>
+         <p><%= image_tag(monsterbattle.partner.creature.image_url(:thumb)) %></p>
+      <% end %>
+      <br>
+      <p>Physical skills</p>
+      <p>Type: <%= monsterbattle.creaturetype_id %></p>
+      <p>Level: <%= monsterbattle.partner_plevel %></p>
+      <p>Exp: <%= monsterbattle.partner_pexp %></p>
+      <p>Hp: <%= monsterbattle.partner_chp %>/<%= monsterbattle.partner_hp %></p>
+      <p>Atk: <%= monsterbattle.partner_atk %></p>
+      <p>Def: <%= monsterbattle.partner_def %></p>
+      <p>Agility: <%= monsterbattle.partner_agility %></p>
+      <p>Strength: <%= monsterbattle.partner_strength %></p>
+      <br>
+      <p>Magical skills</p>
+      <p>Level: <%= monsterbattle.partner_mlevel %></p>
+      <p>Exp: <%= monsterbattle.partner_mexp %></p>
+      <p>Mp: <%= monsterbattle.partner_cmp %>/<%= monsterbattle.partner_mp %></p>
+      <p>Atk: <%= monsterbattle.partner_matk %></p>
+      <p>Def: <%= monsterbattle.partner_mdef %></p>
+      <p>Agility: <%= monsterbattle.partner_magi %></p>
+      <p>Strength: <%= monsterbattle.partner_mstr %></p>
+      <br>
+      <p>Battle traits</p>
+      <p>Lives: <%= monsterbattle.partner_lives %></p> 
+      <p>Damage: <%= monsterbattle.partner_damage %></p>
+      <p>Rarity: <%= monsterbattle.partner_rarity %></p>
+      <br>
+      <p>Monster</p>
+      <p><%= monsterbattle.monster_name %></p>
+      <% if monsterbattle.monster.image.to_s != "" %>
+         <p><%= image_tag(monsterbattle.monster.image_url(:thumb)) %></p>
+      <% end %>
+      <br>
+      <p>Physical skills</p>
+      <p>Type: <%= monsterbattle.monstertype_id %></p>
+      <p>Level: <%= monsterbattle.monster_plevel %></p>
+      <p>Hp: <%= monsterbattle.monster_chp %>/<%= monsterbattle.monster_hp %></p>
+      <p>Atk: <%= monsterbattle.monster_atk %></p>
+      <p>Def: <%= monsterbattle.monster_def %></p>
+      <p>Agility: <%= monsterbattle.monster_agility %></p>
+      <br>
+      <p>Magical skills</p>
+      <p>Level: <%= monsterbattle.monster_mlevel %></p>
+      <p>Mp: <%= monsterbattle.monster_cmp %>/<%= monsterbattle.monster_mp %></p>
+      <p>Atk: <%= monsterbattle.monster_matk %></p>
+      <p>Def: <%= monsterbattle.monster_mdef %></p>
+      <p>Agility: <%= monsterbattle.monster_magi %></p>
+      <br>
+      <p>Battle traits</p>
+      <p>Loot: <%= monsterbattle.monster_loot %></p>
+      <p>Mischief: <%= monsterbattle.monster_mischief %></p>
+      <p>Damage: <%= monsterbattle.monster_damage %></p>
+      <p>Rarity: <%= monsterbattle.partner_rarity %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

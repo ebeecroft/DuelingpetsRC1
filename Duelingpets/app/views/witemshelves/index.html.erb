@@ -1,0 +1,190 @@
+<% provide(:h1, "Witemshelf List") %>
+<div class="formlinks"><%= paginate @witemshelves %></div>
+<br>
+<% @witemshelves.each do |witemshelf| %>
+   <div class="pageformat">
+      <p>Name: <%= witemshelf.name %></p>
+      <p>Warehouse: <%= witemshelf.warehouse.name %></p>
+      <% if !witemshelf.item1_id.nil? %>
+         <p>Item 1: <%= witemshelf.item1_id %></p>
+         <p>Quantity: <%= witemshelf.qty1 %></p>
+         <p>Tax: <%= witemshelf.tax1 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item2_id.nil? %>
+         <p>Item 2: <%= witemshelf.item2_id %></p>
+         <p>Quantity: <%= witemshelf.qty2 %></p>
+         <p>Tax: <%= witemshelf.tax2 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item3_id.nil? %>
+         <p>Item 3: <%= witemshelf.item3_id %></p>
+         <p>Quantity: <%= witemshelf.qty3 %></p>
+         <p>Tax: <%= witemshelf.tax3 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item4_id.nil? %>
+         <p>Item 4: <%= witemshelf.item4_id %></p>
+         <p>Quantity: <%= witemshelf.qty4 %></p>
+         <p>Tax: <%= witemshelf.tax4 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item5_id.nil? %>
+         <p>Item 5: <%= witemshelf.item5_id %></p>
+         <p>Quantity: <%= witemshelf.qty5 %></p>
+         <p>Tax: <%= witemshelf.tax5 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item6_id.nil? %>
+         <p>Item 6: <%= witemshelf.item6_id %></p>
+         <p>Quantity: <%= witemshelf.qty6 %></p>
+         <p>Tax: <%= witemshelf.tax6 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item7_id.nil? %>
+         <p>Item 7: <%= witemshelf.item7_id %></p>
+         <p>Quantity: <%= witemshelf.qty7 %></p>
+         <p>Tax: <%= witemshelf.tax7 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item8_id.nil? %>
+         <p>Item 8: <%= witemshelf.item8_id %></p>
+         <p>Quantity: <%= witemshelf.qty8 %></p>
+         <p>Tax: <%= witemshelf.tax8 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item9_id.nil? %>
+         <p>Item 9: <%= witemshelf.item9_id %></p>
+         <p>Quantity: <%= witemshelf.qty9 %></p>
+         <p>Tax: <%= witemshelf.tax9 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item10_id.nil? %>
+         <p>Item 10: <%= witemshelf.item10_id %></p>
+         <p>Quantity: <%= witemshelf.qty10 %></p>
+         <p>Tax: <%= witemshelf.tax10 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item11_id.nil? %>
+         <p>Item 11: <%= witemshelf.item11_id %></p>
+         <p>Quantity: <%= witemshelf.qty11 %></p>
+         <p>Tax: <%= witemshelf.tax11 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item12_id.nil? %>
+         <p>Item 12: <%= witemshelf.item12_id %></p>
+         <p>Quantity: <%= witemshelf.qty12 %></p>
+         <p>Tax: <%= witemshelf.tax12 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item13_id.nil? %>
+         <p>Item 13: <%= witemshelf.item13_id %></p>
+         <p>Quantity: <%= witemshelf.qty13 %></p>
+         <p>Tax: <%= witemshelf.tax13 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item14_id.nil? %>
+         <p>Item 14: <%= witemshelf.item14_id %></p>
+         <p>Quantity: <%= witemshelf.qty14 %></p>
+         <p>Tax: <%= witemshelf.tax14 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item15_id.nil? %>
+         <p>Item 15: <%= witemshelf.item15_id %></p>
+         <p>Quantity: <%= witemshelf.qty15 %></p>
+         <p>Tax: <%= witemshelf.tax15 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item16_id.nil? %>
+         <p>Item 16: <%= witemshelf.item16_id %></p>
+         <p>Quantity: <%= witemshelf.qty16 %></p>
+         <p>Tax: <%= witemshelf.tax16 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item17_id.nil? %>
+         <p>Item 17: <%= witemshelf.item17_id %></p>
+         <p>Quantity: <%= witemshelf.qty17 %></p>
+         <p>Tax: <%= witemshelf.tax17 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item18_id.nil? %>
+         <p>Item 18: <%= witemshelf.item18_id %></p>
+         <p>Quantity: <%= witemshelf.qty18 %></p>
+         <p>Tax: <%= witemshelf.tax18 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item19_id.nil? %>
+         <p>Item 19: <%= witemshelf.item19_id %></p>
+         <p>Quantity: <%= witemshelf.qty19 %></p>
+         <p>Tax: <%= witemshelf.tax19 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item20_id.nil? %>
+         <p>Item 20: <%= witemshelf.item20_id %></p>
+         <p>Quantity: <%= witemshelf.qty20 %></p>
+         <p>Tax: <%= witemshelf.tax20 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item21_id.nil? %>
+         <p>Item 21: <%= witemshelf.item21_id %></p>
+         <p>Quantity: <%= witemshelf.qty21 %></p>
+         <p>Tax: <%= witemshelf.tax21 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item22_id.nil? %>
+         <p>Item 22: <%= witemshelf.item22_id %></p>
+         <p>Quantity: <%= witemshelf.qty22 %></p>
+         <p>Tax: <%= witemshelf.tax22 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item23_id.nil? %>
+         <p>Item 23: <%= witemshelf.item23_id %></p>
+         <p>Quantity: <%= witemshelf.qty23 %></p>
+         <p>Tax: <%= witemshelf.tax23 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item24_id.nil? %>
+         <p>Item 24: <%= witemshelf.item24_id %></p>
+         <p>Quantity: <%= witemshelf.qty24 %></p>
+         <p>Tax: <%= witemshelf.tax24 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item25_id.nil? %>
+         <p>Item 25: <%= witemshelf.item25_id %></p>
+         <p>Quantity: <%= witemshelf.qty25 %></p>
+         <p>Tax: <%= witemshelf.tax25 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item26_id.nil? %>
+         <p>Item 26: <%= witemshelf.item26_id %></p>
+         <p>Quantity: <%= witemshelf.qty26 %></p>
+         <p>Tax: <%= witemshelf.tax26 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item27_id.nil? %>
+         <p>Item 27: <%= witemshelf.item27_id %></p>
+         <p>Quantity: <%= witemshelf.qty27 %></p>
+         <p>Tax: <%= witemshelf.tax27 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item28_id.nil? %>
+         <p>Item 28: <%= witemshelf.item28_id %></p>
+         <p>Quantity: <%= witemshelf.qty28 %></p>
+         <p>Tax: <%= witemshelf.tax28 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item29_id.nil? %>
+         <p>Item 29: <%= witemshelf.item29_id %></p>
+         <p>Quantity: <%= witemshelf.qty29 %></p>
+         <p>Tax: <%= witemshelf.tax29 %></p>
+         <br>
+      <% end %>
+      <% if !witemshelf.item30_id.nil? %>
+         <p>Item 30: <%= witemshelf.item30_id %></p>
+         <p>Quantity: <%= witemshelf.qty30 %></p>
+         <p>Tax: <%= witemshelf.tax30 %></p>
+      <% end %>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

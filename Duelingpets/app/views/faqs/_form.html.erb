@@ -1,0 +1,34 @@
+<%= form_with(model: @faq, local: true) do |form| %>
+  <% if @faq.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@faq.errors.count, "error") %> prohibited this faq from being saved:</h2>
+           <ul>
+              <% @faq.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :goal, "What do you need help with?" %>
+    <%= form.text_field :goal %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :prereqs %>
+    <%= form.text_area :prereqs %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :steps %>
+    <%= form.text_area :steps %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', faqs_path %></p>
+<% end %>

@@ -1,0 +1,58 @@
+<% provide(:h1, @bookworld.name) %>
+<p id="notice"><%= notice %></p>
+<div class="pageformat">
+   <% if current_user && (current_user.id == @bookworld.user_id || current_user.pouch.privilege == "Admin") %>
+      <div class="container"><%= button_to 'Edit', edit_user_bookworld_path(@bookworld.user, @bookworld), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [@bookworld.user, @bookworld], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+   <% end %>
+   <p>Created: <%= distance_of_time_in_words_to_now @bookworld.created_on %> ago on (<%= @bookworld.created_on.strftime("%B-%d-%Y") %>)</p>
+   <p>Updated: <%= distance_of_time_in_words_to_now @bookworld.updated_on %> ago on (<%= @bookworld.updated_on.strftime("%B-%d-%Y") %>)</p>
+   <p>Book price: <%= @bookworld.price %></p>
+   <p>Open world: <%= @bookworld.open_world %></p>
+   <p>Private world: <%= @bookworld.privateworld %></p>
+   <br>
+   <% if @bookworld.user.userinfo.miniavatar.to_s != "" %>
+      <p><%= image_tag(@bookworld.user.userinfo.miniavatar_url(:thumb)) %></p>
+   <% end %>
+   <p class="formlinks">Writer: <%= getUserPrivilege(@bookworld.user) %><%= link_to @bookworld.user.vname, user_path(@bookworld.user) %></p>
+   <p>Total books: <%= @bookworld.books.count %></p>
+   <p>Status: <%= getActivity(@bookworld.user) %>
+      <% if getActivity(@bookworld.user) != "Online" && getActivity(@bookworld.user) != "Inoperable" %>
+         for <%= distance_of_time_in_words_to_now getTime(@bookworld.user) %>
+      <% end %>
+   </p>
+   <br>
+   <p class="textindent"><%= textFormater("Multi", @bookworld.description, "All").html_safe %></p>
+   <br>
+   <% if @books.count >= 10 %>
+      <div class="formlinks"><%= paginate @books %></div>
+      <br>
+   <% end %>
+   <% @books.each do |book| %>
+      <p class="formlinks"><%= link_to book.title, bookworld_book_path(book.bookworld, book) %></p>
+      <% if current_user && (current_user.id == book.user_id || current_user.pouch.privilege == "Admin") %>
+         <div class="container"><%= button_to 'Edit', edit_bookworld_book_path(book.bookworld, book), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [book.bookworld, book], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <% end %>
+      <p>Created: <%= distance_of_time_in_words_to_now book.created_on %> ago on (<%= book.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now book.updated_on %> ago on(<%= book.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <br>
+      <% if book.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(book.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Writer: <%= getUserPrivilege(book.user) %><%= link_to book.user.vname, user_path(book.user) %></p>
+      <p>Total chapters: <%= book.chapters.count %></p>
+      <p>Status: <%= getActivity(book.user) %>
+         <% if getActivity(book.user) != "Online" && getActivity(book.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(book.user) %>
+         <% end %>
+      </p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", book.description, "All").html_safe %></p>
+      <br>
+   <% end %>
+   <% if(current_user && ((current_user.id == @bookworld.user_id) || @bookworld.open_world)) %>
+      <p><%= button_to "New Book", new_bookworld_book_path(@bookworld), method: :get, class: "button submitbutton" %></p>
+      <br>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to "User Bookworlds", user_bookworlds_path(@bookworld.user) %> |
+<%= link_to "Bookworld List", bookworlds_path %></p>

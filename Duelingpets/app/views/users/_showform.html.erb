@@ -1,0 +1,325 @@
+<% if current_user %>
+   <br>
+   <% if current_user.pouch.privilege == "Admin" || current_user.id == @user.id %>
+      <h2 class="subheader1">Funds</h2>
+      <p>Pouch: <%= @user.pouch.amount %>/<%= getUpgrades("Pouch", "Limit", @user.pouch, 1) %> points</p>
+      <p><div class="container">Dreyore: <%= @user.pouch.dreyterriumamount %>/<%= getUpgrades("Dreyore", "Limit", @user.pouch, 5) %></div> <div class="container"><%= button_to 'Extract', users_extractore_path(:id=>@user.id), method: :post, class: "button submitbutton" %></div></p>
+      <% if getUpgrades("Emerald", "Limit", @user.pouch, 2) > 0 %>
+         <p>Emeralds: <%= @user.pouch.emeraldamount %>/<%= getUpgrades("Emerald", "Limit", @user.pouch, 2) %></p>
+      <% end %>
+      <br>
+      <p>Feature Requests</p>
+      <div class="container"><%= button_to "My Suggestions", suggestions_path, method: :get, class: "button submitbutton" %></div>
+      <% if current_user.id == @user.id %>
+         <div class="container"><%= button_to "New Suggestion", new_user_suggestion_path(@user), method: :get, class: "button submitbutton" %></div>
+         <br>
+      <% end %>
+      <br>
+   <% end %>
+   <h2 class="subheader1">Userboxes</h2>
+   <% if(@user.donationbox.box_open) %>
+      <div class="container">Goal: <%= @user.donationbox.progress %>/<%= @user.donationbox.goal %></div>
+      <% if current_user.id == @user.id %>
+         <% if !@user.donationbox.hitgoal %>
+            <p><%= button_to 'Refund', donationboxes_refund_path(:id=>@user.donationbox.id), method: :post, class: "button submitbutton" %></p>
+         <% else %>
+            <p><%= button_to 'Retrieve', donationboxes_retrieve_path(:id=>@user.donationbox.id), method: :post, class: "button submitbutton" %></p>
+         <% end %>
+      <% else %>
+         <p><%= button_to 'Donate', new_donationbox_donor_path(@user.donationbox), method: :get, class: "button submitbutton" %></p>
+      <% end %>
+      <p class="formlinks">Donors: <%= link_to @user.donationbox.donors.count, donors_mydonors_path(:donationbox_id=>@user.donationbox.id) %></p>
+      <p>Initialized: <%= distance_of_time_in_words_to_now @user.donationbox.initialized_on %> ago on (<%=@user.donationbox.initialized_on.strftime("%B-%d-%Y") %>)</p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", @user.donationbox.description, "All").html_safe %></p>
+      <!--Might get rid of max donations and only use it in a function-->
+      <p>Max donations: <%= getUserContent(@user, "Donors") %>/<%= @user.donationbox.capacity %></p>
+   <% else %>
+      <p><%= @user.vname %>'s donationbox is currently closed!</p>
+      <% if current_user.id == @user.id %>
+         <br>
+         <p><%= button_to 'Enable Donationbox', edit_user_donationbox_path(@user, @user.donationbox), method: :get, class: "button submitbutton" %></p>
+      <% end %>
+   <% end %>
+   <br>
+   <% if(@user.pmbox.box_open) %>
+      <% if current_user.id == @user.id %>
+         <br>
+         <p><%= button_to 'Disable PMbox', users_disablepmbox_path(:id=>@user.id), method: :post, class: "button submitbutton" %></p>
+         <br>
+         <p>My PMs</p>
+         <div class="container"><%= button_to 'Inbox', pmboxes_inbox_path, method: :get, class: "button submitbutton" %></div>
+         <div class="container"><%= button_to 'Outbox', pmboxes_outbox_path, method: :get, class: "button submitbutton" %></div>
+         <br>
+      <% else %>
+         <br>
+         <p>New message!</p>
+         <p><%= button_to 'New PM', new_pmbox_pm_path(@user.pmbox), method: :get, class: "button submitbutton" %></p>
+      <% end %>
+      <p>PM Capacity: <%= getUserContent(@user, "PMs") %>/<%= @user.pmbox.capacity %></p>
+   <% else %>
+      <p><%= @user.vname %>'s pmbox is currently closed!</p>
+      <% if current_user.id == @user.id %>
+         <br>
+         <p><%= button_to 'Enable PMbox', users_disablepmbox_path(:id=>@user.id), method: :post, class: "button submitbutton" %></p>
+      <% end %>
+   <% end %>
+   <br>
+   <% if(@user.shoutbox.box_open) %>
+      <div class="container">Shout Capacity: <%= getUserContent(@user, "Shout") %>/<%= @user.shoutbox.capacity %></div>
+      <div class="container"><%= button_to 'Review', shouts_review_path, method: :get, class: "button submitbutton" %></div>
+      <br>
+      <p><%= button_to 'Disable Shoutbox', users_disableshoutbox_path(:id=>@user.id), method: :post, class: "button submitbutton" %></p>
+   <% else %>
+      <p><%= @user.vname %>'s shoutbox is currently closed!</p>
+      <% if current_user.id == @user.id %>
+         <br>
+         <p><%= button_to 'Enable Shoutbox', users_disableshoutbox_path(:id=>@user.id), method: :post, class: "button submitbutton" %></p>
+      <% end %>
+   <% end %>
+   <br>
+   <% if(@user.vname != "none") %>
+      <% if !@user.referral.nil? %>
+         <p class="formlinks">Referred by: <%= getUserPrivilege(@user.referral.referred_by) %><%= link_to @user.referral.referred_by.vname, user_path(@user.referral.referred_by) %></p>
+      <% end %>
+      <% if current_user && current_user.id == @user.id && @user.referral.nil? %>
+         <div class="container"><p class="formlinks">Referred by:</p></div>
+         <div class="container"><%= button_to "By Player", new_user_referral_path(@user), method: :get, class: "button submitbutton" %></div> <div class= "container"><%= button_to "Discoveredit", referrals_discoveredit_path, method: :post, class: "button submitbutton", data: { confirm: 'This means you found the site on your own. Are you sure you want to select it?' } %></div>
+      <% end %>
+   <% end %>
+   <p>Amount of referrals: <%= getReferrals(@user) %></p>
+<% end %>
+<br>
+<h2 class="subheader1">CMITP Section</h2>
+<% if getUserContent(@user, "Creatures") != 0 || getUserContent(@user, "Monsters") != 0 || getUserContent(@user, "Items") != 0 || getUserContent(@user, "Tags") != 0 || getUserContent(@user, "Partners") != 0 %>
+   <% if getUserContent(@user, "Creatures") != 0 %>
+      <div class="container"><%= button_to "My Creatures", user_creatures_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% if current_user && current_user.id == @user.id %>
+         <div class="container"><%= button_to "New Creature", new_user_creature_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% end %>
+      <br>
+      <p>Creatures: <%= getUserContent(@user, "Creatures") %></p>
+   <% else %>
+      <p><%= @user.vname %> has not created any creatures yet.</p>
+      <% if current_user && current_user.id == @user.id && @user.pouch.amount > 0 %>
+         <br>
+         <p><%= button_to "New Creature", new_user_creature_path(@user), method: :get, class: "button submitbutton" %></p>
+      <% end %>
+   <% end %>
+   <% if getUserContent(@user, "Elements") != 0 %>
+      <br>
+      <div class="container"><%= button_to "My Elements", user_elements_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% if current_user && current_user.id == @user.id %>
+         <div class="container"><%= button_to "New Element", new_user_element_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% end %>
+      <br>
+      <p>Elements: <%= getUserContent(@user, "Elements") %></p>
+   <% else %>
+      <br>
+      <p><%= @user.vname %> has not created any elements yet.</p>
+      <% if current_user && current_user.id == @user.id %>
+         <br>
+         <p><%= button_to "New Element", new_user_element_path(@user), method: :get, class: "button submitbutton" %></p>
+      <% end %>
+   <% end %>
+   <% if getUserContent(@user, "Monsters") != 0 %>
+      <br>
+      <div class="container"><%= button_to "My Monsters", user_monsters_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% if current_user && current_user.id == @user.id %>
+         <div class="container"><%= button_to "New Monster", new_user_monster_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% end %>
+      <br>
+      <p>Monsters: <%= getUserContent(@user, "Monsters") %></p>
+   <% else %>
+      <br>
+      <p><%= @user.vname %> has not created any monsters yet.</p>
+      <% if current_user && current_user.id == @user.id && @user.pouch.amount > 0 %>
+         <br>
+         <p><%= button_to "New Monster", new_user_monster_path(@user), method: :get, class: "button submitbutton" %></p>
+      <% end %>
+   <% end %>
+   <% if getUserContent(@user, "Items") != 0 %>
+      <br>
+      <div class="container"><%= button_to "My Items", user_items_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% if current_user && current_user.id == @user.id %>
+         <div class="container"><%= button_to "New Item", items_choose_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% end %>
+      <br>
+      <p>Items: <%= getUserContent(@user, "Items") %></p>
+   <% else %>
+      <br>
+      <p><%= @user.vname %> has not created any items yet.</p>
+      <% if current_user && current_user.id == @user.id && @user.pouch.amount > 0 %>
+         <br>
+         <p><%= button_to "New Item", items_choose_path(@user), method: :get, class: "button submitbutton" %></p>
+      <% end %>
+   <% end %>
+   <% if getUserContent(@user, "Tags") != 0 %>
+      <br>
+      <div class="container"><%= button_to "My Tags", user_tags_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% if current_user && current_user.id == @user.id %>
+         <div class="container"><%= button_to "New Tag", new_user_tag_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% end %>
+      <br>
+      <p>Tags: <%= getUserContent(@user, "Tags") %></p>
+   <% else %>
+      <br>
+      <p><%= @user.vname %> has not created any tags yet.</p>
+      <% if current_user && current_user.id == @user.id && @user.pouch.amount > 0 %>
+         <br>
+         <p><%= button_to "New Tag", new_user_tag_path(@user), method: :get, class: "button submitbutton" %></p>
+      <% end %>
+   <% end %>
+   <% if getUserContent(@user, "Partners") != 0 %>
+      <br>
+      <div class="container"><%= button_to "My Partners", user_partners_path(@user), method: :get, class: "button submitbutton" %></div>
+      <br>
+      <p>Partner limit: <%= @user.partners.count %>/<%= @user.inventory.petcapacity %></p>
+   <% else %>
+      <br>
+      <p><%= @user.vname %> does not own any pets yet.</p>
+   <% end %>
+<% else %>
+   <p><%= @user.vname %> does not have any content yet.</p>
+   <% if current_user && current_user.id == @user.id && @user.pouch.amount > 0 %>
+      <br>
+      <div class="container"><%= button_to "New Creature", new_user_creature_path(@user), method: :get, class: "button submitbutton" %></div>
+      <div class="container"><%= button_to "New Element", new_user_element_path(@user), method: :get, class: "button submitbutton" %></div>
+      <div class="container"><%= button_to "New Monster", new_user_monster_path(@user), method: :get, class: "button submitbutton" %></div>
+      <div class="container"><%= button_to "New Item", items_choose_path(@user), method: :get, class: "button submitbutton" %></div>
+      <div class="container"><%= button_to "New Tag", new_user_tag_path(@user), method: :get, class: "button submitbutton" %></div>
+      <br>
+   <% end %>
+<% end %>
+<br>
+<h2 class="subheader1">Creative Content</h2>
+<% if getUserContent(@user, "Galleries") != 0 || getUserContent(@user, "Channels") != 0 || getUserContent(@user, "Jukeboxes") != 0 || getUserContent(@user, "Bookworlds") != 0 || getUserContent(@user, "OCs") != 0 || getUserContent(@user, "Blog") != 0 || getUserContent(@user, "Adblog") != 0 || getUserContent(@user, "Activatedcolors") != 0 || getUserContent(@user, "Inactivecolors") != 0 %>
+   <% if getUserContent(@user, "Galleries") != 0 %>
+      <div class="container"><%= button_to "My Galleries", user_galleries_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% if current_user && current_user.id == @user.id && getUpgrades("Gallery", "Limit", @user.pouch, 9) > 0 %>
+         <div class="container"><%= button_to "New Gallery", new_user_gallery_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% end %>
+      <br>
+      <p>Gallery limit: <%= @user.galleries.count %>/<%= getUpgrades("Gallery", "Limit", @user.pouch, 9) %></p>
+   <% else %>
+      <p><%= @user.vname %> has not created any galleries yet.</p>
+      <% if current_user && current_user.id == @user.id && getUpgrades("Gallery", "Limit", @user.pouch, 9) > 0 %>
+         <br>
+         <p><%= button_to "New Gallery", new_user_gallery_path(@user), method: :get, class: "button submitbutton" %></p>
+      <% end %>
+   <% end %>
+   <% if getUserContent(@user, "Channels") != 0 %>
+      <br>
+      <div class="container"><%= button_to "My Channels", user_channels_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% if current_user && current_user.id == @user.id && getUpgrades("Channel", "Limit", @user.pouch, 8) > 0 %>
+         <div class="container"><%= button_to "New Channel", new_user_channel_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% end %>
+      <br>
+      <p>Channel limit: <%= @user.channels.count %>/<%= getUpgrades("Channel", "Limit", @user.pouch, 8) %></p>
+   <% else %>
+      <br>
+      <p><%= @user.vname %> has not created any channels yet.</p>
+      <% if current_user && current_user.id == @user.id && getUpgrades("Channel", "Limit", @user.pouch, 8) > 0 %>
+         <br>
+         <p><%= button_to "New Channel", new_user_channel_path(@user), method: :get, class: "button submitbutton" %></p>
+      <% end %>
+   <% end %>
+   <% if getUserContent(@user, "Jukeboxes") != 0 %>
+      <br>
+      <div class="container"><%= button_to "My Jukeboxes", user_jukeboxes_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% if current_user && current_user.id == @user.id && getUpgrades("Jukebox", "Limit", @user.pouch, 6) > 0 %>
+         <div class="container"><%= button_to "New Jukebox", new_user_jukebox_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% end %>
+      <br>
+      <p>Jukebox limit: <%= @user.jukeboxes.count %>/<%= getUpgrades("Jukebox", "Limit", @user.pouch, 6) %></p>
+   <% else %>
+      <br>
+      <p><%= @user.vname %> has not created any jukeboxes yet.</p>
+      <% if current_user && current_user.id == @user.id && getUpgrades("Jukebox", "Limit", @user.pouch, 6) > 0 %>
+         <br>
+         <p><%= button_to "New Jukebox", new_user_jukebox_path(@user), method: :get, class: "button submitbutton" %></p>
+      <% end %>
+   <% end %>
+   <% if getUserContent(@user, "Bookworlds") != 0 %>
+      <br>
+      <div class="container"><%= button_to "My Bookworlds", user_bookworlds_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% if current_user && current_user.id == @user.id && getUpgrades("Book", "Limit", @user.pouch, 7) > 0 %>
+         <div class="container"><%= button_to "New Bookworld", new_user_bookworld_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% end %>
+      <br>
+      <p>Book limit: <%= @user.books.count %>/<%= getUpgrades("Book", "Limit", @user.pouch, 7) %></p>
+   <% else %>
+      <br>
+      <p><%= @user.vname %> has not created any bookworlds yet.</p>
+      <% if current_user && current_user.id == @user.id && getUpgrades("Book", "Limit", @user.pouch, 7) > 0 %>
+         <br>
+         <p><%= button_to "New Bookworld", new_user_bookworld_path(@user), method: :get, class: "button submitbutton" %></p>
+      <% end %>
+   <% end %>
+   <% if getUserContent(@user, "OCs") != 0 %>
+      <br>
+      <div class="container"><%= button_to "My OCs", user_ocs_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% if current_user && current_user.id == @user.id && getUpgrades("OC", "Limit", @user.pouch, 5) > 0 %>
+         <div class="container"><%= button_to "New OC", new_user_oc_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% end %>
+      <br>
+      <p>OC limit: <%= @user.ocs.count %>/<%= getUpgrades("OC", "Limit", @user.pouch, 4) %></p>
+   <% else %>
+      <br>
+      <p><%= @user.vname %> has not created any ocs yet.</p>
+      <% if current_user && current_user.id == @user.id && getUpgrades("OC", "Limit", @user.pouch, 5) > 0 %>
+         <br>
+         <p><%= button_to "New OC", new_user_oc_path(@user), method: :get, class: "button submitbutton" %></p>
+         <p>Earn points by creating ocs!</p>
+      <% end %>
+   <% end %>
+   <% if getUserContent(@user, "Blog") != 0 || getUserContent(@user, "Adblog") != 0 %>
+      <br>
+      <div class="container"><%= button_to "My Blog", user_blogs_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% if current_user && current_user.id == @user.id && getUpgrades("Blog", "Limit", @user.pouch, 3) > 0 %>
+         <div class="container"><%= button_to "New Blog", new_user_blog_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% end %>
+      <br>
+      <p>Blogs: <%= getUserContent(@user, "Blog") %></p>
+      <p>Ads: <%= getUserContent(@user, "Adblog") %></p>
+      <p>Blog limit: <%= @user.blogs.count %>/<%= getUpgrades("Blog", "Limit", @user.pouch, 3) %></p>
+   <% else %>
+      <br>
+      <p><%= @user.vname %> has not created any blogs yet.</p>
+      <% if current_user && current_user.id == @user.id && getUpgrades("Blog", "Limit", @user.pouch, 3) > 0 %>
+         <br>
+         <p><%= button_to "New Blog", new_user_blog_path(@user), method: :get, class: "button submitbutton" %></p>
+      <% end %>
+   <% end %>
+   <% if getUserContent(@user, "Activatedcolors") != 0 || getUserContent(@user, "Inactivecolors") != 0 %>
+      <br>
+      <div class="container"><%= button_to "My Colorscheme", user_colorschemes_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% if current_user && current_user.id == @user.id %>
+         <div class="container"><%= button_to "New Colorscheme", new_user_colorscheme_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% end %>
+      <br>
+      <p>Active colors: <%= getUserContent(@user, "Activatedcolors") %></p>
+      <p>Inactive colors: <%= getUserContent(@user, "Inactivecolors") %></p>
+   <% else %>
+      <br>
+      <p><%= @user.vname %> has not created any colorschemes yet.</p>
+      <% if current_user && current_user.id == @user.id %>
+         <br>
+         <p><%= button_to "New Colorscheme", new_user_colorscheme_path(@user), method: :get, class: "button submitbutton" %></p>
+         <p>Earn points by creating colorschemes!</p>
+      <% end %>
+   <% end %>
+<% else %>
+   <p><%= @user.vname %> does not have any content yet.</p>
+   <% if current_user && current_user.id == @user.id %>
+      <br>
+      <div class="container"><%= button_to "New Gallery", new_user_gallery_path(@user), method: :get, class: "button submitbutton" %></div>
+      <div class="container"><%= button_to "New Channel", new_user_channel_path(@user), method: :get, class: "button submitbutton" %></div>
+      <div class="container"><%= button_to "New Jukebox", new_user_jukebox_path(@user), method: :get, class: "button submitbutton" %></div>
+      <div class="container"><%= button_to "New Bookworld", new_user_bookworld_path(@user), method: :get, class: "button submitbutton" %></div>
+      <div class="container"><%= button_to "New OC", new_user_oc_path(@user), method: :get, class: "button submitbutton" %></div>
+      <div class="container"><%= button_to "New Blog", new_user_blog_path(@user), method: :get, class: "button submitbutton" %></div>
+      <div class="container"><%= button_to "New Colorscheme", new_user_colorscheme_path(@user), method: :get, class: "button submitbutton" %></div>
+      <br>
+   <% end %>
+<% end %>

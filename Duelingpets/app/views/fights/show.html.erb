@@ -1,0 +1,54 @@
+<% provide(:h1, @fight.partner.name + "'s Fights") %>
+<p id="notice"><%= notice %></p>
+<div class="pageformat">
+   <p>Wins: <%= @fight.win %></p>
+   <p>Draws: <%= @fight.draw %></p>
+   <p>Losses: <%= @fight.loss %></p>
+   <br>
+   <p>Pet Battles</p>
+   <p>Monster Battles</p>
+   <div class="formlinks"><%= paginate @monsterbattles %></div>
+   <br>
+   <% @monsterbattles.each do |monsterbattle| %>
+      <div class="container"><p class="formlinks">Round: <%= link_to monsterbattle.round, fight_monsterbattle_path(monsterbattle.fight, monsterbattle) %></p></div>
+      <% if current_user && (current_user.id == monsterbattle.fight.partner.user_id || current_user.pouch.privilege == "Admin") %>
+         <div class="container"><%= button_to 'Destroy', [monsterbattle.fight, monsterbattle], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+         <br>
+      <% end %>
+      <p>Started: <%= distance_of_time_in_words_to_now monsterbattle.started_on %> ago on (<%= monsterbattle.started_on.strftime("%B-%d-%Y") %>)</p>
+      <% if(monsterbattle.battleover) %>
+         <p>Ended: <%= distance_of_time_in_words_to_now monsterbattle.ended_on %> ago on (<%= monsterbattle.ended_on.strftime("%B-%d-%Y") %>)</p>
+         <p>Tokens: <%= monsterbattle.tokens_earned %></p>
+         <p>Exp: <%= monsterbattle.exp_earned %></p>
+         <p>Dreyore: <%= monsterbattle.dreyore_earned %></p>
+         <p>Items: <%= monsterbattle.items_earned %></p>
+      <% end %>
+      <br>
+      <% if monsterbattle.fight.partner.creature.image.to_s != "" %>
+         <p><%= image_tag(monsterbattle.fight.partner.creature.image_url(:thumb)) %></p>
+      <% end %>
+      <p>Partner: <%= monsterbattle.fight.partner.name %></p>
+      <p>HP: <%= monsterbattle.partner_chp %>/<%= monsterbattle.partner_hp %></p>
+      <p>Level: <%= monsterbattle.partner_plevel %></p>
+      <p>Atk: <%= monsterbattle.partner_atk %></p>
+      <p>Def: <%= monsterbattle.partner_def %></p>
+      <p>Agility: <%= monsterbattle.partner_agility %></p>
+      <p>Strength: <%= monsterbattle.partner_strength %></p> 
+      <br>
+      <p>VS</p>
+      <br>
+      <% if monsterbattle.monster.image.to_s != "" %>
+         <p><%= image_tag(monsterbattle.monster.image_url(:thumb)) %></p>
+      <% end %>
+      <p>Monster: <%= monsterbattle.monster.name %></p>
+      <p>HP: <%= monsterbattle.monster_chp %>/<%= monsterbattle.monster_hp %></p>
+      <p>Level: <%= monsterbattle.monster_plevel %></p>
+      <p>Atk: <%= monsterbattle.monster_atk %></p>
+      <p>Def: <%= monsterbattle.monster_def %></p>
+      <p>Agility: <%= monsterbattle.monster_agility %></p>
+      <br>
+   <% end %>
+   <p>Fanger Battles</p>
+</div>
+<br>
+<p class="formlinks"><%= link_to "Back", user_partner_path(@fight.partner.user, @fight.partner) %></p>

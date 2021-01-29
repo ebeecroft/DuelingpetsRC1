@@ -1,0 +1,41 @@
+<% if optional %>
+   <% provide(:h1, @user.vname +  "'s channels") %>
+<% else %>
+   <% provide(:h1, "Channel List") %>
+<% end %>
+<div class="formlinks"><%= paginate @channels %></div>
+<br>
+<% @channels.each do |channel| %>
+   <div class="pageformat">
+      <p class="formlinks"><%= link_to channel.name, user_channel_path(channel.user, channel) %></p>
+      <p>Created: <%= distance_of_time_in_words_to_now channel.created_on %> ago on (<%= channel.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now channel.updated_on %> ago on (<%= channel.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <% if !optional %>
+         <br>
+         <% if channel.user.userinfo.miniavatar.to_s != "" %>
+            <p><%= image_tag(channel.user.userinfo.miniavatar_url(:thumb)) %></p>
+         <% end %>
+         <p class="formlinks">Director: <%= getUserPrivilege(channel.user) %><%= link_to channel.user.vname, user_path(channel.user) %></p>
+         <p>Group: <%= channel.bookgroup.name %></p>
+         <p>Viewer: <%= channel.gviewer.name %></p>
+         <p>Status: <%= getActivity(channel.user) %>
+            <% if getActivity(channel.user) != "Online" && getActivity(channel.user) != "Inoperable" %>
+               for <%= distance_of_time_in_words_to_now getTime(channel.user) %>
+            <% end %>
+         </p>
+         <br>
+      <% else %>
+         <br>
+         <p>Group: <%= channel.bookgroup.name %></p>
+         <p>Viewer: <%= channel.gviewer.name %></p>
+         <br>
+      <% end %>
+      <p class="textindent"><%= textFormater("Multi", channel.description, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<% if optional %>
+   <p class="formlinks"><%= link_to 'Back', user_path(@user) %></p>
+<% else %>
+   <p class="formlinks"><%= link_to 'Back', root_path %></p>
+<% end %>

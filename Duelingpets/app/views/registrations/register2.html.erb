@@ -1,0 +1,7 @@
+<% provide(:h1, "New Registration") %>
+<div class="pageformat">
+   <p><%= image_tag(@artpage.art_url(:thumb)) %></p>
+   <p class="textindent"><%= textFormater("Multi", @artpage.message, "All").html_safe %></p>
+   <br>
+</div>
+<%= render 'form' %>

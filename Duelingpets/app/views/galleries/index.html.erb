@@ -1,0 +1,41 @@
+<% if optional %>
+   <% provide(:h1, @user.vname +  "'s galleries") %>
+<% else %>
+   <% provide(:h1, "Gallery List") %>
+<% end %>
+<div class="formlinks"><%= paginate @galleries %></div>
+<br>
+<% @galleries.each do |gallery| %>
+   <div class="pageformat">
+      <p class="formlinks"><%= link_to gallery.name, user_gallery_path(gallery.user, gallery) %></p>
+      <p>Created: <%= distance_of_time_in_words_to_now gallery.created_on %> ago on (<%= gallery.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now gallery.updated_on %> ago on (<%= gallery.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <% if !optional %>
+         <br>
+         <% if gallery.user.userinfo.miniavatar.to_s != "" %>
+            <p><%= image_tag(gallery.user.userinfo.miniavatar_url(:thumb)) %></p>
+         <% end %>
+         <p class="formlinks">Artist: <%= getUserPrivilege(gallery.user) %><%= link_to gallery.user.vname, user_path(gallery.user) %></p>
+         <p>Group: <%= gallery.bookgroup.name %></p>
+         <p>Viewer: <%= gallery.gviewer.name %></p>
+         <p>Status: <%= getActivity(gallery.user) %>
+            <% if getActivity(gallery.user) != "Online" && getActivity(gallery.user) != "Inoperable" %>
+               for <%= distance_of_time_in_words_to_now getTime(gallery.user) %>
+            <% end %>
+         </p>
+         <br>
+      <% else %>
+         <br>
+         <p>Group: <%= gallery.bookgroup.name %></p>
+         <p>Viewer: <%= gallery.gviewer.name %></p>
+         <br>
+      <% end %>
+      <p class="textindent"><%= textFormater("Multi", gallery.description, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<% if optional %>
+   <p class="formlinks"><%= link_to 'Back', user_path(@user) %></p>
+<% else %>
+   <p class="formlinks"><%= link_to 'Back', root_path %></p>
+<% end %>

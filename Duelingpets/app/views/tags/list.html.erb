@@ -1,0 +1,23 @@
+<% provide(:h1, "Tag List") %>
+<div class="formlinks"><%= paginate @tags %></div>
+<br>
+<% @tags.each do |tag| %>
+   <div class="pageformat">
+      <div class="container"><p><%= tag.name %></p></div> <div class="container"><%= button_to 'Edit', edit_user_tag_path(tag.user, tag), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [tag.user, tag], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <p>Created: <%= distance_of_time_in_words_to_now tag.created_on %> ago on (<%= tag.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now tag.updated_on %> ago on (<%= tag.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <br>
+      <% if tag.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(tag.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Owner: <%= getUserPrivilege(tag.user) %><%= link_to tag.user.vname, user_path(tag.user) %></p>
+      <p>Group: <%= tag.bookgroup.name %></p>
+      <p>Status: <%= getActivity(tag.user) %>
+         <% if getActivity(tag.user) != "Online" && getActivity(tag.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(tag.user) %>
+         <% end %>
+      </p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

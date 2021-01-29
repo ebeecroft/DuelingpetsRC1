@@ -1,0 +1,17 @@
+<div class="container">
+   <p class="formlinks"><%= link_to getItemName(slotindex, slot, "Name"), user_item_path(getItemName(slotindex, slot, "Creator"), getItemName(slotindex, slot, "Name")) %><%= form.radio_button :slotindex_id, slotindex, checked: true %></p>
+   <% if getItemImage(slotindex, slot, "Imagecheck").to_s != "" %>
+      <p><%= image_tag(getItemImage(slotindex, slot, "Image")) %></p>
+   <% end %>
+   <p>Durability: <%= getDurability(slotindex, slot, "Current") %>/<%= getDurability(slotindex, slot, "Starter") %></p>
+   <p>Quantity: <%= getQuantity(slotindex, slot) %></p>
+   <p>Rarity: <%= getItemName(slotindex, slot, "Rarity") %></p>
+   <p>Equipable: <%= getItemName(slotindex, slot, "Equip") %></p>
+   <p>Type: <%= getItemName(slotindex, slot, "Itemtype") %></p>
+   <p>Cost: <%= getItemName(slotindex, slot, "Points") %></p>
+   <p>Emeralds: <%= getItemName(slotindex, slot, "Emeralds") %></p>
+   <p class="formlinks">Artist: <%= getUserPrivilege(getItemName(slotindex, slot, "User")) %><%= link_to getItemName(slotindex, slot, "Creator"), user_path(getItemName(slotindex, slot, "Creator")) %></p>
+   <br>
+   <p>Stats</p>
+   <%= getStats(slotindex, slot) %>
+</div>

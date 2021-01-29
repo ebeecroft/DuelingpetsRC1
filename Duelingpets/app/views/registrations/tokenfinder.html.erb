@@ -1,0 +1,13 @@
+<% provide(:h1, "Token Finder") %>
+<%= form_for(:session, url: registrations_tokenpost_path) do |form| %>
+   <div class="pageformat">
+      <p>
+         <%= form.label :regtoken, "Please provide your consent token here!" %></p>
+         <%= form.text_field :regtoken %>
+      </p>
+      <br>
+      <p><%= form.submit "Submit", class: "button submitbutton" %></p>
+   </div>
+<% end %>
+<br>
+<p class="formlinks"><%= link_to "Back", root_path %></p>

@@ -1,0 +1,40 @@
+<% if current_user && current_user.id == @user.id && @user.pouch.amount > 0 %>
+   <br>
+   <h2 class="subheader1">Upgrade levels</h2>
+   <div class="container">Free pouch level: <%= @user.pouch.pouchslot.free1 %>/<%= getUpgrades("Pouch", "Max", @user.pouch, 1) %></div> <div class="container"><%= button_to 'Buy Upgrade for ' + getUpgrades("Pouch", "Cost", @user.pouch, 1).to_s, userupgrades_buy_path(:pouch_id=>@user.pouch.id, :buyname=>"Pouch", :upnumber=>1), method: :post, class: "button submitbutton" %></div>
+   <br>
+   <div class="container">Member pouch level: <%= @user.pouch.pouchslot.free1 %>/<%= getUpgrades("Pouch", "Max", @user.pouch, 1) %></div> <div class="container"><%= button_to 'Buy Upgrade for ' + getUpgrades("Pouch", "Cost", @user.pouch, 1).to_s, userupgrades_buy_path(:pouch_id=>@user.pouch.id, :buyname=>"Pouch", :upnumber=>1), method: :post, class: "button submitbutton" %></div>
+   <br>
+   <div class="container">Free oc level: <%= @user.pouch.pouchslot.free4 %>/<%= getUpgrades("OC", "Max", @user.pouch, 4) %></div> <div class="container"><%= button_to 'Buy Upgrade for ' + getUpgrades("OC", "Cost", @user.pouch, 4).to_s, userupgrades_buy_path(:pouch_id=>@user.pouch.id, :buyname=>"OC", :upnumber=>4), method: :post, class: "button submitbutton" %></div>
+   <br>
+   <div class="container">Member oc level: <%= @user.pouch.pouchslot.free4 %>/<%= getUpgrades("OC", "Max", @user.pouch, 4) %></div> <div class="container"><%= button_to 'Buy Upgrade for ' + getUpgrades("OC", "Cost", @user.pouch, 4).to_s, userupgrades_buy_path(:pouch_id=>@user.pouch.id, :buyname=>"OC", :upnumber=>4), method: :post, class: "button submitbutton" %></div>
+   <br>
+   <div class="container">Free blog level: <%= @user.pouch.pouchslot.free3 %>/<%= getUpgrades("Blog", "Max", @user.pouch, 3) %></div> <div class="container"><%= button_to 'Buy Upgrade for ' + getUpgrades("Blog", "Cost", @user.pouch, 3).to_s, userupgrades_buy_path(:pouch_id=>@user.pouch.id, :buyname=>"Blog", :upnumber=>3), method: :post, class: "button submitbutton" %></div>
+   <br>
+   <div class="container">Member blog level: <%= @user.pouch.pouchslot.free3 %>/<%= getUpgrades("Blog", "Max", @user.pouch, 3) %></div> <div class="container"><%= button_to 'Buy Upgrade for ' + getUpgrades("Blog", "Cost", @user.pouch, 3).to_s, userupgrades_buy_path(:pouch_id=>@user.pouch.id, :buyname=>"Blog", :upnumber=>3), method: :post, class: "button submitbutton" %></div>
+   <br>
+   <div class="container">Free emerald level: <%= @user.pouch.pouchslot.free2 %>/<%= getUpgrades("Emerald", "Max", @user.pouch, 2) %></div> <div class="container"><%= button_to 'Buy Upgrade for ' + getUpgrades("Emerald", "Cost", @user.pouch, 2).to_s, userupgrades_buy_path(:pouch_id=>@user.pouch.id, :buyname=>"Emerald", :upnumber=>2), method: :post, class: "button submitbutton" %></div>
+   <br>
+   <div class="container">Member emerald level: <%= @user.pouch.pouchslot.free2 %>/<%= getUpgrades("Emerald", "Max", @user.pouch, 2) %></div> <div class="container"><%= button_to 'Buy Upgrade for ' + getUpgrades("Emerald", "Cost", @user.pouch, 2).to_s, userupgrades_buy_path(:pouch_id=>@user.pouch.id, :buyname=>"Emerald", :upnumber=>2), method: :post, class: "button submitbutton" %></div>
+   <br>
+   <div class="container">Free dreyterrium level: <%= @user.pouch.pouchslot.free5 %>/<%= getUpgrades("Dreyore", "Max", @user.pouch, 5) %></div> <div class="container"><%= button_to 'Buy Upgrade for ' + getUpgrades("Dreyore", "Cost", @user.pouch, 5).to_s, userupgrades_buy_path(:pouch_id=>@user.pouch.id, :buyname=>"Dreyore", :upnumber=>5), method: :post, class: "button submitbutton" %></div>
+   <br>
+   <div class="container">Member dreyterrium level: <%= @user.pouch.pouchslot.free5 %>/<%= getUpgrades("Dreyore", "Max", @user.pouch, 5) %></div> <div class="container"><%= button_to 'Buy Upgrade for ' + getUpgrades("Dreyore", "Cost", @user.pouch, 5).to_s, userupgrades_buy_path(:pouch_id=>@user.pouch.id, :buyname=>"Dreyore", :upnumber=>5), method: :post, class: "button submitbutton" %></div>
+   <br>
+   <div class="container">Free jukebox level: <%= @user.pouch.pouchslot.free6 %>/<%= getUpgrades("Jukebox", "Max", @user.pouch, 6) %></div> <div class="container"><%= button_to 'Buy Upgrade for ' + getUpgrades("Jukebox", "Cost", @user.pouch, 6).to_s, userupgrades_buy_path(:pouch_id=>@user.pouch.id, :buyname=>"Jukebox", :upnumber=>6), method: :post, class: "button submitbutton" %></div>
+   <br>
+   <div class="container">Member jukebox level: <%= @user.pouch.pouchslot.free6 %>/<%= getUpgrades("Jukebox", "Max", @user.pouch, 6) %></div> <div class="container"><%= button_to 'Buy Upgrade for ' + getUpgrades("Jukebox", "Cost", @user.pouch, 6).to_s, userupgrades_buy_path(:pouch_id=>@user.pouch.id, :buyname=>"Jukebox", :upnumber=>6), method: :post, class: "button submitbutton" %></div>
+   <br>
+   <div class="container">Free book level: <%= @user.pouch.pouchslot.free7 %>/<%= getUpgrades("Book", "Max", @user.pouch, 7) %></div> <div class="container"><%= button_to 'Buy Upgrade for ' + getUpgrades("Book", "Cost", @user.pouch, 7).to_s, userupgrades_buy_path(:pouch_id=>@user.pouch.id, :buyname=>"Book", :upnumber=>7), method: :post, class: "button submitbutton" %></div>
+   <br>
+   <div class="container">Member book level: <%= @user.pouch.pouchslot.free7 %>/<%= getUpgrades("Book", "Max", @user.pouch, 7) %></div> <div class="container"><%= button_to 'Buy Upgrade for ' + getUpgrades("Book", "Cost", @user.pouch, 7).to_s, userupgrades_buy_path(:pouch_id=>@user.pouch.id, :buyname=>"Book", :upnumber=>7), method: :post, class: "button submitbutton" %></div>
+   <br>
+   <div class="container">Free channel level: <%= @user.pouch.pouchslot.free8 %>/<%= getUpgrades("Channel", "Max", @user.pouch, 8) %></div> <div class="container"><%= button_to 'Buy Upgrade for ' + getUpgrades("Channel", "Cost", @user.pouch, 8).to_s, userupgrades_buy_path(:pouch_id=>@user.pouch.id, :buyname=>"Channel", :upnumber=>8), method: :post, class: "button submitbutton" %></div>
+   <br>
+   <div class="container">Member channel level: <%= @user.pouch.pouchslot.free8 %>/<%= getUpgrades("Channel", "Max", @user.pouch, 8) %></div> <div class="container"><%= button_to 'Buy Upgrade for ' + getUpgrades("Channel", "Cost", @user.pouch, 8).to_s, userupgrades_buy_path(:pouch_id=>@user.pouch.id, :buyname=>"Channel", :upnumber=>8), method: :post, class: "button submitbutton" %></div>
+   <br>
+   <div class="container">Free gallery level: <%= @user.pouch.pouchslot.free9 %>/<%= getUpgrades("Gallery", "Max", @user.pouch, 9) %></div> <div class="container"><%= button_to 'Buy Upgrade for ' + getUpgrades("Gallery", "Cost", @user.pouch, 9).to_s, userupgrades_buy_path(:pouch_id=>@user.pouch.id, :buyname=>"Gallery", :upnumber=>9), method: :post, class: "button submitbutton" %></div>
+   <br>
+   <div class="container">Member gallery level: <%= @user.pouch.pouchslot.free9 %>/<%= getUpgrades("Gallery", "Max", @user.pouch, 9) %></div> <div class="container"><%= button_to 'Buy Upgrade for ' + getUpgrades("Gallery", "Cost", @user.pouch, 9).to_s, userupgrades_buy_path(:pouch_id=>@user.pouch.id, :buyname=>"Gallery", :upnumber=>9), method: :post, class: "button submitbutton" %></div>
+   <br>
+<% end %>

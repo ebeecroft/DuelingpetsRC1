@@ -1,0 +1,37 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  pouchbase: 1
+  pouchinc: 1
+  pouchcost: 1
+  pouchmax: 1
+  emeraldbase: 1
+  emeraldinc: 1
+  emeraldcost: 1
+  emeraldmax: 1
+  blogbase: 1
+  bloginc: 1
+  blogcost: 1
+  blogmax: 1
+  dreyterriumbase: 1
+  dreyterriuminc: 1
+  dreyterriumcost: 1
+  dreyterriummax: 1
+
+two:
+  pouchbase: 1
+  pouchinc: 1
+  pouchcost: 1
+  pouchmax: 1
+  emeraldbase: 1
+  emeraldinc: 1
+  emeraldcost: 1
+  emeraldmax: 1
+  blogbase: 1
+  bloginc: 1
+  blogcost: 1
+  blogmax: 1
+  dreyterriumbase: 1
+  dreyterriuminc: 1
+  dreyterriumcost: 1
+  dreyterriummax: 1

@@ -1,0 +1,38 @@
+<% if @type == "Review" %>
+   <%= @content.user.vname %>'s shout is awaiting your review!
+<% elsif @type == "Approved" %>
+   Your new shout for <%= @content.shoutbox.user.vname %> shoutbox was approved!
+<% elsif @type == "Denied" %>
+   Your new shout for <%= @content.shoutbox.user.vname %> shoutbox was denied!
+<% end %>
+===============================================
+
+<% if @type == "Review" %>
+   Greetings <%= @content.shoutbox.user.vname %> we have a user by
+   the name of <%= @content.user.vname %> who is creating some
+   shouts on your page. As such I would like you to look over the
+   shout message to see if it fits the bookgroup that it belongs
+   to. Also by the way here is a url <%= @url %> to help you out
+   for the review process. If you approve this shout it will be
+   publicly visible for other to see, if you deny it then it will
+   not be available to the public. I hope you will excercise good
+   judment to keep our virtual pet site community safe for
+   everyone. I leave the ruling up to you.
+<% elsif @type == "Approved" %>
+   The shoutbox owner <%= @content.shoutbox.user.vname %> has taken
+   the time to look over your shout and has determined that it is
+   okay to air to the public on her profile. The bookgroup that
+   this shout belongs to feels correct for the bookgroup it belongs
+   to. As such we have removed some points from your pouch to pay
+   for this post.
+<% elsif @type == "Denied" %>
+   The shoutbox owner <%= @content.shoutbox.user.vname %> has taken
+   the time to look over your shout and has determined that it
+   doesn't fit into the correct bookgroup. Its okay things like
+   this happen from time to time. All you need to do edit the shout
+   and try again. We want to ensure that the content is suitable to
+   our community.
+<% end  %>
+
+
+The Duelingpets Staff Team

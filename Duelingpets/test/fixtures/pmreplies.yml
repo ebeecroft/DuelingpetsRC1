@@ -1,0 +1,25 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  message: MyText
+  image: MyString
+  ogg: MyString
+  mp3: MyString
+  ogv: MyString
+  mp4: MyString
+  created_on: 2019-12-25 08:32:52
+  updated_on: 2019-12-25 08:32:52
+  user_id: 1
+  pm_id: 1
+
+two:
+  message: MyText
+  image: MyString
+  ogg: MyString
+  mp3: MyString
+  ogv: MyString
+  mp4: MyString
+  created_on: 2019-12-25 08:32:52
+  updated_on: 2019-12-25 08:32:52
+  user_id: 1
+  pm_id: 1

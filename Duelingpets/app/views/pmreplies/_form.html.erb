@@ -1,0 +1,89 @@
+<%= form_with(model: [@pm, @pmreply], local: true) do |form| %>
+  <% if @pmreply.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@pmreply.errors.count, "error") %> prohibited this pmreply from being saved:</h2>
+           <ul>
+              <% @pmreply.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :message %>
+    <%= form.text_area :message %>
+  </div>
+  <br>
+  <p class="pageformat">Image</p>
+  <div class="pageformat">
+     <%= image_tag @pmreply.image_url(:thumb).to_s if @pmreply.image? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :image %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_image_url, "or Image URL" %>
+     <%= form.text_field :remote_image_url %>
+     <%= form.hidden_field :image_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Ogg files</p>
+  <div class="pageformat">
+     <%= audio_tag(@pmreply.ogg_url.to_s, :controls => true) if @pmreply.ogg? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :ogg %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_ogg_url, "or Ogg URL" %>
+     <%= form.text_field :remote_ogg_url %>
+     <%= form.hidden_field :ogg_cache %>
+  </div>
+  <br>
+  <p class="pageformat">MP3 files</p>
+  <div class="pageformat">
+     <%= audio_tag(@pmreply.mp3_url.to_s, :controls => true) if @pmreply.mp3? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :mp3 %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_mp3_url, "or Mp3 URL" %>
+     <%= form.text_field :remote_mp3_url %>
+     <%= form.hidden_field :mp3_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Ogv files</p>
+  <div class="pageformat">
+     <%= video_tag(@pmreply.ogv_url.to_s, :controls => true) if @pmreply.ogv? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :ogv %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_ogv_url, "or Ogv URL" %>
+     <%= form.text_field :remote_ogv_url %>
+     <%= form.hidden_field :ogv_cache %>
+  </div>
+  <br>
+  <p class="pageformat">MP4 files</p>
+  <div class="pageformat">
+     <%= video_tag(@pmreply.mp4_url.to_s, :controls => true) if @pmreply.mp4? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :mp4 %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_mp4_url, "or Mp4 URL" %>
+     <%= form.text_field :remote_mp4_url %>
+     <%= form.hidden_field :mp4_cache %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', pmbox_pm_path(@pm.pmbox, @pm) %></p>
+<% end %>

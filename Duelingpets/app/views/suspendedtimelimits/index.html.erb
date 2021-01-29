@@ -1,0 +1,32 @@
+<% provide(:h1, "Suspendedtimelimit List") %>
+<% if @suspendedtimelimits.count >= 10 %>
+   <div class="formlinks"><%= paginate @suspendedtimelimits %></div>
+   <br>
+<% end %>
+<% @suspendedtimelimits.each do |suspendedtimelimit| %>
+   <div class="pageformat">
+      <% if current_user && current_user.pouch.privilege == "Admin" %>
+         <div class="container"><%= button_to 'Edit', edit_suspendedtimelimit_path(suspendedtimelimit), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [suspendedtimelimit], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <% end %>
+      <% if suspendedtimelimit.to_user.userinfo.miniavatar.to_s != "" %>
+         <br>
+         <p><%= image_tag(suspendedtimelimit.to_user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">User: <%= getUserPrivilege(suspendedtimelimit.to_user) %><%= link_to suspendedtimelimit.to_user.vname, user_path(suspendedtimelimit.to_user) %></p>
+      <p>Suspended: <%= distance_of_time_in_words_to_now suspendedtimelimit.created_on %> ago on (<%= suspendedtimelimit.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Expires in: <%= distance_of_time_in_words_to_now suspendedtimelimit.timelimit %> on (<%= suspendedtimelimit.timelimit.strftime("%B-%d-%Y") %>)</p>
+      <p>Pointfine: <%= suspendedtimelimit.pointfines %> points</p>
+      <p>Emeraldfine: <%= suspendedtimelimit.emeraldfines %> emeralds</p>
+      <p class="formlinks">Suspended by: <%= getUserPrivilege(suspendedtimelimit.from_user) %><%= link_to suspendedtimelimit.from_user.vname, user_path(suspendedtimelimit.to_user) %></p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", suspendedtimelimit.reason, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<div class="pageformat">
+   <% if current_user && current_user.pouch.privilege == "Admin" %>
+      <p><%= button_to 'New Suspendedtimelimit', new_suspendedtimelimit_path, method: :get, class: "button submitbutton" %></p>
+      <br>
+   <% end %>
+   <p class="formlinks"><%= link_to 'Back', root_path %></p>
+</div>

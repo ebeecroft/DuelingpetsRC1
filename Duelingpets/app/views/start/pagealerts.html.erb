@@ -1,0 +1,52 @@
+<% provide(:h1, "Pagealerts") %>
+<div class="pageformat">
+   <p>Creative content</p>
+   <% if alert("Jukebox") != 0 %>
+      <p>Jukeboxes: <%= alertMessages("Jukebox", "Name") %></p>
+   <% end %>
+   <% if alert("Gallery") != 0 %>
+      <p>Galleries: <%= alertMessages("Gallery", "Name") %></p>
+   <% end %>
+   <% if alert("Channel") != 0 %>
+      <p>Channels: <%= alertMessages("Channel", "Name") %></p>
+   <% end %>
+   <% if alert("Book") != 0 %>
+      <p>Books: <%= alertMessages("Book", "Name") %></p>
+   <% end %>
+   <% if alert("OC") != 0 %>
+      <p>OCs: <%= alertMessages("OC", "Name") %></p>
+   <% end %>
+   <% if alert("Blog") != 0 %>
+      <p>Blogs: <%= alertMessages("Blog", "Name") %></p>
+   <% end %>
+   <br>
+   <p>Communication</p>
+   <% if alert("Shoutbox") != 0 %>
+      <p>Shoutbox: <%= alertMessages("Shoutbox", "Name") %></p>
+   <% end %>
+   <% if alert("PMbox") != 0 %>
+      <p>PMBox: <%= alertMessages("PMbox", "Name") %></p>
+   <% end %>
+   <% if alert("Donationbox") != 0 %>
+      <p>Donationbox: <%= alertMessages("Donationbox", "Name") %></p>
+   <% end %>
+   <br>
+   <p>Player items</p>
+   <% if alert("Partner") != 0 %>
+      <p>Partners: <%= alertMessages("Partner", "Name") %></p>
+   <% end %>
+   <% if alert("Item") != 0 %>
+      <p>Items: <%= alertMessages("Item", "Name") %></p>
+   <% end %>
+   <% if alert("Pouch") != 0 %>
+      <p>Points: <%= alertMessages("Pouch", "Name") %></p>
+   <% end %>
+   <% if alert("Emerald") != 0 %>
+      <p>Emeralds: <%= alertMessages("Emerald", "Name") %></p>
+   <% end %>
+   <% if alert("Dreyore") != 0 %>
+      <p>Dreyores: <%= alertMessages("Dreyore", "Name") %></p>
+   <% end %>
+</div>
+<br>
+<p class="formlinks"><%= link_to "Back", root_path %></p>

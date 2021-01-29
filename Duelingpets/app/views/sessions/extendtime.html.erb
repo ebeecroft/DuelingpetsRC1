@@ -1,0 +1,23 @@
+<% provide(:title, "Duelingpets: Renew Timer") %>
+<% provide(:description, "Some of you may have missed the time window on activating your account. No matter you can have a new token sent to you, so that you activate your account again using this form.") %>
+<% provide(:h1, "Reset Timer") %>
+<div class="pageformat">
+   <p><%= image_tag(@artpage.art_url(:thumb)) %></p>
+   <p class="textindent"><%= textFormater("Multi", @artpage.message, "All").html_safe %></p>
+</div>
+<br>
+<div class="pageformat">
+   <%= form_for(:session, url: extendtimepost_path) do |f| %>
+      <p><%= f.label :login_id, "Login Name" %></p>
+      <p><%= f.text_field :login_id %></p>
+      <br>
+      <p><%= f.label :vname, "Virtual Name" %></p>
+      <p><%= f.text_field :vname %></p>
+      <br>
+      <p><%= f.submit "Reset", class: "button submitbutton" %></p>
+   <% end %>
+</div>
+<br>
+<div class="pageformat">
+   <p class="formlinks"><%= link_to "Back", login_path %></p>
+</div>

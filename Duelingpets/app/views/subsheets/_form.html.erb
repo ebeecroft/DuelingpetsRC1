@@ -1,0 +1,44 @@
+<%= form_with(model: [@mainsheet, @subsheet], local: true) do |form| %>
+  <% if @subsheet.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@subsheet.errors.count, "error") %> prohibited this subsheet from being saved:</h2>
+           <ul>
+              <% @subsheet.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :description %>
+    <%= form.text_area :description %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :collab_mode %>
+    <%= form.check_box :collab_mode %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :fave_folder %>
+    <%= form.check_box :fave_folder %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :privatesubsheet %>
+    <%= form.check_box :privatesubsheet %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', jukebox_mainsheet_path(@mainsheet.jukebox, @mainsheet) %></p>
+<% end %>

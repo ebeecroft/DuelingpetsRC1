@@ -1,0 +1,189 @@
+<% provide(:h1, "Pouchslot List") %>
+<% if @pouchslots.count >= 10 %>
+   <div class="formlinks"><%= paginate @pouchslots %></div>
+   <br>
+<% end %>
+<% @pouchslots.each do |pouchslot| %>
+   <div class="pageformat">
+      <p><%= button_to 'Edit', edit_pouch_pouchtype_path(pouchtype.pouch, pouchtype), method: :get, class: "button editbutton" %></p>
+      <p>Pouchtype1: <%= pouchslot.pouchtype1 %></p>
+      <p>Free1 level: <%= pouchslot.free1 %></p>
+      <p>Member1 level: <%= pouchslot.member1 %></p>
+      <br>
+      <p>Pouchtype2: <%= pouchslot.pouchtype2 %></p>
+      <p>Free2 level: <%= pouchslot.free2 %></p>
+      <p>Member2 level: <%= pouchslot.member2 %></p>
+      <br>
+      <p>Pouchtype3: <%= pouchslot.pouchtype3 %></p>
+      <p>Free3 level: <%= pouchslot.free3 %></p>
+      <p>Member3 level: <%= pouchslot.member3 %></p>
+      <br>
+      <p>Pouchtype4: <%= pouchslot.pouchtype4 %></p>
+      <p>Free4 level: <%= pouchslot.free4 %></p>
+      <p>Member4 level: <%= pouchslot.member4 %></p>
+      <br>
+      <p>Pouchtype5: <%= pouchslot.pouchtype5 %></p>
+      <p>Free5 level: <%= pouchslot.free5 %></p>
+      <p>Member5 level: <%= pouchslot.member5 %></p>
+      <br>
+      <p>Pouchtype6: <%= pouchslot.pouchtype6 %></p>
+      <p>Free6 level: <%= pouchslot.free6 %></p>
+      <p>Member6 level: <%= pouchslot.member6 %></p>
+      <br>
+      <p>Pouchtype7: <%= pouchslot.pouchtype7 %></p>
+      <p>Free7 level: <%= pouchslot.free7 %></p>
+      <p>Member7 level: <%= pouchslot.member7 %></p>
+      <br>
+      <p>Pouchtype8: <%= pouchslot.pouchtype8 %></p>
+      <p>Free8 level: <%= pouchslot.free8 %></p>
+      <p>Member8 level: <%= pouchslot.member8 %></p>
+      <br>
+      <p>Pouchtype9: <%= pouchslot.pouchtype9 %></p>
+      <p>Free9 level: <%= pouchslot.free9 %></p>
+      <p>Member9 level: <%= pouchslot.member9 %></p>
+      <br>
+      <p>Pouchtype10: <%= pouchslot.pouchtype10 %></p>
+      <p>Free10 level: <%= pouchslot.free10 %></p>
+      <p>Member10 level: <%= pouchslot.member10 %></p>
+      <br>
+      <p>Pouchtype11: <%= pouchslot.pouchtype11 %></p>
+      <p>Free11 level: <%= pouchslot.free11 %></p>
+      <p>Member11 level: <%= pouchslot.member11 %></p>
+      <br>
+      <p>Pouchtype12: <%= pouchslot.pouchtype12 %></p>
+      <p>Free12 level: <%= pouchslot.free12 %></p>
+      <p>Member12 level: <%= pouchslot.member12 %></p>
+      <br>
+      <p>Pouchtype13: <%= pouchslot.pouchtype13 %></p>
+      <p>Free13 level: <%= pouchslot.free13 %></p>
+      <p>Member13 level: <%= pouchslot.member13 %></p>
+      <br>
+      <p>Pouchtype14: <%= pouchslot.pouchtype14 %></p>
+      <p>Free14 level: <%= pouchslot.free14 %></p>
+      <p>Member14 level: <%= pouchslot.member14 %></p>
+      <br>
+      <p>Pouchtype15: <%= pouchslot.pouchtype15 %></p>
+      <p>Free15 level: <%= pouchslot.free15 %></p>
+      <p>Member15 level: <%= pouchslot.member15 %></p>
+      <br>
+      <p>Pouchtype16: <%= pouchslot.pouchtype16 %></p>
+      <p>Free16 level: <%= pouchslot.free16 %></p>
+      <p>Member16 level: <%= pouchslot.member16 %></p>
+      <br>
+      <p>Pouchtype17: <%= pouchslot.pouchtype17 %></p>
+      <p>Free17 level: <%= pouchslot.free17 %></p>
+      <p>Member17 level: <%= pouchslot.member17 %></p>
+      <br>
+      <p>Pouchtype18: <%= pouchslot.pouchtype18 %></p>
+      <p>Free18 level: <%= pouchslot.free18 %></p>
+      <p>Member18 level: <%= pouchslot.member18 %></p>
+      <br>
+      <p>Pouchtype19: <%= pouchslot.pouchtype19 %></p>
+      <p>Free19 level: <%= pouchslot.free19 %></p>
+      <p>Member19 level: <%= pouchslot.member19 %></p>
+      <br>
+      <p>Pouchtype20: <%= pouchslot.pouchtype20 %></p>
+      <p>Free20 level: <%= pouchslot.free20 %></p>
+      <p>Member20 level: <%= pouchslot.member20 %></p>
+      <br>
+      <p>Pouchtype21: <%= pouchslot.pouchtype21 %></p>
+      <p>Free21 level: <%= pouchslot.free21 %></p>
+      <p>Member21 level: <%= pouchslot.member21 %></p>
+      <br>
+      <p>Pouchtype22: <%= pouchslot.pouchtype22 %></p>
+      <p>Free22 level: <%= pouchslot.free22 %></p>
+      <p>Member22 level: <%= pouchslot.member22 %></p>
+      <br>
+      <p>Pouchtype23: <%= pouchslot.pouchtype23 %></p>
+      <p>Free23 level: <%= pouchslot.free23 %></p>
+      <p>Member23 level: <%= pouchslot.member23 %></p>
+      <br>
+      <p>Pouchtype24: <%= pouchslot.pouchtype24 %></p>
+      <p>Free24 level: <%= pouchslot.free24 %></p>
+      <p>Member24 level: <%= pouchslot.member24 %></p>
+      <br>
+      <p>Pouchtype25: <%= pouchslot.pouchtype25 %></p>
+      <p>Free25 level: <%= pouchslot.free25 %></p>
+      <p>Member25 level: <%= pouchslot.member25 %></p>
+      <br>
+      <p>Pouchtype26: <%= pouchslot.pouchtype26 %></p>
+      <p>Free26 level: <%= pouchslot.free26 %></p>
+      <p>Member26 level: <%= pouchslot.member26 %></p>
+      <br>
+      <p>Pouchtype27: <%= pouchslot.pouchtype27 %></p>
+      <p>Free27 level: <%= pouchslot.free27 %></p>
+      <p>Member27 level: <%= pouchslot.member27 %></p>
+      <br>
+      <p>Pouchtype28: <%= pouchslot.pouchtype28 %></p>
+      <p>Free28 level: <%= pouchslot.free28 %></p>
+      <p>Member28 level: <%= pouchslot.member28 %></p>
+      <br>
+      <p>Pouchtype29: <%= pouchslot.pouchtype29 %></p>
+      <p>Free29 level: <%= pouchslot.free29 %></p>
+      <p>Member29 level: <%= pouchslot.member29 %></p>
+      <br>
+      <p>Pouchtype30: <%= pouchslot.pouchtype30 %></p>
+      <p>Free30 level: <%= pouchslot.free30 %></p>
+      <p>Member30 level: <%= pouchslot.member30 %></p>
+      <br>
+      <p>Pouchtype31: <%= pouchslot.pouchtype31 %></p>
+      <p>Free31 level: <%= pouchslot.free31 %></p>
+      <p>Member31 level: <%= pouchslot.member31 %></p>
+      <br>
+      <p>Pouchtype32: <%= pouchslot.pouchtype32 %></p>
+      <p>Free32 level: <%= pouchslot.free32 %></p>
+      <p>Member32 level: <%= pouchslot.member32 %></p>
+      <br>
+      <p>Pouchtype33: <%= pouchslot.pouchtype33 %></p>
+      <p>Free33 level: <%= pouchslot.free33 %></p>
+      <p>Member33 level: <%= pouchslot.member33 %></p>
+      <br>
+      <p>Pouchtype34: <%= pouchslot.pouchtype34 %></p>
+      <p>Free34 level: <%= pouchslot.free34 %></p>
+      <p>Member34 level: <%= pouchslot.member34 %></p>
+      <br>
+      <p>Pouchtype35: <%= pouchslot.pouchtype35 %></p>
+      <p>Free35 level: <%= pouchslot.free35 %></p>
+      <p>Member35 level: <%= pouchslot.member35 %></p>
+      <br>
+      <p>Pouchtype36: <%= pouchslot.pouchtype36 %></p>
+      <p>Free36 level: <%= pouchslot.free36 %></p>
+      <p>Member36 level: <%= pouchslot.member36 %></p>
+      <br>
+      <p>Pouchtype37: <%= pouchslot.pouchtype37 %></p>
+      <p>Free37 level: <%= pouchslot.free37 %></p>
+      <p>Member37 level: <%= pouchslot.member37 %></p>
+      <br>
+      <p>Pouchtype38: <%= pouchslot.pouchtype38 %></p>
+      <p>Free38 level: <%= pouchslot.free38 %></p>
+      <p>Member38 level: <%= pouchslot.member38 %></p>
+      <br>
+      <p>Pouchtype39: <%= pouchslot.pouchtype39 %></p>
+      <p>Free39 level: <%= pouchslot.free39 %></p>
+      <p>Member39 level: <%= pouchslot.member39 %></p>
+      <br>
+      <p>Pouchtype40: <%= pouchslot.pouchtype40 %></p>
+      <p>Free40 level: <%= pouchslot.free40 %></p>
+      <p>Member40 level: <%= pouchslot.member40 %></p>
+      <br>
+      <p>Pouchtype41: <%= pouchslot.pouchtype41 %></p>
+      <p>Free41 level: <%= pouchslot.free41 %></p>
+      <p>Member41 level: <%= pouchslot.member41 %></p>
+      <br>
+      <p>Pouchtype42: <%= pouchslot.pouchtype42 %></p>
+      <p>Free42 level: <%= pouchslot.free42 %></p>
+      <p>Member42 level: <%= pouchslot.member42 %></p>
+      <br>
+      <% if pouchslot.pouch.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(pouchslot.pouch.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Owner: <%= getUserPrivilege(pouchslot.pouch.user) %><%= link_to pouchslot.pouch.user.vname, user_path(pouchslot.pouch.user) %></p>
+      <p>Status: <%= getActivity(pouchslot.pouch.user) %>
+         <% if getActivity(pouchslot.pouch.user) != "Online" && getActivity(pouchslot.pouch.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(pouchslot.pouch.user) %>
+         <% end %>
+      </p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

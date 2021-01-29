@@ -1,0 +1,52 @@
+<% provide(:h1, "Item Review") %>
+<div class="formlinks"><%= paginate @items %></div>
+<br>
+<div class="pageformat">
+   <% @items.each_with_index do |item, index| %>
+      <% if(index % 3 == 2) %>
+         <div class="container">
+      <% else %>
+         <!--Container space-->
+         <div class="container">
+      <% end %>
+         <div class="container"><p class="formlinks"><%= link_to item.name, user_item_path(item.user, item) %></p></div> <div class="container"><%= button_to 'Approve', items_review1_path(:item_id=>item.id), method: :post, class: "button editbutton" %></div> <div class="container"><%= button_to 'Deny', items_review2_path(:item_id=>item.id), method: :post, class: "button destroybutton" %></div>
+         <p>Created</p>
+         <p><%= distance_of_time_in_words_to_now item.created_on %> ago on</p>
+         <p>(<%= item.created_on.strftime("%B-%d-%Y") %>)</p>
+         <p>Updated</p>
+         <p><%= distance_of_time_in_words_to_now item.updated_on %> ago on</p>
+         <p>(<%= item.updated_on.strftime("%B-%d-%Y") %>)</p>
+         <% if item.itemart.to_s != "" %>
+            <br>
+            <p><%= image_tag(item.itemart_url(:thumb)) %></p>
+         <% end %>
+         <br>
+         <p>Durability: <%= item.durability %></p>
+         <p>Rarity: <%= item.rarity %></p>
+         <p>Equipable: <%= item.equipable %></p>
+         <p>Type: <%= item.itemtype.name %></p>
+         <p>Cost: <%= item.cost %></p>
+         <p>Emeralds: <%= item.emeraldcost %></p>
+         <% if item.user.userinfo.miniavatar.to_s != "" %>
+            <br>
+            <p><%= image_tag(item.user.userinfo.miniavatar_url(:thumb)) %></p>
+         <% end %>
+         <p class="formlinks">Artist: <%= getUserPrivilege(item.user) %><%= link_to item.user.vname, user_path(item.user) %></p>
+         <p>Status: <%= getActivity(item.user) %>
+            <% if getActivity(item.user) != "Online" && getActivity(item.user) != "Inoperable" %>
+               for <%= distance_of_time_in_words_to_now getTime(item.user) %>
+            <% end %>
+         </p>
+         <br>
+         <p>Stats</p>
+         <%= getItemStats(item, item.itemtype.name) %>
+         <br>
+         <p class="textindent"><%= textFormater("Multi", item.description, "All").html_safe %></p>
+      </div>
+      <% if index % 3 == 2 %>
+         <br>
+         <br>      
+      <% end %>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

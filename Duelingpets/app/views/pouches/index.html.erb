@@ -1,0 +1,32 @@
+<% provide(:h1, "Pouch List") %>
+<% if @pouches.count >= 10 %>
+   <div class="formlinks"><%= paginate @pouches %></div>
+   <br>
+<% end %>
+<% @pouches.each do |pouch| %>
+   <!---Add a possible avatar up here--->
+   <div class="pageformat">
+      <div class="container"><p class="formlinks">User: <%= link_to pouch.user.vname, user_path(pouch.user) %></p></div> <div class="container"><%= button_to 'Edit', edit_pouch_path(pouch), method: :get, class: "button editbutton" %></div>
+      <p>Privilege: <%= pouch.privilege %></p>
+      <p>Status: <%= getActivity(pouch.user) %></p>
+      <p>Amount: <%= pouch.amount %>/<%= getUpgradeLimit(pouch, "Pouch") %></p>
+      <p>Pouch level: <%= pouch.pouchlevel %>/<%= getUpgradeMax("Pouch") %></p>
+      <% if !pouch.signed_in_at.nil? %>
+         <br>
+         <p>Signed in: <%= distance_of_time_in_words_to_now pouch.signed_in_at %> ago on (<%= pouch.signed_in_at.strftime("%B-%d-%Y") %>)</p>
+      <% end %>
+      <% if !pouch.last_visited.nil? %>
+         <p>Last visited: <%= distance_of_time_in_words_to_now pouch.last_visited %> ago on (<%= pouch.last_visited.strftime("%B-%d-%Y") %>)</p>
+      <% end %>
+      <% if !pouch.signed_out_at.nil? %>
+         <p>Signed out: <%= distance_of_time_in_words_to_now pouch.signed_out_at %> ago on (<%= pouch.signed_out_at.strftime("%B-%d-%Y") %>)</p>
+      <% end %>
+      <p>Gone: <%= pouch.gone %></p>
+      <p>Remember token: <%= pouch.remember_token %></p>
+      <% if !pouch.expiretime.nil? %>
+         <p>Expiretime: <%= distance_of_time_in_words_to_now pouch.expiretime %> ago on (<%= pouch.expiretime.strftime("%B-%d-%Y") %>)</p>
+      <% end %>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

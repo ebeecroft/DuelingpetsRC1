@@ -1,0 +1,22 @@
+<% provide(:h1, "Gallery Maintenance") %>
+<% if current_user %>
+   <p class="centerpagecontent"><%= playMusicLoop("Maintenance", nil) %></p>
+   <div class="pageformat">
+      <% if current_user.userinfo.mute_on %>
+         <p><%= button_to 'Unmute music', muteAudio_path(:pageType => "Gallerymain"), method: :post, class: "button submitbutton" %></p>
+      <% else %>
+         <p><%= button_to 'Mute music', muteAudio_path(:pageType => "Gallerymain"), method: :post, class: "button submitbutton" %></p>
+      <% end %>
+   </div>
+<% end %>
+<div class="pageformat">
+   <p>Looking for the gallery pages? Tough luck kiddo we are not going to be giving them back until you pay us a ransom for it.</p>
+   <p>"To mess up the pet world in every nation!" Tanooki1 says</p>
+   <p>"To cause mischief in the ways above." Tanooki2 says</p>
+   <p>"Tanooki1" Tanooki1 says</p>
+   <p>"Tanooki2" Tanooki2 says</p>
+   <p>"We are trouble makers of pure delight" Tanooki1 says</p>
+   <p>"Surrender your points now." Tanooki2 says</p>
+   <p>"Or your in for a fight." Tanooki1 says</p>
+   <p>"Squeeek that's right!" Batty villian says</p>
+</div>

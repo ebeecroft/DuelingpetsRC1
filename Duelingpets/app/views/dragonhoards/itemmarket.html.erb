@@ -1,0 +1,55 @@
+<% provide(:h1, "Item Market") %>
+<div class="formlinks"><%= paginate @items %></div>
+<br>
+<div class="pageformat">
+   <%= form_for(:witemshelf, url: dragonhoards_purchase1_path, method: :post) do |form| %>
+      <% if @slots.count > 0 %>
+         <p><%= form.collection_select(:witemshelf_id, @slots, :id, :name) %></p>
+      <% else %>
+         <p>Witemshelves are required to buy items!</p>
+      <% end %>
+      <br>
+      <div class="formlinks"><%= paginate @items %></div>
+      <br>
+      <% @items.each_with_index do |item, index| %>
+         <% if(index % 4 == 3) %>
+            <div class="container">
+         <% else %>
+            <!--Container space-->
+            <div class="container">
+         <% end %>
+            <% if @slots.count > 0 %>
+               <% if index == 0 %>
+                  <p class="formlinks"><%= link_to item.name, user_item_path(item.user, item) %><%= form.radio_button :item_id, item.id, :checked => true %></p>
+               <% else %>
+                  <p class="formlinks"><%= link_to item.name, user_item_path(item.user, item) %><%= form.radio_button :item_id, item.id %></p>
+               <% end %>
+               <% if item.itemart.to_s != "" %>
+                  <p><%= image_tag(item.itemart_url(:thumb)) %></p>
+               <% end %>
+               <p>Type: <%= item.itemtype.name %></p>
+               <p>Durability: <%= item.durability %></p>
+               <p>Rarity: <%= item.rarity %></p>
+               <p class="formlinks">Artist: <%= getUserPrivilege(item.user) %><%= link_to item.name, user_path(item.user) %></p>
+               <p>Emeralds: <%= item.emeraldcost %></p>
+               <!--Add tax in later-->
+               <p>Points: <%= item.cost %></p>
+               <br>
+               <p>Stats</p>
+               <%= getMarketStats(item, item.itemtype.name) %>
+            <% end %>
+         </div>
+         <% if @slots.count > 0 %>
+            <% if index % 4 == 3 %>
+               <br>
+               <br>
+            <% end %>
+         <% end %>
+      <% end %>
+      <% if @slots.count > 0 %>
+         <p><%= form.submit "Purchase", class: "button submitbutton" %></p>
+         <br>
+      <% end %>
+   <% end %>
+   <p class="formlinks"><%= link_to "Hoard", dragonhoards_path %></p>
+</div>

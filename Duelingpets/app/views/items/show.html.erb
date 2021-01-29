@@ -1,0 +1,45 @@
+<% if @item.retireditem %>
+   <% provide(:h1, @item.name + " [Retired]") %>
+<% else %>
+   <% provide(:h1, @item.name) %>
+<% end %>
+<p id="notice"><%= notice %></p>
+<div class="pageformat">
+   <% if current_user && (current_user.id == @item.user_id || current_user.pouch.privilege == "Admin") %>
+      <div class="container"><%= button_to 'Edit', edit_user_item_path(@item.user, @item), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [@item.user, @item], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+   <% end %>
+   <p>Created: <%= distance_of_time_in_words_to_now @item.created_on %> ago on (<%= @item.created_on.strftime("%B-%d-%Y") %>)</p>
+   <% if !@item.reviewed_on.nil? %>
+      <p>Reviewed: <%= distance_of_time_in_words_to_now @item.reviewed_on %> ago on (<%= @item.reviewed_on.strftime("%B-%d-%Y") %>)</p>
+   <% end %>
+   <p>Updated: <%= distance_of_time_in_words_to_now @item.updated_on %> ago on (<%= @item.updated_on.strftime("%B-%d-%Y") %>)</p>
+   <% if @item.itemart.to_s != "" %>
+      <br>
+      <p><%= image_tag(@item.itemart_url(:thumb)) %></p>
+   <% end %>
+   <br>
+   <p>Durability: <%= @item.durability %></p>
+   <p>Rarity: <%= @item.rarity %></p>
+   <p>Equipable: <%= @item.equipable %></p>
+   <p>Type: <%= @item.itemtype.name %></p>
+   <p>Cost: <%= @item.cost %></p>
+   <p>Emeralds: <%= @item.emeraldcost %></p>
+   <% if @item.user.userinfo.miniavatar.to_s != "" %>
+      <br>
+      <p><%= image_tag(@item.user.userinfo.miniavatar_url(:thumb)) %></p>
+   <% end %>
+   <p class="formlinks">Artist: <%= getUserPrivilege(@item.user) %><%= link_to @item.user.vname, user_path(@item.user) %></p>
+   <p>Status: <%= getActivity(@item.user) %>
+      <% if getActivity(@item.user) != "Online" && getActivity(@item.user) != "Inoperable" %>
+         for <%= distance_of_time_in_words_to_now getTime(@item.user) %>
+      <% end %>
+   </p>
+   <br>
+   <p>Stats</p>
+   <%= getItemStats(@item, @item.itemtype.name) %>
+   <br>
+   <p class="textindent"><%= textFormater("Multi", @item.description, "All").html_safe %></p>
+</div>
+<br>
+<p class="formlinks"><%= link_to "User Items", user_items_path(@item.user) %> |
+<%= link_to "Item List", items_path %></p>

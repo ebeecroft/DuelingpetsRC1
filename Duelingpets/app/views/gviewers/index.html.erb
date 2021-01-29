@@ -1,0 +1,9 @@
+<% provide(:h1, "Gviewer List") %>
+<% @gviewers.each do |gviewer| %>
+   <div class="pageformat">
+      <p>Type: <%= gviewer.name %></p>
+      <p>Created on: <%= distance_of_time_in_words_to_now gviewer.created_on %> ago on (<%= gviewer.created_on.strftime("%B-%d-%Y") %>)</p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

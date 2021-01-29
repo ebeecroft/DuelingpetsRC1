@@ -1,0 +1,33 @@
+<% provide(:h1, "Economy") %>
+<div class="pageformat">
+   <p><%= button_to 'Switch to Stats', stats_path, method: :get, class: "button submitbutton" %></p>
+   <br>
+   <p>Source points: <%= getEconomyChanges("Source") %></p>
+   <p>Tax points: <%= getEconomyChanges("Tax") %></p>
+   <p>Sink points: <%= getEconomyChanges("Sink") %></p>
+   <p>Transfer points: <%= getEconomyChanges("Transfer") %></p>
+   <p>Economy value: <%= getEconomyvalue %></p>
+   <br>
+   <p>User points: <%= getPouchcontents("User") %></p>
+   <p>Bot points: <%= getPouchcontents("Bot") %></p>
+   <p>Treasury points: <%= getTreasurypoints %></p>
+   <p>Contest points: <%= getContestpoints %></p>
+   <p>User population: <%= getPouchcontents("Userpop") %></p>
+   <p>Bot population: <%= getPouchcontents("Botpop") %></p>
+   <br>
+   <p>Hoard's worth: <%= getHoardvalue %></p>
+   <p>World's worth: <%= getWorldvalue %></p>
+   <% if getHoardchange != getHoardvalue %>
+      <p>Hoard's change: <%= getHoardchange %></p>
+   <% end %>
+   <% if getWorldchange != getWorldvalue %>
+      <p>World's change: <%= getWorldchange %></p>
+   <% end %>
+   <br>
+   <p>Content generated: <%= getEcontypes("Content") %></p>
+   <p>Hoard fees: <%= getEcontypes("Treasury") %></p>
+   <p>Community feedback: <%= getEcontypes("Community") %></p>
+   <p>User purchases: <%= getEcontypes("Purchase") %></p>
+   <p>Content cleanup: <%= getEcontypes("Cleanup") %></p>
+   <p>Emergency funds: <%= getEcontypes("Funds") %></p>
+</div>

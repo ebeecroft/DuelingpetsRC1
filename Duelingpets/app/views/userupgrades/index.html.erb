@@ -1,0 +1,19 @@
+<% provide(:h1, "Userupgrade List") %>
+<% if @userupgrades.count > 10 %>
+   <div class="formlinks"><%= paginate @userupgrades %></div>
+   <br>
+<% end %>
+<% @userupgrades.each do |userupgrade| %>
+   <div class="pageformat">
+      <div class="container"><%= userupgrade.name %></div> <div class="container"><%= button_to 'Edit', edit_userupgrade_path(userupgrade), method: :get, class: "button editbutton" %></div>
+      <p>Base: <%= userupgrade.base %></p>
+      <p>Inc: <%= userupgrade.baseinc %></p>
+      <p>Price: <%= userupgrade.price %></p>
+      <p>Freecap: <%= userupgrade.freecap %></p>
+      <p>Membercap: <%= userupgrade.membercap %></p>
+   </div>
+   <br>
+<% end %>
+<div class="pageformat"><%= button_to "New Userupgrade", new_userupgrade_path, method: :get, class: "button submitbutton" %></div>
+<br>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

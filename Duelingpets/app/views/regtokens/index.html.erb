@@ -1,0 +1,15 @@
+<% provide(:h1, "Regtoken List") %>
+<div class="formlinks"><%= paginate @regtokens %></div>
+<br>
+<% @regtokens.each do |regtoken| %>
+   <div class="pageformat">
+      <div class="container"><p>Token: <%= regtoken.token %></p></div> <div class="container"><%= button_to 'Regen', regtokens_regentoken_path(regtoken), method: :post, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [regtoken], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div></p>
+      <p>Expires: <%= distance_of_time_in_words_to_now regtoken.expiretime %> ago on (<%= regtoken.expiretime.strftime("%B-%d-%Y") %>)</p>
+   </div>
+   <br>
+<% end %>
+<div class="pageformat">
+   <p><%= button_to "New Token", regtokens_gentoken_path, method: :post, class: "button submitbutton" %></p>
+   <br>
+   <p class="formlinks"><%= link_to 'Back', root_path %></p>
+</div>

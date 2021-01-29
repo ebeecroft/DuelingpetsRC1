@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  description: MyText
+  amount: 1
+  capacity: 1
+  created_on: 2020-04-08 00:34:34
+  updated_on: 2020-04-08 00:34:34
+  user_id: 1
+  donationbox_id: 1
+  pointsreceived: false
+
+two:
+  description: MyText
+  amount: 1
+  capacity: 1
+  created_on: 2020-04-08 00:34:34
+  updated_on: 2020-04-08 00:34:34
+  user_id: 1
+  donationbox_id: 1
+  pointsreceived: false

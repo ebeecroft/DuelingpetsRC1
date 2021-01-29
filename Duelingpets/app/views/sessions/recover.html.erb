@@ -1,0 +1,25 @@
+<% provide(:title, "Duelingpets: Recover") %>
+<% provide(:description, "If you forgot your password, no worries we can happily reset it for you. All you have to do is fill out this form and a new password will be sent to you.") %>
+<% provide(:h1, "Recover Password") %>
+<div class="pageformat">
+   <p><%= image_tag(@artpage.art_url(:thumb)) %></p>
+   <p class="textindent"><%= textFormater("Multi", @artpage.message, "All").html_safe %></p>
+</div>
+<br>
+<div class="pageformat">
+   <%= form_for(:session, url: recoverpost_path) do |f| %>
+      <p><%= f.label :login_id, "Login Name" %></p>
+      <p><%= f.text_field :login_id %></p>
+      <br>
+      <p><%= f.label :vname, "Virtual Name" %></p>
+      <p><%= f.text_field :vname %></p>
+      <br>
+      <p><%= f.submit "Reset", class: "button submitbutton" %></p>
+   <% end %>
+</div>
+<br>
+<div class="pageformat">
+   <p class="formlinks">AltEmailRecovery? <%= link_to "Alternate Email!", altemail_path %></p>
+   <br>
+   <p class="formlinks"><%= link_to "Back", root_path %></p>
+</div>

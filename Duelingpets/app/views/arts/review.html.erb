@@ -1,0 +1,44 @@
+<% provide(:h1, "Art Review") %>
+<div class="formlinks"><%= paginate @arts %></div>
+<br>
+<div class="pageformat">
+   <% @arts.each_with_index do |art, index| %>
+      <% if(index % 3 == 2) %>
+         <div class="container">
+      <% else %>
+         <!--Container space-->
+         <div class="container">
+      <% end %>
+         <div class="container"><p class="formlinks">Name: <%= link_to art.title, subfolder_art_path(art.subfolder, art) %></p></div> <div class="container"><%= button_to 'Approve', arts_review1_path(:art_id=>art.id), method: :post, class: "button editbutton" %></div> <div class="container"><%= button_to 'Deny', arts_review2_path(:art_id=>art.id), method: :post, class: "button destroybutton" %></div>
+         <p>Created</p>
+         <p><%= distance_of_time_in_words_to_now art.created_on %> ago on</p>
+         <p>(<%= art.created_on.strftime("%B-%d-%Y") %>)</p>
+         <p>Updated</p>
+         <p><%= distance_of_time_in_words_to_now art.updated_on %> ago on</p>
+         <p>(<%= art.updated_on.strftime("%B-%d-%Y") %>)</p>
+         <% if art.image.to_s != "" %>
+            <br>
+            <p><%= image_tag(art.image_url(:thumb)) %></p>
+         <% end %>
+         <br>
+         <% if art.user.userinfo.miniavatar.to_s != "" %>
+            <p><%= image_tag(art.user.userinfo.miniavatar_url(:thumb)) %></p>
+         <% end %>
+         <p class="formlinks">Artist: <%= getUserPrivilege(art.user) %><%= link_to art.user.vname, user_path(art.user) %></p>
+         <p>Subfolder: <%= art.subfolder.title %></p>
+         <p>Group: <%= art.bookgroup.name %></p>
+         <p>Status: <%= getActivity(art.user) %>
+            <% if getActivity(art.user) != "Online" && getActivity(art.user) != "Inoperable" %>
+               for <%= distance_of_time_in_words_to_now getTime(art.user) %>
+            <% end %>
+         </p>
+         <br>
+         <p class="textindent"><%= textFormater("Multi", art.description, "All").html_safe %></p>
+      </div>
+      <% if index % 3 == 2 %>
+         <br>
+         <br>      
+      <% end %>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

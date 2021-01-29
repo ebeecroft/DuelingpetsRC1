@@ -1,0 +1,77 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  description: MyText
+  plevel: 1
+  pexp: 1
+  chp: 1
+  hp: 1
+  atk: 1
+  def: 1
+  agility: 1
+  strength: 1
+  mlevel: 1
+  mexp: 1
+  cmp: 1
+  mp: 1
+  matk: 1
+  mdef: 1
+  magi: 1
+  mstr: 1
+  chunger: 1
+  hunger: 1
+  cthirst: 1
+  thirst: 1
+  cfun: 1
+  fun: 1
+  lives: 1
+  adoptcost: 1
+  cost: 1
+  phytokens: 1
+  magitokens: 1
+  adopted_on: 2020-07-18 02:57:45
+  updated_on: 2020-07-18 02:57:45
+  user_id: 1
+  creature_id: 1
+  activepet: false
+  inbattle: false
+  dead: false
+
+two:
+  name: MyString
+  description: MyText
+  plevel: 1
+  pexp: 1
+  chp: 1
+  hp: 1
+  atk: 1
+  def: 1
+  agility: 1
+  strength: 1
+  mlevel: 1
+  mexp: 1
+  cmp: 1
+  mp: 1
+  matk: 1
+  mdef: 1
+  magi: 1
+  mstr: 1
+  chunger: 1
+  hunger: 1
+  cthirst: 1
+  thirst: 1
+  cfun: 1
+  fun: 1
+  lives: 1
+  adoptcost: 1
+  cost: 1
+  phytokens: 1
+  magitokens: 1
+  adopted_on: 2020-07-18 02:57:45
+  updated_on: 2020-07-18 02:57:45
+  user_id: 1
+  creature_id: 1
+  activepet: false
+  inbattle: false
+  dead: false

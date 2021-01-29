@@ -1,0 +1,75 @@
+<% provide(:h1, "Den of Darkness") %>
+<div class="formlinks"><%= paginate @monsters %></div>
+<br>
+<div class="pageformat">
+   <%= form_for(:monsterbattle, url: fight_monsterbattles_path(:fight_id=>activePet.fight.id), method: :post) do |form| %>
+      <% if(@monsters.count > 0) %>
+         <p>Pet: <%= form.collection_select(:partner_id, @pets, :id, :name) %></p>
+         <br>
+      <% end %>
+      <% @monsters.each_with_index do |monster, index| %>
+         <% if(index % 3 == 2) %>
+            <div class="container">
+         <% else %>
+            <!--Container space-->
+            <div class="container">
+         <% end %>
+            <% if index == 0 %>
+               <p class="formlinks"><%= link_to monster.name, user_monster_path(monster.user, monster) %><%= form.radio_button :monster_id, monster.id, :checked => true %></p>
+            <% else %>
+               <p class="formlinks"><%= link_to monster.name, user_monster_path(monster.user, monster) %><%= form.radio_button :monster_id, monster.id %></p>
+            <% end %>
+            <p>Created</p>
+            <p><%= distance_of_time_in_words_to_now monster.created_on %> ago on</p>
+            <p>(<%= monster.created_on.strftime("%B-%d-%Y") %>)</p>
+            <p>Updated</p>
+            <p><%= distance_of_time_in_words_to_now monster.updated_on %> ago on</p>
+            <p>(<%= monster.updated_on.strftime("%B-%d-%Y") %>)</p>
+            <% if !monster.reviewed_on.nil? %>
+               <p>Reviewed</p>
+               <p><%= distance_of_time_in_words_to_now monster.reviewed_on %> ago on</p>
+               <p>(<%= monster.reviewed_on.strftime("%B-%d-%Y") %>)</p>
+            <% end %>
+            <% if monster.image.to_s != "" %>
+               <br>
+               <p><%= image_tag(monster.image_url(:thumb)) %></p>
+            <% end %>
+            <br>
+            <p>Level: <%= monster.level %></p>
+            <p>HP: <%= monster.hp %></p>
+            <p>MP: <%= monster.mp %></p>
+            <p>Atk: <%= monster.atk %></p>
+            <p>Def: <%= monster.def %></p>
+            <p>Agility: <%= monster.agility %></p>
+            <p>Matk: <%= monster.matk %></p>
+            <p>Mdef: <%= monster.mdef %></p>
+            <p>Magi: <%= monster.magi %></p>
+            <p>Exp: <%= monster.exp %></p>
+            <p>Loot: <%= monster.loot %></p>
+            <p>Mischief: <%= monster.mischief %></p>
+            <p>Rarity: <%= monster.rarity %></p>
+            <p>Type: <%= monster.monstertype.name %></p>
+            <p>Element: <%= monster.element.name %></p>
+            <% if monster.user.userinfo.miniavatar.to_s != "" %>
+               <br>
+               <p><%= image_tag(monster.user.userinfo.miniavatar_url(:thumb)) %></p>
+            <% end %>
+            <p class="formlinks">Artist: <%= getUserPrivilege(monster.user) %><%= link_to monster.user.vname, user_path(monster.user) %></p>
+            <p>Status: <%= getActivity(monster.user) %>
+               <% if getActivity(monster.user) != "Online" && getActivity(monster.user) != "Inoperable" %>
+                  for <%= distance_of_time_in_words_to_now getTime(monster.user) %>
+               <% end %>
+            </p>
+         </div>
+         <% if index % 3 == 2 %>
+            <br>
+            <br>      
+         <% end %>
+      <% end %>
+      <% if(@monsters.count > 0) %>
+         <div class="pageformat"><%= form.submit "Battle", class: "button submitbutton" %></div>
+         <br>
+      <% end %>
+      <p class="formlinks"><%= link_to 'Back', root_path %></p>
+   <% end %>
+</div>

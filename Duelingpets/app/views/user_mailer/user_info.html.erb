@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+   </head>
+   <body>
+      <% if @type == "Welcome" %>
+         <h1>Welcome <%= @user.vname %> to Duelingpets!</h1>
+      <% elsif @type == "Info" %>
+         <h1>Greetings <%= @user.vname %> here is your account info!</h1>
+      <% elsif @type == "Findlogin" %>
+         <h1>Need help finding your login <%= @user.vname %>?</h1>
+      <% elsif @type == "Resetpassword" %>
+         <h1>Need help with your password <%= @user.vname %>?</h1>
+      <% elsif @type == "Resettime" %>
+         <h1>Lets reset the time limit for you <%= @user.vname %>!</h1>
+      <% end %>
+      <p>
+         <% if @type == "Welcome" %>
+            Hehehe hello there <%= @user.vname %> I am Glitchy the
+            Dragon your helpful little tour guide. Not what you
+            were expecting that's okay. Well one doesn't meet a
+            dragon like me very often, you might even say I am a
+            bit of a glitch. Now the Admin of this site invited me
+            in and well I have set up a bit of a shop here. I call
+            it the dragonhoard and I take great care to see how
+            well the economy of the game is managed.
+         <% elsif @type == "Info" %>
+            Well hello there <%= @user.vname %> I am sure your
+            curious about the contents of your account. I
+            Bartholumu Bat will guide you. Avatars are images
+            that define you as an individual. Vname or virtual
+            name is your main handle to the outside world,
+            some of these may contain symbols next to them to
+            represent their privilege level. Privilege levels
+            by default are normally users, but others may be
+            reviewers, keymasters or others.
+         <% elsif @type == "Findlogin" %>
+            Sera the Shrew here, so it seems you misplaced
+            your login name once again little bat. You really
+            should consider investing in some glasses to see
+            better dear. No matter I am happy to help you
+            locate it.
+         <% elsif @type == "Resetpassword" %>
+            So you came to visit Steford the Stoat about that
+            pesky password issue you were having. What did
+            you say your name was again? I am a bit old and
+            my memory is not as sharp as it once was. Ah yes
+            <%= @user.vname %> your the one that called upon
+            me earlier. Let me fetch my tools and I will see
+            what I can do.
+         <% elsif @type == "Resettime" %>
+            Mortica Mouse here you must be the one requesting
+            more time weren't you. I thought as much
+            <%= @user.vname %>, I will see if I can roll back
+            the clock just a tad. Time magic tends to be very
+            exhausting you know and as a wizard in training
+            I know that quite well. Let me consult my spell
+            book and I will see what I can do.
+         <% end  %>
+      </p>
+      <p>
+         <% if @type == "Welcome" %>
+            Still being a glitch dragon does have some downsides
+            playing games can be quite challenging when your
+            programming has other plans. I can't remember how many
+            times I played megaman 4 only to have the floor
+            disappear under megaman, oops. Yeah that is kind of a
+            thing. Still I am quite happy to be here and meet new
+            people. I help out the admin in developing all kinds
+            of new features so that is kind of why I am a bit of a
+            beta tester. Anyways I hope you have fun and enjoy
+            playing around the site.
+         <% elsif @type == "Info" %>
+            Now writing groups define what content as user you can
+            create as such based on the age you selected during
+            registration. As you grow older this writing  group
+            will change over time, for example if you are originally
+            Peter Rabbit and you are old enough to be a Bluelander,
+            your writing group reflects this new change. Reading
+            groups on the other hand reflect what type of content
+            the user wishes to see. By default all users are normally
+            set to Peter Rabbit which is the lowest group of the six.
+            Reading groups can be changed to what ever group the user
+            wishes to be in that is equal to their writing group or
+            less than it. Thats all I have time to tell you young
+            one, best of luck to you.
+         <% elsif @type == "Findlogin" %>
+            Sera chuckles. Well looks like I found it. It was under
+            your little leaf bed. Its okay youngen sometimes these
+            things happen. Even little Twinks bat at times has
+            difficulty in finding his toys. He is quite a cutie
+            though. Tell him I say hi. Oh by the way your
+            Login name is: <%= @user.login_id %>. I hope to see you
+            again little bat. She then proceeds to give you a kiss
+            before leaving.
+         <% elsif @type == "Resetpassword" %>
+            Well not bad I think this should work granted it is not
+            the best, still its pretty good for Stoat knowledge on
+            this thing. Heheee you humans are very silly creatures
+            always seeming to forget one thing or another. I must
+            say you could learn a thing or two from the squirrels
+            but that is neither here nor there. The new password
+            is <%= @user.password %>, please remember to change
+            this one, once you are back into your account. See you
+            later you one eyed seadog. Hahaha.
+         <% elsif @type == "Resettime" %>
+            Whew that was quite exhausting I hope bought you enough
+            time. I had to mutter quite a few words of power to
+            reset and now I am quite winded. At least I was able to
+            get you this new token: <%= @user.pouch.remember_token %>.
+            Please remember to enter this code to activate your account.
+            Have fun.
+         <% end %>
+      </p>
+      <br>
+      <p>
+         <% if @type == "Welcome" %>
+            Your tourguide Glitchy The Dragon
+         <% elsif @type == "Info" %>
+            A very Myotis day to you from Bartholumu Bat
+         <% elsif @type == "Findlogin" %>
+            Sera the Shrew finder of small items
+         <% elsif @type == "Resetpassword" %>
+            Steford the Stoat your pirate captain
+         <% elsif @type == "Resettime" %>
+            The great mystic Mortica Mouse
+         <% end %>
+      </p>
+   </body>
+</html>

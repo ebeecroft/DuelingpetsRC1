@@ -1,0 +1,31 @@
+<% provide(:h1, "Suggestion List") %>
+<div class="formlinks"><%= paginate @suggestions %></div>
+<br>
+<% @suggestions.each do |suggestion| %>
+   <div class="pageformat">
+      <div class="container"><%= suggestion.title %></div>
+      <% if current_user && (current_user.pouch.privilege == "Admin" || current_user.id == suggestion.user_id) %>
+         <div class="container"><%= button_to 'Edit', edit_user_suggestion_path(suggestion.user, suggestion), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [suggestion.user, suggestion], method: :delete, data: { confirm: 'Are you sure?' }, class: "button destroybutton" %></div>
+      <% end %>
+      <br>
+      <p>Created: <%= distance_of_time_in_words_to_now suggestion.created_on %> ago on (<%= suggestion.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now suggestion.updated_on %> ago on (<%= suggestion.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <br>
+      <% if current_user.pouch.privilege == "Admin" %>
+         <% if suggestion.user.userinfo.miniavatar.to_s != "" %>
+            <br>
+            <p><%= image_tag(suggestion.user.userinfo.miniavatar_url(:thumb)) %></p>
+         <% end %>
+         <p class="formlinks">Owner: <%= getUserPrivilege(suggestion.user) %><%= link_to suggestion.user.vname, user_path(suggestion.user) %></p>
+         <p>Status: <%= getActivity(suggestion.user) %>
+            <% if getActivity(suggestion.user) != "Online" && getActivity(suggestion.user) != "Inoperable" %>
+               for <%= distance_of_time_in_words_to_now getTime(suggestion.user) %>
+            <% end %>
+         </p>
+         <br>
+      <% end %>
+      <p><%= textFormater("Multi", suggestion.description, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', user_path(current_user) %></p>

@@ -1,0 +1,10 @@
+<% provide(:h1, "Baserate List") %>
+<% @baserates.each do |baserate| %>
+   <div class="pageformat">
+      <p>Name: <%= baserate.name %></p>
+      <p>Amount: <%= baserate.amount %></p>
+      <p>Created: <%= distance_of_time_in_words_to_now baserate.created_on %> ago on (<%= baserate.created_on.strftime("%B-%d-%Y") %>)</p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

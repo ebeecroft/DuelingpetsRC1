@@ -1,0 +1,2 @@
+class Regtoken < ApplicationRecord
+end

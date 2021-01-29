@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  created_on: 2019-11-25 21:29:46
+  basecost: 1
+  dreyterriumcost: 1
+
+two:
+  name: MyString
+  created_on: 2019-11-25 21:29:46
+  basecost: 1
+  dreyterriumcost: 1

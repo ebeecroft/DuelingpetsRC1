@@ -1,0 +1,31 @@
+<% provide(:h1, "Userinfo List") %>
+<% if @userinfos.count >= 10 %>
+   <div class="formlinks"><%= paginate @userinfos %></div>
+   <br>
+<% end %>
+<% @userinfos.each do |userinfo| %>
+   <div class="pageformat">
+      <p><%= button_to 'Edit', edit_userinfo_path(userinfo), method: :get, class: "button editbutton" %></p>
+      <p>Audio Browser: <%= userinfo.audiobrowser %></p>
+      <p>Video Browser: <%= userinfo.videobrowser %></p>
+      <p>MP3 file: <%= userinfo.mp3 %></p>
+      <p>OGG file: <%= userinfo.ogg %></p>
+      <p>Music on: <%= userinfo.music_on %></p>
+      <p>Militarytime on: <%= userinfo.militarytime %></p>
+      <p>Avatar file: <%= userinfo.avatar %></p>
+      <p>Miniavatar file: <%= userinfo.miniavatar %></p>
+      <p>Book group: <%= userinfo.bookgroup.name %></p>
+      <p>Nightvision on: <%= userinfo.nightvision %></p>
+      <p>Daycolor name: <%= userinfo.daycolor.name %></p>
+      <p>Nightcolor name: <%= userinfo.nightcolor.name %></p>
+      <p class="formlinks">Owner name: <%= link_to userinfo.user.vname, user_path(userinfo.user) %></p>
+      <p>Status: <%= getActivity(userinfo.user) %>
+         <% if getActivity(userinfo.user) == "Offline" || getActivity(userinfo.user) == "Inactive" %>
+            for <%= distance_of_time_in_words_to_now getTime(userinfo.user) %>
+         <% end %>
+      </p>
+      <p class="textindent"><%= textFormater("Multi", userinfo.info, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

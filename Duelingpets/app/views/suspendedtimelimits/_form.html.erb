@@ -1,0 +1,44 @@
+<%= form_with(model: @suspendedtimelimit, local: true) do |form| %>
+  <% if @suspendedtimelimit.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@suspendedtimelimit.errors.count, "error") %> prohibited this suspendedtimelimit from being saved:</h2>
+           <ul>
+              <% @suspendedtimelimit.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :user_id, "Select User" %>
+    <%= form.collection_select(:user_id, @users, :id, :vname) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :reason %>
+    <%= form.text_area :reason %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :timelimit %>
+    <%= form.datetime_select :timelimit %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pointfines %>
+    <%= form.number_field :pointfines %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :emeraldfines %>
+    <%= form.number_field :emeraldfines %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', suspendedtimelimits_path %></p>
+<% end %>

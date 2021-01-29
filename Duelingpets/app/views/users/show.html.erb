@@ -1,0 +1,129 @@
+<% provide(:h1, @user.vname + "'s profile") %>
+<p id="notice"><%= notice %></p>
+<% if current_user %>
+   <p class="centerpagecontent"><%= playMusicLoop("User", @user) %></p>
+<% end %>
+<div class="pageformat">
+   <% if current_user && current_user.id == @user.id %>
+      <% if @user.userinfo.ogg.to_s != "" || @user.userinfo.mp3.to_s != "" %>
+         <div class="container">
+         <% if @user.userinfo.music_on %>
+            <p><%= button_to 'Turn off music', users_music_path(:id=>@user.id), method: :post, class: "button submitbutton" %></p>
+         <% else %>
+            <p><%= button_to 'Turn on music', users_music_path(:id=>@user.id), method: :post, class: "button submitbutton" %></p>
+         <% end %>
+         </div>
+      <% end %>
+   <% end %>
+   <% if current_user %>
+      <div class="container">
+         <% if current_user.userinfo.mute_on %>
+            <p><%= button_to 'Unmute music', muteAudio_path(:pageType => "User", :pageContent => @user), method: :post, class: "button submitbutton" %></p>
+            <br>
+         <% else %>
+            <p><%= button_to 'Mute music', muteAudio_path(:pageType => "User", :pageContent => @user), method: :post, class: "button submitbutton" %></p>
+            <br>
+         <% end %>
+      </div>
+      <br>
+   <% end %>
+   <% if @user.userinfo.avatar.to_s != "" %>
+      <p><%= image_tag(@user.userinfo.avatar_url(:thumb)) %></p>
+   <% end %>
+   <div class="container">Imaginary friend: <%= @user.imaginaryfriend %></div>
+   <% if current_user %>
+      <% if current_user.id == @user.id || current_user.pouch.privilege == "Admin" %>
+         <div class="container"><%= button_to 'Edit', edit_user_path(@user), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', @user, method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <% end %>
+      <p>Birthday: <%= profileInfo("Birthday", @user) %></p>
+      <p>Writing Group: <%= getWritingGroup(@user, "Name") %></p>
+      <% if current_user.pouch.privilege == "Admin" || current_user.id == @user.id %>
+         <p>Reading Group: <%= getReadingGroup(@user, "Name") %></p>
+         <p>Email: <%= @user.email %></p>
+         <p>Shared: <%= @user.shared %></p>
+      <% end %>
+      <p>Timezone: <%= @user.country_timezone %></p>
+      <br>
+   <% end %>
+   <p>Joined: <%= distance_of_time_in_words_to_now @user.joined_on %> ago on (<%= @user.joined_on.strftime("%B-%d-%Y") %>)</p>
+   <p>Registered: <%= distance_of_time_in_words_to_now @user.registered_on %> ago on (<%= @user.registered_on.strftime("%B-%d-%Y") %>)</p>
+   <!--Ban section-->
+   <% if @user.pouch.banned %>
+      <br>
+      <p>This user's account was suspended!</p>
+      <p>Suspended on: <%= getBanned(@user).first.created_on.strftime("%B-%d-%Y") %></p>
+      <p>Expires on: <%= getBanned(@user).first.timelimit.strftime("%B-%d-%Y") %></p>
+      <p class="formlinks">Suspended by: <%= getUserPrivilege(getBanned(@user).first.from_user) %><%= link_to getBanned(@user).first.from_user.vname, user_path(getBanned(@user).first.from_user) %></p>
+      <p>Time left: <%= distance_of_time_in_words_to_now getBanned(@user).first.timelimit %></p>
+      <p>User fined: <%= getBanned(@user).first.fines %> points</p>
+      <p class="textindent"><%= getBanned(@user).first.reason %></p>
+   <% end %>
+   <!--End Ban section-->
+   <% if current_user && (current_user.id == @user.id || current_user.pouch.privilege == "Admin") %>
+      <br>
+      <p><%= button_to 'Add Avatar and Edit Browser', edit_userinfo_path(@user.userinfo), method: :get, class: "button submitbutton" %></p>
+   <% end %>
+   <br>
+   <p class="textindent"><%= textFormater("Multi", @user.userinfo.info, "All").html_safe %></p>
+   <% if current_user && current_user.id == @user.id && current_user.pouch.privilege == "Admin" %>
+      <br>
+      <% if current_user.userinfo.admincontrols_on %>
+         <p><%= button_to 'Admin Off', users_controlsOn_path, method: :post, class: "button submitbutton" %></p>
+         <p><%= button_to 'Admin Controls', admincontrols_path, method: :get, class: "button submitbutton" %></p>
+      <% else %>
+         <p><%= button_to 'Admin On', users_controlsOn_path, method: :post, class: "button submitbutton" %></p>
+      <% end %>
+   <% elsif current_user && current_user.id == @user.id && current_user.pouch.privilege == "Keymaster" %>
+      <br>
+      <% if current_user.userinfo.keymastercontrols_on %>
+         <p><%= button_to 'Keymaster Off', users_controlsOn_path, method: :post, class: "button submitbutton" %></p> 
+         <p><%= button_to 'Keymaster Controls', keymastercontrols_path, method: :get, class: "button submitbutton" %></p>
+      <% else %>
+         <p><%= button_to 'Keymaster On', users_controlsOn_path, method: :post, class: "button submitbutton" %></p>
+      <% end %>
+   <% elsif current_user && current_user.id == @user.id && current_user.pouch.privilege == "Reviewer" %>
+      <br>
+      <% if current_user.userinfo.reviewercontrols_on %>
+         <p><%= button_to 'Reviewer Off', users_controlsOn_path, method: :post, class: "button submitbutton" %></p>
+         <p><%= button_to 'Reviewer Controls', reviewercontrols_path, method: :get, class: "button submitbutton" %></p>
+      <% else %>
+         <p><%= button_to 'Reviewer On', users_controlsOn_path, method: :post, class: "button submitbutton" %></p>
+      <% end %>
+   <% end %>
+   <%= render 'upgradeform' %>
+   <%= render 'showform' %>
+   <% if current_user %>
+      <br>
+      <p>Shouts</p>
+      <div class="formlinks"><%= paginate getUserContent(@user, "Pageshouts") %></div>
+      <br>
+      <% getUserContent(@user, "Pageshouts").each do |shout| %>
+         <div class="container"><%= button_to 'Edit', edit_shoutbox_shout_path(shout.shoutbox, shout), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [shout.shoutbox, shout], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+         <p>Created: <%= distance_of_time_in_words_to_now shout.created_on %> ago on (<%= shout.created_on.strftime("%B-%d-%Y") %>)</p>
+         <% if !shout.reviewed_on.nil? %>
+            <p>Reviewed on: <%= distance_of_time_in_words_to_now shout.reviewed_on %> ago on(<%= shout.reviewed_on.strftime("%B-%d-%Y") %>)</p>
+         <% end %>
+         <% if shout.user.userinfo.miniavatar.to_s != "" %>
+            <p><%= image_tag(shout.user.userinfo.miniavatar_url(:thumb)) %></p>
+         <% end %>
+         <p class="formlinks">Owner: <%= getUserPrivilege(shout.user) %><%= link_to shout.user.vname, user_path(shout.user) %></p>
+         <p>Status: <%= getActivity(shout.user) %>
+            <% if getActivity(shout.user) != "Online" && getActivity(shout.user) != "Inoperable" %>
+               for <%= distance_of_time_in_words_to_now getTime(shout.user) %>
+            <% end %>
+         </p>
+         <br>
+         <p>Message</p>
+         <p class="textindent"><%= textFormater("Multi", shout.message, "All").html_safe %></p>
+      <% end %>
+      <% if current_user.id != @user.id && @user.pouch.amount > 0 %>
+         <%= form_for [@user.shoutbox, Shout.new] do |form| %>
+            <p><%= form.label :message %></p>
+            <p><%= form.text_area :message, :placeholder => "Enter message" %></p>
+            <p><%= form.submit %></p>
+         <% end %>
+      <% end %>
+   <% end %>
+</div>
+<br>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

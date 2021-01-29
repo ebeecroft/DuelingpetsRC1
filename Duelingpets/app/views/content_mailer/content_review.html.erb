@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+   </head>
+   <body>
+      <% if @type == "Blog" %>
+         <h1><%= @content.user.vname %>'s new blog <%= @content.title %> is awaiting your review!</h1>
+      <% elsif @type == "OC" %>
+         <h1><%= @content.user.vname %>'s new oc <%= @content.name %> is awaiting your review!</h1>   
+      <% elsif @type == "Movie %>
+         <h1><%= @content.user.vname %>'s new movie <%= @content.title %> is awaiting your review!</h1>
+      <% elsif @type == "Art %>
+         <h1><%= @content.user.vname %>'s new art <%= @content.title %> is awaiting your review!</h1>   
+      <% elsif @type == "Sound" %>
+         <h1><%= @content.user.vname %>'s new sound <%= @content.title %> is awaiting your review!</h1>
+      <% elsif @type == "Chapter" %>
+         <h1><%= @content.user.vname %>'s new chapter <%= @content.title %> is awaiting your review!</h1>   
+      <% elsif @type == "Element" %>
+         <h1><%= @content.user.vname %>'s new element <%= @content.name %> is awaiting your review!</h1>   
+      <% elsif @type == "Creature" %>
+         <h1><%= @content.user.vname %>'s new creature <%= @content.name %> is awaiting your review!</h1>
+      <% elsif @type == "Monster" %>
+         <h1><%= @content.user.vname %>'s new monster <%= @content.name %> is awaiting your review!</h1>
+      <% elsif @type == "Item" %>
+         <h1><%= @content.user.vname %>'s new item <%= @content.name %> is awaiting your review!</h1>
+      <% end %>
+      <p>
+         <% if @type == "Blog" %>
+            Greeting my review team we have a blogger by the name
+            of <%= @content.user.vname %> who is creating some
+            new blogs to help advertise his content on this site.
+         <% elsif @type == "OC" %>
+            Greetings my review team we have an artist by the name
+            of <%= @content.user.vname %> who is creating some new
+            ocs for the site.
+         <% elsif @type == "Movie" %>
+            Greeting my review team we have a director by the name
+            of <%= @content.user.vname %> who is creating some new
+            movies for the site.
+         <% elsif @type == "Art" %>
+            Greeting my review team we have an artist by the name
+            of <%= @content.user.vname %> who is creating some new
+            artworks for the site.   
+         <% elsif @type == "Sound" %>
+            Greetings my review team we have a composer by the name
+            of <%= @content.user.vname %> who is creating some new
+            sounds for the site.
+         <% elsif @type == "Chapter" %>
+            Greetings my review team we have a writer by the name
+            of <%= @content.user.vname %> who is creating some new
+            chapters for the site.   
+         <% elsif @type == "Element" %>
+            Greetings my review team we have an artist by the name
+            of <%= @content.user.vname %> who is creating some new
+            elements for the site.
+         <% elsif @type == "Creature" %>
+            Greetings my review team we have an artist by the name
+            of <%= @content.user.vname %> who is creating some new
+            creatures for the site.
+         <% elsif @type == "Monster" %>   
+            Greetings my review team we have an artist by the name
+            of <%= @content.user.vname %> who is creating some new
+            monsters for the site.
+         <% elsif @type == "Item" %>
+            Greetings my review team we have an artist by the name
+            of <%= @content.user.vname %> who is creating some new
+            items for the site.
+         <% end %>
+         So I gathered you all together to have a look at his
+         newest submission to see if it fits within our
+         guidlines.
+         <% if @type == "Blog" %>
+            This blog might contain some artwork ads
+            and as such I would like you to look them over in
+            addition to the traditional text based content that
+            blogs normally contain.
+         <% elsif @type == "OC" %>
+            This oc might contain some music and voice elements in
+            addition to the standard image and text content found
+            on most ocs. As such I would like you to look this
+            content over.
+         <% elsif @type == "Movie" %>
+            This movie might be a cartoon, a game lp, or others. As
+            such I would like you to look this content over.   
+         <% elsif @type == "Art" %>
+            This art might be a digital or traditional image. It is
+            also possible it might be a photograph, or some kind of
+            crafting design. There might be some sounds included with
+            the image itself. As such I would like you to look this
+            content over.
+         <% elsif @type == "Sound" %>
+            This sound might be a song, a radio walkthrough, or
+            others. As such I would like you to look this content
+            over.
+         <% elsif @type == "Chapter" %>
+            This chapter might contain some character voices or
+            background music, there also might be some images of the
+            characters themselves in addition to the story itself.
+            As such I would like you to look this content over.
+         <% elsif @type == "Element" %>
+            This element might include an image of the element, in
+            addition to the standard text. As such I would like you
+            to look this content over.
+         <% elsif @type == "Creature" %>
+            This creature has a variety of different stats that might
+            be included with the standard image as well as some voice
+            and background music. As such I would like you to look
+            this content over.
+         <% elsif @type == "Monster" %>
+            This monster has a variety of different stats that might
+            be included with the standard image. As such I would like
+            you to look this content over.
+         <% elsif @type == "Item" %>
+            This item has a variety of different stats that might
+            be included with the standard image. As such I would
+            like you to look this content over.
+         <% end %>
+         Be sure to check to see if this content does indeed fit
+         the book group that it has been assigned to. Please give
+         this content an in depth check as we want to ensure this
+         community stays safe for everyone.
+      </p>
+      <p>
+         Now I am sure all of you are itching to get started so I
+         setup a useful url <%= @url %> for you to use. However
+         if you are having trouble finding this url, well I
+         created a special panel for you guys to use when it
+         comes to reviewing content. This special panel should
+         only be used when you need it and turned off when you
+         don't. Its very important that you keep this special
+         knowledge under lock and key as we don't want this tool
+         to be abused for evil means.
+         <% if @type == "Blog" %>
+            Now if you approve the blog then the user gets points
+            or has them removed from their account.
+         <% elsif @type == "OC" %>
+            Now if you approve the oc then the user gets points
+            added to their account.
+         <% elsif @type == "Movie" %>
+            Now if you approve the movie then the user gets
+            points added to their account.   
+         <% elsif @type == "Sound" %>
+            Now if you approve the sound then the user gets
+            points added to their account.
+         <% elsif @type == "Chapter" %>
+            Now if you approve the chapter then the user gets
+            points added to their account.
+         <% elsif @type == "Element" %>
+            Now if you approve the element then the user gets
+            points deducted from their account for using the
+            feature.
+         <% elsif @type == "Creature" %>
+            Now if you approve the creature then the user gets
+            points deducted from their account for using the
+            feature.
+         <% elsif @type == "Monster" %>
+            Now if you approve the monster then the user gets
+            points deducted from their account for using the
+            feature.
+         <% elsif @type == "Item" %>
+            Now if you approve the item then the user gets
+            points deducted from their account for using the
+            feature.
+         <% end %>
+         If you deny the content please get in touch with the
+         user and let him know why and how to go about fixing it
+         if it doesn't fit our guidelines. I leave that ruling up
+         to you.
+      </p>
+      <br>
+      <p>From Bolt Greywing the Admin</p>
+   </body>
+</html>

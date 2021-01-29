@@ -1,0 +1,30 @@
+<%= form_with(model: [@user, @partner], local: true) do |form| %>
+  <% if @partner.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@partner.errors.count, "error") %> prohibited this partner from being saved:</h2>
+           <ul>
+              <% @partner.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :description %>
+    <%= form.text_area :description %>
+  </div>
+  <%= form.hidden_field :creature_id %>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', user_path(@partner.user) %></p>
+<% end %>

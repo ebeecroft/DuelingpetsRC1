@@ -1,0 +1,31 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  description: MyText
+  image: MyString
+  ogg: MyString
+  mp3: MyString
+  created_on: 2020-06-13 15:26:21
+  updated_on: 2020-06-13 15:26:21
+  reviewed_on: 2020-06-13 15:26:21
+  user_id: 1
+  bookgroup_id: 1
+  subfolder_id: 1
+  reviewed: false
+  pointsreceived: false
+
+two:
+  title: MyString
+  description: MyText
+  image: MyString
+  ogg: MyString
+  mp3: MyString
+  created_on: 2020-06-13 15:26:21
+  updated_on: 2020-06-13 15:26:21
+  reviewed_on: 2020-06-13 15:26:21
+  user_id: 1
+  bookgroup_id: 1
+  subfolder_id: 1
+  reviewed: false
+  pointsreceived: false

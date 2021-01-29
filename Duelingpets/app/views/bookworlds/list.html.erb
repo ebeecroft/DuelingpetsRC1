@@ -1,0 +1,30 @@
+<% provide(:h1, "Bookworld List") %>
+<% if @bookworlds.count >= 10 %>
+   <div class="formlinks"><%= paginate @bookworlds %></div>
+   <br>
+<% end %>
+<% @bookworlds.each do |bookworld| %>
+   <div class="pageformat">
+      <p>Created: <%= distance_of_time_in_words_to_now bookworld.created_on %> ago on (<%= bookworld.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now bookworld.updated_on %> ago on (<%= bookworld.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <div class="container"><p class="formlinks">Name: <%= link_to bookworld.name, user_bookworld_path(bookworld.user, bookworld) %></p></div> <div class="container"><%= button_to 'Edit', edit_user_jukebox_path(jukebox.user, jukebox), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [bookworld.bookworld, jukebox], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <p>Book price: <%= bookworld.price %></p>
+      <p>Open world: <%= bookworld.open_world %></p>
+      <p>Private world: <%= bookworld.privateworld %></p>
+      <p>Total books: <%#= bookworld.books.count %></p>
+      <br>
+      <% if bookworld.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(bookworld.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Writer: <%= getUserPrivilege(bookworld.user) %><%= link_to bookworld.user.vname, user_path(bookworld.user) %></p>
+      <p>Status: <%= getActivity(bookworld.user) %>
+         <% if getActivity(bookworld.user) != "Online" && getActivity(bookworld.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(bookworld.user) %>
+         <% end %>
+      </p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", bookworld.description, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

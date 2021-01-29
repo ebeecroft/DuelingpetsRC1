@@ -1,0 +1,194 @@
+<div class="pageformat">
+   <% if current_user.userinfo.mute_on %>
+      <p><%= button_to 'Unmute music', muteAudio_path(:pageType => "NewOC"), method: :post, class: "button submitbutton" %></p>
+      <br>
+   <% else %>
+      <p><%= button_to 'Mute music', muteAudio_path(:pageType => "NewOC"), method: :post, class: "button submitbutton" %></p>
+      <br>
+   <% end %>
+</div>
+<%= form_with(model: [@user, @oc], local: true) do |form| %>
+  <p class="centerpagecontent"><%= playMusicLoop("Creative", nil) %></p>
+  <% if @oc.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@oc.errors.count, "error") %> prohibited this oc from being saved:</h2>
+           <ul>
+              <% @oc.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :description %>
+    <%= form.text_area :description %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :nickname %>
+    <%= form.text_field :nickname %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :species %>
+    <%= form.text_field :species %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :age %>
+    <%= form.number_field :age %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :personality %>
+    <%= form.text_area :personality %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :likesanddislikes %>
+    <%= form.text_area :likesanddislikes %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :backgroundandhistory %>
+    <%= form.text_area :backgroundandhistory %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :relatives %>
+    <%= form.text_area :relatives %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :family %>
+    <%= form.text_area :family %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :friends %>
+    <%= form.text_area :friends %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :world %>
+    <%= form.text_area :world %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :alignment %>
+    <%= form.text_field :alignment %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :alliance %>
+    <%= form.text_area :alliance %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :elements %>
+    <%= form.text_area :elements %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :appearance %>
+    <%= form.text_area :appearance %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :clothing %>
+    <%= form.text_area :clothing %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :accessories %>
+    <%= form.text_area :accessories %>
+  </div>
+  <br>
+  <p class="pageformat">Image</p>
+  <div class="pageformat">
+     <%= image_tag @oc.image_url(:thumb).to_s if @oc.image? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :image %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_image_url, "or Image URL" %>
+     <%= form.text_field :remote_image_url %>
+     <%= form.hidden_field :image_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Voiceogg files</p>
+  <div class="pageformat">
+     <%= audio_tag(@oc.voiceogg_url.to_s, :controls => true) if @oc.voiceogg? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :voiceogg %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_voiceogg_url, "or Voiceogg URL" %>
+     <%= form.text_field :remote_voiceogg_url %>
+     <%= form.hidden_field :voiceogg_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Voicemp3 files</p>
+  <div class="pageformat">
+     <%= audio_tag(@oc.voicemp3_url.to_s, :controls => true) if @oc.voicemp3? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :voicemp3 %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_voicemp3_url, "or Mp3 URL" %>
+     <%= form.text_field :remote_voicemp3_url %>
+     <%= form.hidden_field :voicemp3_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Ogg files</p>
+  <div class="pageformat">
+     <%= audio_tag(@oc.ogg_url.to_s, :controls => true) if @oc.ogg? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :ogg %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_ogg_url, "or Ogg URL" %>
+     <%= form.text_field :remote_ogg_url %>
+     <%= form.hidden_field :ogg_cache %>
+  </div>
+  <br>
+  <p class="pageformat">MP3 files</p>
+  <div class="pageformat">
+     <%= audio_tag(@oc.mp3_url.to_s, :controls => true) if @oc.mp3? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :mp3 %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_mp3_url, "or Mp3 URL" %>
+     <%= form.text_field :remote_mp3_url %>
+     <%= form.hidden_field :mp3_cache %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :bookgroup_id, "Select Group" %>
+    <%= form.collection_select(:bookgroup_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :gviewer_id, "Select Gviewer" %>
+    <%= form.collection_select(:gviewer_id, @gviewers, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', user_path(@oc.user) %></p>
+<% end %>

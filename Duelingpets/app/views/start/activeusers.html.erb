@@ -1,0 +1,19 @@
+<% provide(:h1, "Active Users") %>
+<div class="formlinks"><%= paginate @pouches %></div>
+<br>
+<div class="pageformat">
+   <% @pouches.each_with_index do |pouch, index| %>
+      <div class="container">
+         <% if pouch.user.userinfo.miniavatar.to_s != "" %>
+            <p><%= image_tag(pouch.user.userinfo.miniavatar_url(:thumb)) %></p>
+         <% end %>
+         <p class="formlinks"><%= link_to pouch.user.vname, user_path(pouch.user) %></p>
+         <p>Active last: <%= distance_of_time_in_words_to_now pouch.last_visited %></p>
+      </div>
+      <% if index % 10 == 9 %>
+         <br>
+         <br>      
+      <% end %>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

@@ -1,0 +1,76 @@
+<% provide(:h1, @pm.title) %>
+<p id="notice"><%= notice %></p>
+<div class="pageformat">
+   <% if current_user && (current_user.id == @pm.user_id || current_user.pouch.privilege == "Admin") %>
+      <div class="container"><%= button_to 'Edit', edit_pmbox_pm_path(@pm.pmbox, @pm), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [@pm.pmbox, @pm], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+   <% end %>
+   <p>Created: <%= distance_of_time_in_words_to_now @pm.created_on %> ago on (<%= @pm.created_on.strftime("%B-%d-%Y") %>)</p>
+   <p>Updated: <%= distance_of_time_in_words_to_now @pm.updated_on %> ago on (<%= @pm.updated_on.strftime("%B-%d-%Y") %>)</p>
+   <% if @pm.image.to_s != "" %>
+      <br>
+      <p><%= image_tag(@pm.image_url(:thumb)) %></p>
+   <% end %>
+   <% if @pm.ogg.to_s != "" || @pm.mp3.to_s != "" %>
+      <br>
+      <p><%= audio_tag(getMusicOrVideo("Sound", @pm), :controls => true) %></p>
+   <% end %>
+   <% if @pm.ogv.to_s != "" || @pm.mp4.to_s != "" %>
+      <br>
+      <p><%= video_tag(getMusicOrVideo("Movie", @pm), width: "65%", :controls => true) %></p>
+   <% end %>
+   <br>
+   <% if @pm.user.userinfo.miniavatar.to_s != "" %>
+      <p><%= image_tag(@pm.user.userinfo.miniavatar_url(:thumb)) %></p>
+   <% end %>
+   <p class="formlinks">Owner: <%= getUserPrivilege(@pm.user) %><%= link_to @pm.user.vname, user_path(@pm.user) %></p>
+   <p>Unread Owner status: <%= @pm.user1_unread %></p>
+   <p>Unread Receiver status: <%= @pm.user2_unread %></p>
+   <p>Status: <%= getActivity(@pm.user) %>
+      <% if getActivity(@pm.user) != "Online" && getActivity(@pm.user) != "Inoperable" %>
+         for <%= distance_of_time_in_words_to_now getTime(@pm.user) %>
+      <% end %>
+   </p>
+   <p>Posts: <%= @pm.pmreplies.count %></p>
+   <br>
+   <p class="textindent"><%= textFormater("Multi", @pm.message, "All").html_safe %></p>
+   <br>
+   <% if @pm.pmreplies.count >= 10 %>
+      <div class="formlinks"><%= paginate @pm.pmreplies %></div>
+      <br>
+   <% end %>
+   <% @pm.pmreplies.each do |pmreply| %>
+      <div class="container"><%= button_to 'Edit', edit_pm_pmreply_path(pmreply.pm, pmreply), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [pmreply.pm, pmreply], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <p>Created: <%= distance_of_time_in_words_to_now pmreply.created_on %> ago on (<%= pmreply.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now pmreply.updated_on %> ago on(<%= pmreply.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <% if pmreply.image.to_s != "" %>
+         <br>
+         <p><%= image_tag(pmreply.image_url(:thumb)) %></p>
+      <% end %>
+      <% if pmreply.ogg.to_s != "" || pmreply.mp3.to_s != "" %>
+         <br>
+         <p><%= audio_tag(getMusicOrVideo("Sound", pmreply), :controls => true) %></p>
+      <% end %>
+      <% if pmreply.ogv.to_s != "" || pmreply.mp4.to_s != "" %>
+         <br>
+         <p><%= video_tag(getMusicOrVideo("Movie", pmreply), width: "65%", :controls => true) %></p>
+      <% end %>
+      <br>
+      <% if pmreply.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(pmreply.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Owner: <%= getUserPrivilege(pmreply.user) %><%= link_to pmreply.user.vname, user_path(pmreply.user) %></p>
+      <p>Status: <%= getActivity(pmreply.user) %>
+         <% if getActivity(pmreply.user) != "Online" && getActivity(pmreply.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(pmreply.user) %>
+         <% end %>
+      </p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", pmreply.message, "All").html_safe %></p>
+      <br>
+   <% end %>
+   <% if((current_user.id == @pm.user_id) || (current_user.id == @pm.pmbox.user_id)) %>
+      <p><%= button_to "New PMreply", new_pm_pmreply_path(@pm), method: :get, class: "button submitbutton" %></p>
+      <br>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to "Back", user_path(@pm.user) %></p>

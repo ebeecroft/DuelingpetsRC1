@@ -1,0 +1,32 @@
+<% provide(:h1, "Gallery List") %>
+<div class="formlinks"><%= paginate @galleries %></div>
+<br>
+<% @galleries.each do |gallery| %>
+   <div class="pageformat">
+      <p>Created: <%= distance_of_time_in_words_to_now gallery.created_on %> ago on (<%= gallery.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now gallery.updated_on %> ago on (<%= gallery.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <% if gallery.ogg.to_s != "" || gallery.mp3.to_s != "" %>
+         <br>
+         <p>Theme song: <%= audio_tag(getMusicOrVideo("Sound", gallery), :controls => true) %></p>
+      <% end %>
+      <br>
+      <div class="container"><p class="formlinks">Name: <%= link_to gallery.name, user_gallery_path(gallery.user, gallery) %></p></div> <div class="container"><%= button_to 'Edit', edit_user_gallery_path(gallery.user, gallery), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [gallery.user, gallery], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <p>Private gallery: <%= gallery.privategallery %></p>
+      <br>
+      <% if gallery.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(gallery.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Artist: <%= getUserPrivilege(gallery.user) %><%= link_to gallery.user.vname, user_path(gallery.user) %></p>
+      <p>Group: <%= gallery.bookgroup.name %></p>
+      <p>Viewer: <%= gallery.gviewer.name %></p>
+      <p>Status: <%= getActivity(gallery.user) %>
+         <% if getActivity(gallery.user) != "Online" && getActivity(gallery.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(gallery.user) %>
+         <% end %>
+      </p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", gallery.description, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

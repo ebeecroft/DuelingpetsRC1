@@ -1,0 +1,41 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  avatar: MyString
+  miniavatar: MyString
+  mp3: MyString
+  ogg: MyString
+  music_on: false
+  mute_on: false
+  audiobrowser: MyString
+  videobrowser: MyString
+  militarytime: false
+  bookgroup_id: 1
+  info: MyText
+  user_id: 1
+  daycolor_id: 1
+  nightcolor_id: 1
+  admincontrols_on: false
+  reviewercontrols_on: false
+  keymastercontrols_on: false
+  managercontrols_on: false
+
+two:
+  avatar: MyString
+  miniavatar: MyString
+  mp3: MyString
+  ogg: MyString
+  music_on: false
+  mute_on: false
+  audiobrowser: MyString
+  videobrowser: MyString
+  militarytime: false
+  bookgroup_id: 1
+  info: MyText
+  user_id: 1
+  daycolor_id: 1
+  nightcolor_id: 1
+  admincontrols_on: false
+  reviewercontrols_on: false
+  keymastercontrols_on: false
+  managercontrols_on: false

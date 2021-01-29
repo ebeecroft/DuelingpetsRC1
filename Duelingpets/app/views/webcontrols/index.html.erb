@@ -1,0 +1,32 @@
+<% provide(:h1, "Webcontrol List") %>
+<% if @webcontrols.count > 10 %>
+   <div class="formlinks"><%= paginate @webcontrols %></div>
+   <br>
+<% end %>
+<% @webcontrols.each do |webcontrol| %>
+   <div class="pageformat"><div class="container">Created on: <%= distance_of_time_in_words_to_now webcontrol.created_on %> ago on (<%= webcontrol.created_on.strftime("%B-%d-%Y") %>)</div> <div class="container"><%= button_to 'Edit', edit_webcontrol_path(webcontrol), method: :get, class: "button editbutton" %></div></div>
+   <div class="pageformat">
+      <p>Banner: <%= webcontrol.banner %></p>
+      <p>Mascot: <%= webcontrol.mascot %></p>
+      <p>Favicon: <%= webcontrol.favicon %></p>
+      <p>Homepage OGG: <%= webcontrol.ogg %></p>
+      <p>Homepage MP3: <%= webcontrol.mp3 %></p>
+      <p>Critical OGG: <%= webcontrol.criticalogg %></p>
+      <p>Critical MP3: <%= webcontrol.criticalmp3 %></p>
+      <p>Beta OGG: <%= webcontrol.betaogg %></p>
+      <p>Beta MP3: <%= webcontrol.betamp3 %></p>
+      <p>Grand OGG: <%= webcontrol.grandogg %></p>
+      <p>Grand MP3: <%= webcontrol.grandmp3 %></p>
+      <p>Creation OGG: <%= webcontrol.creationogg %></p>
+      <p>Creation MP3: <%= webcontrol.creationmp3 %></p>
+      <p>Maintenance OGG: <%= webcontrol.maintenanceogg %></p>
+      <p>Maintenance MP3: <%= webcontrol.maintenancemp3 %></p>
+      <p>Missingpage OGG: <%= webcontrol.missingpageogg %></p>
+      <p>Missingpage MP3: <%= webcontrol.missingpagemp3 %></p>
+      <p>Day color: <%= webcontrol.daycolor.name %></p>
+      <p>Night color: <%= webcontrol.nightcolor.name %></p>
+      <p>Gate open: <%= webcontrol.gate_open %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

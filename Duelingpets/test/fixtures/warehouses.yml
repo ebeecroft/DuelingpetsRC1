@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  message: MyText
+  ogg: MyString
+  mp3: MyString
+  created_on: 2020-12-09 05:40:22
+  updated_on: 2020-12-09 05:40:22
+  treasury: 1
+  profit: 1
+  store_open: false
+
+two:
+  name: MyString
+  message: MyText
+  ogg: MyString
+  mp3: MyString
+  created_on: 2020-12-09 05:40:22
+  updated_on: 2020-12-09 05:40:22
+  treasury: 1
+  profit: 1
+  store_open: false

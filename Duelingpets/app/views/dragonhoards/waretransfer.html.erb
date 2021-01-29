@@ -1,0 +1,20 @@
+<% provide(:h1, "Transfer") %>
+<%= form_for(:warehouse, url: dragonhoards_warepost_path, method: :post) do |form| %>
+   <p class="pageformat"><%= form.collection_select(:warehouse_id, @slots, :id, :name) %></p>
+   <br>
+   <div class="pageformat">
+      <%= form.label :points, "Points" %>
+      <%= form.number_field :amount %>
+   </div>
+   <br>
+   <div class="pageformat">
+      <%= form.label :emeralds, "Emeralds" %>
+      <%= form.number_field :emeralds %>
+   </div>
+   <br>
+   <div class="pageformat">
+      <p><%= form.submit "Transfer", class: "button submitbutton" %></p>
+   </div>
+<% end %>
+<br>
+<p class="formlinks"><%= link_to 'Back', dragonhoards_path %></p>

@@ -1,0 +1,57 @@
+<% if @status == "Review" %>
+   <% if @type == "Blogreply" %>
+      <%= @content.user.vname %>'s blogreply is awaiting your review!
+   <% end %>
+<% elsif @status == "Approved" %>
+   <% if @type == "Blogreply" %>
+      Your new blogreply for <%= @content.blog.user.vname %> blog was approved!
+   <% end %>
+<% elsif @status == "Denied" %>
+   <% if @type == "Blogreply" %>
+      Your new blogreply for <%= @content.blog.user.vname %> blog was denied!
+   <% end %>
+<% end %>
+===============================================
+
+<% if @status == "Review" %>
+   <% if @type == "Blogreply" %>
+      Greetings <%= @content.blog.user.vname %>
+   <% end %>
+   we have a user by the name of <%= @content.user.vname %> who is
+   <% if @type == "Blogreply" %>
+      creating some replies on your blog. As such I would like you
+      to look over the blogreply message to to see if it fits the
+      bookgroup that it belongs to.
+   <% end %>
+   Also by the way here is a url <%= @url %> to help you out
+   for the review process. If you approve this reply, it will then
+   be publicly visible for others to see in that bookgroup. If you
+   deny it, then it will not be publicly available. I hope you
+   will excercise good judgment to keep our virtual pet site
+   community safe everyone. I leave the ruling up to you.
+<% elsif @status == "Approved" %>
+   <% if @type == "Blogreply" %>
+      The blog owner <%= @content.blog.user.vname %>
+   <% end %>
+   has taken the time to look over your reply and has determined that
+   <% if @type == "Blogreply" %>
+      it is okay to air to the public the message on their blog.
+   <% end %>
+   The bookgroup that the reply belongs to feels correct and as such
+   <% if @type == "Blogreply" %>
+      we have taken the opportunity to award the blog owner
+      <%= @points %> points for their efforts.
+   <% end %>
+<% elsif @status == "Denied" %>
+   <% if @type == "Blogreply" %>
+      The blog owner <%= @content.blog.user.vname %>
+   <% end %>
+   has taken the time to look over your reply and has determined that
+   it doesn't fit into the correct bookgroup. Its okay as things like
+   this tend to happen from time to time. All you need to do is edit
+   the reply and try again. We want to ensure that the content is
+   suitable for our community.
+<% end %>
+
+
+The Duelingpets Staff Team

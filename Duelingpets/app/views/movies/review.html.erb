@@ -1,0 +1,44 @@
+<% provide(:h1, "Movie Review") %>
+<div class="formlinks"><%= paginate @movies %></div>
+<br>
+<div class="pageformat">
+   <% @movies.each_with_index do |movie, index| %>
+      <% if(index % 3 == 2) %>
+         <div class="container">
+      <% else %>
+         <!--Container space-->
+         <div class="container">
+      <% end %>
+         <div class="container"><p class="formlinks">Name: <%= link_to movie.title, subplaylist_movie_path(movie.subplaylist, movie) %></p></div> <div class="container"><%= button_to 'Approve', movies_review1_path(:movie_id=>movie.id), method: :post, class: "button editbutton" %></div> <div class="container"><%= button_to 'Deny', movies_review2_path(:movie_id=>movie.id), method: :post, class: "button destroybutton" %></div>
+         <p>Created</p>
+         <p><%= distance_of_time_in_words_to_now movie.created_on %> ago on</p>
+         <p>(<%= movie.created_on.strftime("%B-%d-%Y") %>)</p>
+         <p>Updated</p>
+         <p><%= distance_of_time_in_words_to_now movie.updated_on %> ago on</p>
+         <p>(<%= movie.updated_on.strftime("%B-%d-%Y") %>)</p>
+         <% if movie.ogv.to_s != "" || movie.mp4.to_s != "" %>
+            <br>
+            <p><%= video_tag(getMusicOrVideo("Movie", movie), size: "200x200", :controls => true) %></p>
+         <% end %>
+         <br>
+         <% if movie.user.userinfo.miniavatar.to_s != "" %>
+            <p><%= image_tag(movie.user.userinfo.miniavatar_url(:thumb)) %></p>
+         <% end %>
+         <p class="formlinks">Director: <%= getUserPrivilege(movie.user) %><%= link_to movie.user.vname, user_path(movie.user) %></p>
+         <p>Subplaylist: <%= movie.subplaylist.title %></p>
+         <p>Group: <%= movie.bookgroup.name %></p>
+         <p>Status: <%= getActivity(movie.user) %>
+            <% if getActivity(movie.user) != "Online" && getActivity(movie.user) != "Inoperable" %>
+               for <%= distance_of_time_in_words_to_now getTime(movie.user) %>
+            <% end %>
+         </p>
+         <br>
+         <p class="textindent"><%= textFormater("Multi", movie.description, "All").html_safe %></p>
+      </div>
+      <% if index % 3 == 2 %>
+         <br>
+         <br>      
+      <% end %>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

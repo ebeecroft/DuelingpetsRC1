@@ -1,0 +1,101 @@
+<% provide(:h1, "Chaptertag List") %>
+<div class="formlinks"><%= paginate @chaptertags %></div>
+<br>
+<% @chaptertags.each do |chaptertag| %>
+   <div class="pageformat">
+      <p class="formlinks"><%= link_to chaptertag.chapter.name, book_chapter_path(chaptertag.chapter.book, chaptertag.chapter) %></p>
+      <p>Tag list</p>
+      <% if(!chaptertag.tag1_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag1_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag1_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!chaptertag.tag2_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag2_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag2_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!chaptertag.tag3_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag3_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag3_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!chaptertag.tag4_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag4_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag4_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!chaptertag.tag5_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag5_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag5_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!chaptertag.tag6_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag6_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag6_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!chaptertag.tag7_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag7_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag7_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!chaptertag.tag8_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag8_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag8_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!chaptertag.tag9_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag9_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag9_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!chaptertag.tag10_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag10_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag10_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!chaptertag.tag11_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag11_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag11_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!chaptertag.tag12_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag12_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag12_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!chaptertag.tag13_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag13_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag13_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!chaptertag.tag14_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag14_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag14_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!chaptertag.tag15_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag15_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag15_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!chaptertag.tag16_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag16_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag16_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!chaptertag.tag17_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag17_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag17_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!chaptertag.tag18_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag18_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag18_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!chaptertag.tag19_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag19_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag19_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!chaptertag.tag20_id.nil?) %>
+         <div class="container"><%= getTagname(chaptertag.tag20_id) %></div>
+         <div class="container"><%= button_to 'X', chaptertags_removetag_path(:chaptertag_id=>chaptertag.id, :tagid=>chaptertag.tag20_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <br>
+      <% if chaptertag.chapter.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(chaptertag.chapter.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Owner: <%= getUserPrivilege(chaptertag.chapter.user) %><%= link_to chaptertag.chapter.user.vname, user_path(chaptertag.chapter.user) %></p>
+      <p>Status: <%= getActivity(chaptertag.chapter.user) %>
+         <% if getActivity(chaptertag.chapter.user) != "Online" && getActivity(chaptertag.chapter.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(chaptertag.chapter.user) %>
+         <% end %>
+      </p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

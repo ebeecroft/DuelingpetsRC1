@@ -1,0 +1,105 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  partner_name: MyString
+  partner_plevel: 1
+  partner_pexp: 1
+  partner_chp: 1
+  partner_hp: 1
+  partner_atk: 1
+  partner_def: 1
+  partner_agility: 1
+  partner_strength: 1
+  partner_mlevel: 1
+  partner_mexp: 1
+  partner_cmp: 1
+  partner_mp: 1
+  partner_matk: 1
+  partner_mdef: 1
+  partner_magi: 1
+  partner_mstr: 1
+  partner_lives: 1
+  partner_damage: 1
+  partner_activepet: false
+  creaturetype_id: 1
+  partner_rarity: 1
+  monster_name: MyString
+  monster_mischief: MyString
+  monster_plevel: 1
+  monster_chp: 1
+  monster_hp: 1
+  monster_atk: 1
+  monster_def: 1
+  monster_agility: 1
+  monster_mlevel: 1
+  monster_cmp: 1
+  monster_mp: 1
+  monster_matk: 1
+  monster_mdef: 1
+  monster_magi: 1
+  monster_loot: 1
+  monster_damage: 1
+  monstertype_id: 1
+  monster_rarity: 1
+  round: 1
+  tokens_earned: 1
+  exp_earned: 1
+  dreyore_earned: 1
+  items_earned: 1
+  battleover: false
+  started_on: 2020-11-07 07:51:56
+  ended_on: 2020-11-07 07:51:56
+  partner_id: 1
+  monster_id: 1
+
+two:
+  partner_name: MyString
+  partner_plevel: 1
+  partner_pexp: 1
+  partner_chp: 1
+  partner_hp: 1
+  partner_atk: 1
+  partner_def: 1
+  partner_agility: 1
+  partner_strength: 1
+  partner_mlevel: 1
+  partner_mexp: 1
+  partner_cmp: 1
+  partner_mp: 1
+  partner_matk: 1
+  partner_mdef: 1
+  partner_magi: 1
+  partner_mstr: 1
+  partner_lives: 1
+  partner_damage: 1
+  partner_activepet: false
+  creaturetype_id: 1
+  partner_rarity: 1
+  monster_name: MyString
+  monster_mischief: MyString
+  monster_plevel: 1
+  monster_chp: 1
+  monster_hp: 1
+  monster_atk: 1
+  monster_def: 1
+  monster_agility: 1
+  monster_mlevel: 1
+  monster_cmp: 1
+  monster_mp: 1
+  monster_matk: 1
+  monster_mdef: 1
+  monster_magi: 1
+  monster_loot: 1
+  monster_damage: 1
+  monstertype_id: 1
+  monster_rarity: 1
+  round: 1
+  tokens_earned: 1
+  exp_earned: 1
+  dreyore_earned: 1
+  items_earned: 1
+  battleover: false
+  started_on: 2020-11-07 07:51:56
+  ended_on: 2020-11-07 07:51:56
+  partner_id: 1
+  monster_id: 1

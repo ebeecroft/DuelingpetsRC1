@@ -1,0 +1,138 @@
+<%= form_with(model: [@book, @chapter], local: true) do |form| %>
+  <% if @chapter.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@chapter.errors.count, "error") %> prohibited this chapter from being saved:</h2>
+           <ul>
+              <% @chapter.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :story %>
+    <%= form.text_area :story %>
+  </div>
+  <br>
+  <p class="pageformat">Bookcover</p>
+  <div class="pageformat">
+     <%= image_tag @chapter.bookcover_url(:thumb).to_s if @chapter.bookcover? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :bookchapter %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_bookcover_url, "or Bookcover URL" %>
+     <%= form.text_field :remote_bookcover_url %>
+     <%= form.hidden_field :bookcover_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Storyscene1</p>
+  <div class="pageformat">
+     <%= image_tag @chapter.storyscene1_url(:thumb).to_s if @chapter.storyscene1? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :storyscene1 %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_storyscene1_url, "or Storyscene1 URL" %>
+     <%= form.text_field :remote_storyscene1_url %>
+     <%= form.hidden_field :storyscene1_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Voice1ogg files</p>
+  <div class="pageformat">
+     <%= audio_tag(@chapter.voice1ogg_url.to_s, :controls => true) if @chapter.voice1ogg? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :voice1ogg %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_voice1ogg_url, "or Voice1ogg URL" %>
+     <%= form.text_field :remote_voice1ogg_url %>
+     <%= form.hidden_field :voice1ogg_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Voice1mp3 files</p>
+  <div class="pageformat">
+     <%= audio_tag(@chapter.voice1mp3_url.to_s, :controls => true) if @chapter.voice1mp3? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :voice1mp3 %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_voice1mp3_url, "or Voice1Mp3 URL" %>
+     <%= form.text_field :remote_voice1mp3_url %>
+     <%= form.hidden_field :voice1mp3_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Voice2ogg files</p>
+  <div class="pageformat">
+     <%= audio_tag(@chapter.voice2ogg_url.to_s, :controls => true) if @chapter.voice2ogg? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :voice2ogg %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_voice2ogg_url, "or Voice2ogg URL" %>
+     <%= form.text_field :remote_voice2ogg_url %>
+     <%= form.hidden_field :voice2ogg_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Voice2mp3 files</p>
+  <div class="pageformat">
+     <%= audio_tag(@chapter.voice2mp3_url.to_s, :controls => true) if @chapter.voice2mp3? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :voice2mp3 %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_voice2mp3_url, "or Voice2Mp3 URL" %>
+     <%= form.text_field :remote_voice2mp3_url %>
+     <%= form.hidden_field :voice2mp3_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Voice3ogg files</p>
+  <div class="pageformat">
+     <%= audio_tag(@chapter.voice3ogg_url.to_s, :controls => true) if @chapter.voice3ogg? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :voice3ogg %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_voice3ogg_url, "or Voice3ogg URL" %>
+     <%= form.text_field :remote_voice3ogg_url %>
+     <%= form.hidden_field :voice3ogg_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Voice3mp3 files</p>
+  <div class="pageformat">
+     <%= audio_tag(@chapter.voice3mp3_url.to_s, :controls => true) if @chapter.voice3mp3? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :voice3mp3 %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_voice3mp3_url, "or Voice3Mp3 URL" %>
+     <%= form.text_field :remote_voice3mp3_url %>
+     <%= form.hidden_field :voice3mp3_cache %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :bookgroup_id, "Select Group" %>
+    <%= form.collection_select(:bookgroup_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', bookworld_book_path(@book.bookworld, @book) %></p>
+<% end %>

@@ -1,0 +1,25 @@
+<% provide(:title, "Duelingpets: Activate") %>
+<% provide(:description, "Before you can use your account, it is important you activate it first using the supplied token.") %>
+<% provide(:h1, "Activate Account") %>
+<div class="pageformat">
+   <p><%= image_tag(@artpage.art_url(:thumb)) %></p>
+   <p class="textindent"><%= textFormater("Multi", @artpage.message, "All").html_safe %></p>
+</div>
+<br>
+<div class="pageformat">
+   <%= form_for(:session, url: activatepost_path) do |f| %>
+      <p><%= f.label :login_id, "Login Name" %></p>
+      <p><%= f.password_field :login_id %></p>
+      <br>
+      <p><%= f.label :token %></p>
+      <p><%= f.password_field :token %></p>
+      <br>
+      <p><%= f.submit "Activate", class: "button submitbutton" %></p>
+   <% end %>
+</div>
+<div class="pageformat">
+   <br>
+   <p class="formlinks">Expired Token? <%= link_to "Reset Timer!", extendtime_path %></p>
+   <br>
+   <p class="formlinks"><%= link_to "Back", login_path %></p>
+</div>

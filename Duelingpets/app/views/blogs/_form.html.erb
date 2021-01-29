@@ -1,0 +1,206 @@
+<%= form_with(model: [@user, @blog], local: true) do |form| %>
+  <% if @blog.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@blog.errors.count, "error") %> prohibited this blog from being saved:</h2>
+           <ul>
+              <% @blog.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :description %>
+    <%= form.text_area :description %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :bookgroup_id, "Select Group" %>
+    <%= form.collection_select(:bookgroup_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <% if object == "New" %>
+     <div class="pageformat">
+        <%= form.label :blogtype_id, "Select Blogtype" %>
+        <%= form.collection_select(:blogtype_id, @blogtypes, :id, :name) %>
+     </div>
+     <br>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :gviewer_id, "Select Gviewer" %>
+    <%= form.collection_select(:gviewer_id, @gviewers, :id, :name) %>
+  </div>
+  <br>
+  <% if object == "New" || @blog.blogtype.name == "Blog" %>
+     <p class="pageformat">Ad Mascot</p>
+     <div class="pageformat">
+        <%= image_tag @blog.admascot_url(:thumb).to_s if @blog.admascot? %>
+     </div>
+     <div class="pageformat">
+        <%= form.file_field :admascot %>
+     </div>
+     <div class="pageformat">
+        <%= form.label :remote_admascot_url, "or Admascot URL" %>
+        <%= form.text_field :remote_admascot_url %>
+        <%= form.hidden_field :admascot_cache %>
+     </div>
+     <br>
+  <% end %>
+  <% if object == "New" || @blog.blogtype.name == "Adblog" %>
+     <p class="pageformat">Ogg files</p>
+     <div class="pageformat">
+        <%= audio_tag(@blog.ogg_url.to_s, :controls => true) if @blog.ogg? %>
+     </div>
+     <div class="pageformat">
+        <%= form.file_field :ogg %>
+     </div>
+     <div class="pageformat">
+        <%= form.label :remote_ogg_url, "or Ogg URL" %>
+        <%= form.text_field :remote_ogg_url %>
+        <%= form.hidden_field :ogg_cache %>
+     </div>
+     <br>
+     <p class="pageformat">MP3 files</p>
+     <div class="pageformat">
+        <%= audio_tag(@blog.mp3_url.to_s, :controls => true) if @blog.mp3? %>
+     </div>
+     <div class="pageformat">
+        <%= form.file_field :mp3 %>
+     </div>
+     <div class="pageformat">
+        <%= form.label :remote_mp3_url, "or Mp3 URL" %>
+        <%= form.text_field :remote_mp3_url %>
+        <%= form.hidden_field :mp3_cache %>
+     </div>
+     <br>
+     <p class="pageformat">Ad Banner</p>
+     <div class="pageformat">
+        <%= image_tag @blog.adbanner_url(:thumb).to_s if @blog.adbanner? %>
+     </div>
+     <div class="pageformat">
+        <%= form.file_field :adbanner %>
+     </div>
+     <div class="pageformat">
+        <%= form.label :remote_adbanner_url, "or Adbanner URL" %>
+        <%= form.text_field :remote_adbanner_url %>
+        <%= form.hidden_field :adbanner_cache %>
+     </div>
+     <br>
+     <p class="pageformat">Large Image1</p>
+     <div class="pageformat">
+        <%= image_tag @blog.largeimage1_url(:thumb).to_s if @blog.largeimage1? %>
+     </div>
+     <div class="pageformat">
+        <%= form.file_field :largeimage1 %>
+     </div>
+     <div class="pageformat">
+        <%= form.label :remote_largeimage1_url, "or Largeimage1 URL" %>
+        <%= form.text_field :remote_largeimage1_url %>
+        <%= form.hidden_field :largeimage1_cache %>
+     </div>
+     <br>
+     <p class="pageformat">Large Image2</p>
+     <div class="pageformat">
+        <%= image_tag @blog.largeimage2_url(:thumb).to_s if @blog.largeimage2? %>
+     </div>
+     <div class="pageformat">
+        <%= form.file_field :largeimage2 %>
+     </div>
+     <div class="pageformat">
+        <%= form.label :remote_largeimage2_url, "or Largeimage2 URL" %>
+        <%= form.text_field :remote_largeimage2_url %>
+        <%= form.hidden_field :largeimage2_cache %>
+     </div>
+     <br>
+     <p class="pageformat">Large Image3</p>
+     <div class="pageformat">
+        <%= image_tag @blog.largeimage3_url(:thumb).to_s if @blog.largeimage3? %>
+     </div>
+     <div class="pageformat">
+        <%= form.file_field :largeimage3 %>
+     </div>
+     <div class="pageformat">
+        <%= form.label :remote_largeimage3_url, "or Largeimage3 URL" %>
+        <%= form.text_field :remote_largeimage3_url %>
+        <%= form.hidden_field :largeimage3_cache %>
+     </div>
+     <br>
+     <p class="pageformat">Small Image1</p>
+     <div class="pageformat">
+        <%= image_tag @blog.smallimage1_url(:thumb).to_s if @blog.smallimage1? %>
+     </div>
+     <div class="pageformat">
+        <%= form.file_field :smallimage1 %>
+     </div>
+     <div class="pageformat">
+        <%= form.label :remote_smallimage1_url, "or Smallimage1 URL" %>
+        <%= form.text_field :remote_smallimage1_url %>
+        <%= form.hidden_field :smallimage1_cache %>
+     </div>
+     <br>
+     <p class="pageformat">Small Image2</p>
+     <div class="pageformat">
+        <%= image_tag @blog.smallimage2_url(:thumb).to_s if @blog.smallimage2? %>
+     </div>
+     <div class="pageformat">
+        <%= form.file_field :smallimage2 %>
+     </div>
+     <div class="pageformat">
+        <%= form.label :remote_smallimage2_url, "or Smallimage2 URL" %>
+        <%= form.text_field :remote_smallimage2_url %>
+        <%= form.hidden_field :smallimage2_cache %>
+     </div>
+     <br>
+     <p class="pageformat">Small Image3</p>
+     <div class="pageformat">
+        <%= image_tag @blog.smallimage3_url(:thumb).to_s if @blog.smallimage3? %>
+     </div>
+     <div class="pageformat">
+        <%= form.file_field :smallimage3 %>
+     </div>
+     <div class="pageformat">
+        <%= form.label :remote_smallimage3_url, "or Smallimage3 URL" %>
+        <%= form.text_field :remote_smallimage3_url %>
+        <%= form.hidden_field :smallimage3_cache %>
+     </div>
+     <br>
+     <p class="pageformat">Small Image4</p>
+     <div class="pageformat">
+        <%= image_tag @blog.smallimage4_url(:thumb).to_s if @blog.smallimage4? %>
+     </div>
+     <div class="pageformat">
+        <%= form.file_field :smallimage4 %>
+     </div>
+     <div class="pageformat">
+        <%= form.label :remote_smallimage4_url, "or Smallimage4 URL" %>
+        <%= form.text_field :remote_smallimage4_url %>
+        <%= form.hidden_field :smallimage4_cache %>
+     </div>
+     <br>
+     <p class="pageformat">Small Image5</p>
+     <div class="pageformat">
+        <%= image_tag @blog.smallimage5_url(:thumb).to_s if @blog.smallimage5? %>
+     </div>
+     <div class="pageformat">
+        <%= form.file_field :smallimage5 %>
+     </div>
+     <div class="pageformat">
+        <%= form.label :remote_smallimage5_url, "or Smallimage5 URL" %>
+        <%= form.text_field :remote_smallimage5_url %>
+        <%= form.hidden_field :smallimage5_cache %>
+     </div>
+     <br>
+  <% end %>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', user_path(@blog.user) %></p>
+<% end %>

@@ -1,0 +1,43 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  created_on: 2019-07-08 05:00:48
+  banner: MyString
+  mascot: MyString
+  favicon: MyString
+  daycolor_id: 1
+  nightcolor_id: 1
+  ogg: MyString
+  mp3: MyString
+  criticalogg: MyString
+  criticalmp3: MyString
+  betaogg: MyString
+  betamp3: MyString
+  grandogg: MyString
+  grandmp3: MyString
+  creationogg: MyString
+  creationmp3: MyString
+  maintenanceogg: MyString
+  maintenancemp3: MyString
+  gate_open: false
+
+two:
+  created_on: 2019-07-08 05:00:48
+  banner: MyString
+  mascot: MyString
+  favicon: MyString
+  daycolor_id: 1
+  nightcolor_id: 1
+  ogg: MyString
+  mp3: MyString
+  criticalogg: MyString
+  criticalmp3: MyString
+  betaogg: MyString
+  betamp3: MyString
+  grandogg: MyString
+  grandmp3: MyString
+  creationogg: MyString
+  creationmp3: MyString
+  maintenanceogg: MyString
+  maintenancemp3: MyString
+  gate_open: false

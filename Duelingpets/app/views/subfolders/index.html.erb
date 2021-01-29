@@ -1,0 +1,28 @@
+<% provide(:h1, "Subfolder List") %>
+<div class="formlinks"><%= paginate @subfolders %></div>
+<br>
+<% @subfolders.each do |subfolder| %>
+   <div class="pageformat">
+      <p>Created: <%= distance_of_time_in_words_to_now subfolder.created_on %> ago on (<%= subfolder.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now subfolder.updated_on %> ago on (<%= subfolder.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <div class="container"><p class="formlinks">Title: <%= link_to subfolder.title, mainfolder_subfolder_path(subfolder.mainfolder, subfolder) %></p></div> <div class="container"><%= button_to 'Edit', edit_mainfolder_subfolder_path(subfolder.mainfolder, subfolder), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [subfolder.mainfolder, subfolder], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <br>
+      <% if subfolder.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(subfolder.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Artist: <%= getUserPrivilege(subfolder.user) %><%= link_to subfolder.user.vname, user_path(subfolder.user) %></p>
+      <p class="formlinks">Mainfolder: <%= link_to subfolder.mainfolder.title, gallery_mainfolder_path(subfolder.mainfolder.gallery, subfolder.mainfolder) %></p>
+      <p>Collab mode: <%= subfolder.collab_mode %></p>
+      <p>Fave folder: <%= subfolder.fave_folder %></p>
+      <p>Private sheet: <%= subfolder.privatesubfolder %></p>
+      <p>Status: <%= getActivity(subfolder.user) %>
+         <% if getActivity(subfolder.user) != "Online" && getActivity(subfolder.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(subfolder.user) %>
+         <% end %>
+      </p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", subfolder.description, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

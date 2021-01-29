@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+   </head>
+   <body>
+      <% if @type == "Blog" %>
+         <h1>Your new blog <%= @content.title %> was approved!</h1>
+      <% elsif @type == "OC" %>
+         <h1>Your new oc <%= @content.name %> was approved!</h1>
+      <% elsif @type == "Movie" %>
+         <h1>Your new movie <%= @content.title %> was approved!</h1>
+      <% elsif @type == "Art" %>
+         <h1>Your new art <%= @content.title %> was approved!</h1>
+      <% elsif @type == "Sound" %>
+         <h1>Your new sound <%= @content.title %> was approved!</h1>
+      <% elsif @type == "Chapter" %>
+         <h1>Your new chapter <%= @content.title %> was approved!</h1>
+      <% elsif @type == "Element" %>
+         <h1>Your new element <%= @content.name %> was approved!</h1>
+      <% elsif @type == "Creature" %>
+         <h1>Your new creature <%= @content.name %> was approved!</h1>
+      <% elsif @type == "Monster" %>
+         <h1>Your new monster <%= @content.name %> was approved!</h1>
+      <% elsif @type == "Item" %>
+         <h1>Your new item <%= @content.name %> was approved!</h1>
+      <% end %>
+      <p>
+         Our review team has taken the time to do look over
+         the <%= @type.downcase %> you submited to our site and found
+         that it fits into the correct book group. The
+         <% if @type == "Blog" %>
+            images if any that this blog contains appear
+            to be operating within normal parameters.
+            Depending on wether or not this blog is running
+            with ads we have taken the liberty of removing
+            or adding points to your points account. Blogs
+            are a good place to advertise your artwork,
+            pets, movies, or sounds.
+         <% elsif @type == "OC" %>
+            oc itself has a lot of interesting looking features,
+            the background tunes are well out of this world. The
+            voice is really well done and reflects the feel of
+            the character itself. The image of the character
+            itself looks really cool and looks like you put in a
+            lot of effort in its design.
+         <% elsif @type == "Movie" %>
+            movie you have created is really nice. The other
+            users will have a lot of fun watching your video.   
+         <% elsif @type == "Art" %>
+            art you have created is really nice. I am sure
+            that the others will enjoy looking at your
+            beautiful artwork too. The sounds if any seem to
+            set the scene quite well.   
+         <% elsif @type == "Sound" %>
+            sound you created is really nice. The other users
+            will like it a lot too.
+         <% elsif @type == "Chapter" %>
+            content you have written for this chapter feels as
+            if the characters themselves are going to spring
+            forth from the pages. The voice acting if any is
+            really spot on and sounds quite good. The character
+            art if any looks really cool too.   
+         <% elsif @type == "Element" %>   
+            element you created will open the doors to new
+            monsters and creatures. Also the image itself looks
+            really cool. I am sure the users will be able to
+            put this new element to good use. Well done.
+         <% elsif @type == "Creature" %>
+            creature has a lot of interesting looking stats,
+            it feels like it is pretty balanced. The image of
+            the creature itself looks really good. The music
+            and creature voice appear to be really good.
+         <% elsif @type == "Monster" %>
+            monster has a lot of interesting looking stats,
+            and feels pretty balanced. The image of the
+            monster looks really good.
+         <% elsif @type == "Item" %>
+            item itself has a lot of interesting looking stats,
+            it feels like it is pretty balanced. The image of
+            the item itself looks really good.
+         <% end %>
+         <% if @type != "Element" && @type != "Creature" && @type != "Monster" && type != "Item" %>
+            In recognition of your effort we have decided
+            to add these <%= @points %> points to your account.
+         <% else %>
+            Since the <%= @type %> was approved by our team we have deducted <%= @points %> points
+            from your account. Thank you for using our <%= @type %> creation system, we hope to see
+            you again soon.
+         <% end %>
+      </p>
+      <br>
+      <p>The Duelingpets Staff Team</p>
+   </body>
+</html>

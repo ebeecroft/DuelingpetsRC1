@@ -1,0 +1,28 @@
+<% provide(:h1, "Subplaylist List") %>
+<div class="formlinks"><%= paginate @subplaylists %></div>
+<br>
+<% @subplaylists.each do |subplaylist| %>
+   <div class="pageformat">
+      <p>Created: <%= distance_of_time_in_words_to_now subplaylist.created_on %> ago on (<%= subplaylist.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now subplaylist.updated_on %> ago on (<%= subplaylist.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <div class="container"><p class="formlinks">Title: <%= link_to subplaylist.title, mainplaylist_subplaylist_path(subplaylist.mainplaylist, subsheet) %></p></div> <div class="container"><%= button_to 'Edit', edit_mainplaylist_subplaylist_path(subplaylist.mainplaylist, subplaylist), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [subplaylist.mainplaylist, subplaylist], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <br>
+      <% if subplaylist.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(subplaylist.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Director: <%= getUserPrivilege(subplaylist.user) %><%= link_to subplaylist.user.vname, user_path(subplaylist.user) %></p>
+      <p class="formlinks">Mainplaylist: <%= link_to subplaylist.mainplaylist.title, channel_mainplaylist_path(subplaylist.mainplaylist.channel, subplaylist.mainplaylist) %></p>
+      <p>Collab mode: <%= subplaylist.collab_mode %></p>
+      <p>Fave folder: <%= subplaylist.fave_folder %></p>
+      <p>Private sheet: <%= subplaylist.privatesubplaylist %></p>
+      <p>Status: <%= getActivity(subplaylist.user) %>
+         <% if getActivity(subplaylist.user) != "Online" && getActivity(subplaylist.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(subplaylist.user) %>
+         <% end %>
+      </p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", subplaylist.description, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

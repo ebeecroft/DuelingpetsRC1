@@ -1,0 +1,149 @@
+== Removals
+== Iteration 4
+== User Information
+* Accounttype: The difficulty in keeping accounttype is it places strain on available points and emeralds stored in storage accounts. When points and emeralds are placed in storage that means they are not out there buying things and reduce the amount of capital flowing through the economy. This also has a negative affect on the Dragonhoard which is a fundamental part of balancing the economy. The Central Bank uses the points it gets from taxes to create emeralds for the user to buy. So what this means is the Central Bank would be unable to purchase pets and items from the player or to perform upgrades to its Warehouse. The Central Bank is highly reliant on users making purchases as it doesn't create points on its own. Since email has been changed to be one email per account for recovery features, it made no sense to keep this feature floating around.
+
+== Changes
+== Iteration 4
+== User Content
+* Gviewer: Renamed blogviewers to gviewers to provide a generic viewer object that can be used with any table.
+
+== Additions
+== Iteration 4
+== Battles
+* Fight: Keeps tracks of loss, wins and draws of pet battles for the specific pet.
+
+* Monster: Allows the user to create various monsters that other users may battle. Monsters may be either a Mon or a Boss based on their monster type, and like creatures they have a variety of different stats that can be set. Monsters in general are the only source of dreyore materials, a necessary ingredient in the construction of items and creatures. Monsters have a property called mischief which applies a condition of some kind to the player or pet. Monsters require a combination of points and emeralds to create them.
+
+* Monsterbattle: Allows the player's partner to fight a monster and depending on if they win, they might get a variety of different loot.
+
+* Element: Allows pets and monsters to have specific strengths and weakness to certain elements. For example fire is weak to water, and water is weak to grass, and grass is weak to fire. These elements are user generated and as such, adds a new dynamic to the way pet battles are now handled compared to the original version of the website.
+
+== User Content
+* Tag: Allows the user to create a variety of tags that they can then apply to their ocs, arts, sounds, movies and chapters. In a future update this might make it easier to search for a specific oc, or other content based on the tag alone.
+
+== Central Bank
+
+* Warehouse: A place for users to purchase items and pets that the Dragonhoard owns. In order to refill its inventory the warehouse will purchase the items and pets from the artist for a modest fee. Any points and emeralds gained from here can then be transfered back to the central bank. Witemshelves is an item storage system for the warehouse, and can hold up to a max of 30 items per shelf. Wpetdens is a pet storage system for the warehouse, and can hold up to a max of 16 pets per den. Each of these features can raise or lower the tax on each individual item or pet to adjust the price of the object.
+
+== Communications
+* Blogreply: Allows users to write comments on another user's blog. Unlike shouts and pms which take points away from the user, this is the only one that awards points to the blog owner. Like shouts, blogreplies must be reviewed before other logged in users can view the message that the reply was sent from. Blogreplies are not displayed to guests for users privacy.
+
+== Webcontrols
+* Faq: Provides an important help file for users to consult for a variety of different features on the website. An example of this would be creating a working gallery. It uses a combination of prereqs and steps fields to provide information on how to build one from the ground up.
+
+* Suggestion: Allows users to suggest important new features to the website or be used to report out new bugs that the users have discovered while navigating the website.
+
+== User Information
+* Regtoken: Allows a user to register for an account if they are underage and parental consent has been received.
+
+== Iteration 3
+== Galleries
+* Gallery: Allows users to be able to store their various artwork on the website. To set one up the user needs to buy the gallery upgrade first. After that they will need to pay in points to create a gallery. In addition to this the user can setup some music to give the gallery a bit of flavor. Gallery content can be restricted to various bookgroups depending on the content that it contains.
+
+* Mainfolder: Is a folder that the user uses to showcase a single image from their gallery. In order for them to display the image, the artwork itself must be reviewed first.
+
+* Subfolder: Allows additional seperation of the mainfolder content, this can be as simple as dog, cats, and sheep subfolders. Subfolders have a special trait in that they can be changed into either a favorite folder, or artwork folder depending on the click of a button. Subfolders can be turned into collaboration centers that allow multiple people to submit artwork to this one subfolder. Subfolders allow additional bookgroup restrictions if needed.
+
+* Art: Are artworks that the user decided to upload to the website, these may at times contain music to help play out a scene. Unlike the gallery, mainfolder, and subfolder, artwork must be first approved by the Duelingpets staff in order for it to show up to others on the site. Artwork allows the user to generate points and is dependent on the price of the day that is set by the dragonhoard.
+
+== User Content
+* Partner: Are creatures that the user adopted be they Zethians or Pets. Partners don't like engaging in battle as it is not a lot of fun for them. They don't like fighting all that much so their fun values decrease depending on the monster's level. A pet's strength determines the item the pet can equip and with each item it decreases the pet's strength to boost other stats. Pets that are in battle can't be healed or fed and have a limited set of lives based on the creature lives. Also when a pet wins battles they can level up and increase their stats. Activepet determines which pet is currently following the player.
+
+== User information
+* Inventoryslots stores the items that the user purchased and is limited to a total of 14 per slot. Starting durability displays the amount of uses the item initially starts off with and current durability displays the amount of uses left for that particular item. Quantity shows the amount of items left in a particular itemslot and once the last item is used up the itemslot gets set to nil.
+
+* Equip: Stores the items that are currently equipped to the partner. Capacity determines how many equipslots the partner can carry, currently this is set to three. Equipslots show the items that are equipped to the partner and supports up to 8 items. Unlike inventoryslot there is no quantity attributes. Starting durability displays the amount of uses the item initially starts off with and current durability displays the amount of uses left for that particular item. In order for an item to be equipped the amount of strength that the item requires must be less than or equal to the pet's current strength.
+
+* Itemaction: Determines what the user wants to do with the item that they are applying to the pet. Possible choices are Discard, Equip, Feed, Drink, and Play. Additional actions might be added later. Discard sends the item to the junk dealer to look over and he will offer the player some points in exchange for the item itself. The Equip option is only offered on items that can be attached to the pet itself. The Feed option only works for items like bread that the pet can eat to restore their hunger. The Drink option only works for items like milk that the pet can drink to restore their thirst. The Play option is meant for toys like yoyos that they can use to increase their fun value.
+
+== Iteration 2
+== Channels
+* Channel: Allows users to be able to store their various videos on the website. To set one up the user needs to buy the channel upgrade first. After that they will need to pay in points to create a channel. In addition to this the user can setup some music to give the channel a bit of flavor. Channel content can be restricted to various bookgroups depending on the content that it contains.
+
+* Mainplaylist: Is a folder that the user uses to showcase a single video from their channel. In order for them to display the video, the movie itself must be reviewed first.
+
+* Subplaylist: Allows additional seperation of the mainplaylist content, this can be as simple as rps, movies, or crafting subplaylists. Suplaylists have a special trait in that they can be changed into either a favorite folder or movie folder depending on the click of a button. Subplaylists can be turned into collaboration centers that allow multiple people to submit movies to this one suplaylist. Subplaylists allow additional bookgroup restrictions if needed.
+
+* Movie: Are movies that the user decided to upload to the website. Unlike the channel, mainplaylist, and subsheet, movies must be first approved by the Duelingpets staff in order for it to show up to others on the site. Movie allows the user to generate points and is dependent on the price of the day that is set by the dragonhoard.
+
+== Bookworlds
+* Bookworld: Allows users to be able to store their various stories on the website. Bookworlds sets up the story universe that the author has created. In addition to this the user can open up the bookworld to others and allow other users to create books of their own in this universe. The user may also choose to setup a price for books that the others might create here.
+
+* Book: Is a story that may contain multiple chapters that the player created for a certain universe. The user may choose to open up this book for collaboration with many other people to submit chapters. Book content can be restricted to various bookgroups depending on the content that it contains. Some example of books could be like superman, flash gordon, or pokemon. In order to create one the user needs to buy the book upgrade first. After that they will need to pay points to the bookworld owner to create a book there.
+
+* General chapters: Are generic chapters that are numbered 1 to n that are used as a template for a chapter. These get increased each time the limit of a book exceeds the amount of generic chapters that are available.
+
+* Chapter: Are chapters that the user decided to upload to the website, these may at times contain a bookcover, character voices, background music, or artwork of a character for a particular scene. Unlike the bookworld, book, and gchapters, chapter must be first approved by the Duelingpets staff in order for it to show up to others on the site. Chapters allows the user to generate points and is dependent on the price of the day.
+
+== Communications
+* Donationbox: Allows the user to store donations from other users, these can be from point commissions or from users who enjoy other peoples artwork. Donationboxes have a goal and progress limit for keeping track of points. The goal is an amount of points that the user needs to reach before they can safely withdraw the points from their donationbox. The progress bar keeps track of how many points have been received by the system in relation to the goal. There is a maximum capacity of 2 Million points that can be safely stored here. While you could set your goal to this number, it is not recommended as that might take a long while to reach. There are safety valves built into the system to ensure that points are not forever stuck in a donationbox. The user may choose to refund all the points that are currently stored in the donationbox and start over or the admin of the site can do so as well. When the user retrieves the points from their donationbox they are charged a small fee to pull the points out, which is based off the points that have been accumulated. The donationbox can be turned on or off depending on whether the user wishes to use this feature or not.
+
+* Donor: Are players who contribute a set amount of points to an user's donationbox. There is a maximum cap of 50000 points to ensure that one user doesn't monopolize the entire point limit that is set on the donationbox. The pointsreceived attribute is set once the points are safely pulled out of the donationbox, this is to ensure that the donations have been accounted for.
+
+* Referral: Allows players to refer other the users to the site by means of giving out their vname on a link. When the new user signs up for the site the player who referred them will receive points for doing so based on the points set up by the dragonhoard.
+
+== User information
+* Pouchtypes is used to identify the various types of items that can be upgraded. Pouchslots expands the pouch to accomodate fields such as galleries, blogs, channels, and others. Each slot is setup with free and member levels that determines how much of that particular item one can carry. Any fields that are available for future expansion are set to none. Pouchslots allows the pouch to expand infinitely without having to recode the pouch each time a new feature gets added. Pouchslots currently can support up to 42 attributes which might be changed over time.
+
+== Central Bank
+* Base Increment: Determines how much to increase or decrease a particular feature by. Valid increments are Tiny, Small, Medium, Large, XL and 2XL. Tiny is set to a value of 1, Small is set to a value of 10, Medium is set to a value of 100 and each additional one adds another 0 to the end.
+
+* Base Rate: Determines the rate at which to increase or decrease a particular feature through floats or doubles. Valid rates are Tiny, Small, Medium, Large, XL and 2XL. Tiny is set to a value of 0.1, Small is set to a value of 0.01, Medium is set to a value of 0.001 and each additional one adds another 0 in front of the number 1.
+
+* Fieldcost: Sets up the pricing for various user attributes. Econtype specifies whether this attribute is a source, since or tax on points. Baseinc determines how much to increase the value by. Amount is the current value in points of the attribute that we are looking at. Ratecost sets up the ratio for various user attributes. Econtype specifies whether this attribute is a source, sink or tax. Baserate determines how much to increase the value by. Amount is the current rate for a particular attribute.
+
+* Dreyores: Is a special material that the user is initially given upon signing up for an account. Dreyore can be either refined for points or the player can use it to build creatures and items. The ore itself can not be traded and maybe in the future might be given out for beating monsters. Each dreyore is worth a price of 20 points as its starting value and increases by 1 depending on how many total ores have been extracted. Change specifies the amount ores that need to be refined before bumping up the price, by default this is set to 7. Capacity determines the maximum dreyore cap the dragonhoard can hold up to. Once the dreyore is running low Glitchy can create more ores at the cost of setting the price back to 20. Current keeps track of how many dreyores are left at the dragonhoard. Baseinc increases the amount of ores that are stockpiled. Extracted keeps track of the total ores refined up to the change value before reseting back to 0. There are two dreyores available, Newbie and Monster each with its own cap, but only Newbie ore is active. Each player can store up to 10 dreyores initially.
+
+== Iteration 1
+== Jukeboxes
+* Jukebox: Allows users to be able to store their various music on the website. To set one up the user needs to buy the jukebox upgrade first. After that they will need to pay in points to create a jukebox. In additon to this the user can setup some music to give the jukebox a bit of flavor. Jukebox content can be restricted to various bookgroups depending on the content that it contains.
+
+* Mainsheet: Is a folder that the user uses to showcase a single song from their jukebox. In order for them to display the music, the sound itself must be reviewed first.
+
+* Subsheet: Allows additional seperation of the mainsheet content, this can be as simple as 8bit, 16bit, or 64bit subsheets. Subsheets have a special trait in that they can be changed into either a favorite folder or sound folder depending on the click of a button. Subsheets can be turned into collaboration centers that allow multiple people to submit sound to this one subsheet. Subsheets allow additional bookgroup restrictions if needed.
+
+* Sound: Are sounds that the user decided to upload to the website, these could be voices or background music. Unlike the jukebox, mainsheet, and subsheet, sounds must be first approved by the Duelingpets staff in order for it to show up to others on the site. Sound allows the user to generate points and is dependent on the price of the day that is set by the dragonhoard.
+
+== User Content
+* Colorscheme: Allows the user to stylized the colors of the website to whatever colors they wish. The nightcolor option allows the player to choose whether this colorscheme is for daytime or nighttime use. Activated allows the user to activate the color they created but caution should be taken to ensure that the colorscheme is tested first to ensure that all the buttons are not hidden otherwise they might get stuck in a situation they can't get out of. Colorschemes don't require any review or purchasing to use them. Colorschemes provide the user with points dependent on the price set by the dragonhoard.
+
+* Blog: Allows the user to provide a bit of news or thoughts of what they are thinking at the moment. These could also be used to let users know about pending point commissions that might begin to take place. Mascots are available to the user for free if the user chooses to use them, these are kind of like free advertisements. Banners, largeimages, smallimages, and music can be purchased but transform a blog into an advertisement section. Blogs need to be reviewed first by the Duelingpets staff before they show up to others on the site. Depending on what the user chooses this is one of the few features that can be either a point source or a sink. Blogtypes set the type of blog that the user chooses at the moment. The blog upgrade needs to be bought first before one can create a blog.
+
+* Blogviewer: Provides a way to adjust the type of users who can view the blog itself from only the player to anyone on the site. This maybe adjusted later down the road later to make this more generic. This way other features could make use of this feature.
+
+* Original Character(OC): Allows the user to create their very own characters that they can use in stories, videos, audio adventures, rps, and many more. An oc may contain an image, music, or even a voice to make their characters come alive. OCs need to be reviewed first by the Duelingpets team before they show up to the public. OCs provide the user with points dependent on the price set by the dragonhoard. This is one of the few features that is available at start that doesn't need to be bought, though its quantity is kind of limited.
+
+* Item: Allows the user to create various items that can be used to either heal the pet, feed it, play with it, or provide armor protection. Items require points and dreyores to create them, but user can then sell them for points and potentially emeralds. All items have a durability and once used up they disappear from the inventory. Items must reviewed first before they can be available to the public. Itemtypes determine the type of item the user is using or equiping. Also they set the base price for the item.
+
+* Creature: Allows the user to create various creatures that other users may adopt. The price is dependent on the level and if the user wants to make it purchaseable with emeralds. Creatures can have limited or unlimited lives at the flick of a button. Creatures need to be reviewed first before they are available for others to purchase. Creature type determines wether the creature being created is a pet or a Zethian, as well as the base cost of the creature. Creatures require points and dreyterrium to create them.
+
+== Communications
+* Shoutbox: Allows the user to store shouts on their profile with a limited quantity of 600 posts. The shoutbox can be activated or deactivated. When the shoutbox is turned on any user can post on the user's profile directly. When it is deactivated no one can post on the user's profile. Shouts are messages that are sent to the user's profile and must be reviewed by the user first in order for them to show up on the user's profile. Shouts are not displayed to guests for users privacy. Shouts take points out of the economy.
+
+* PMbox: Allows the user to store private messages from other users with a limited quantity of 8000 pms. The pmbox can activated or deactivated based on the user's preference. When it is turned on the user can receive pms from other users and when it is turned off user's won't be able to send them messages. PMs are messages that sent or received between different users and only those in the chain can view that particular pm. PMs may contain music, video or even an image sent with their pm. PMs also keep track of if any pm is currently unread. PMreplies allow the user to reply to a specific pm and send the reply back and forth with the original pm owner. Like the pm, the pmreply can contain music, video or even an image sent with their pmreply.
+
+== User information
+* Registration: Allows the user to fill out their information in order to sign up for an account. The account itself can be shared if the player chooses to do so, by marking the shared checkmark. Registrations are looked over by the Duelingpets staff to ensure that this account is not a bot and must undergo manual approval before being converted to a user account. Two parts to keep in mind when registering for the site is that of your login name and virtual name. Your login name is private information that you use to login into your user account and only for that purpose. Anyone who potentially has this along with your password could take over your account and as such it is very important you keep that information to yourself. Your virtual name is how other users identify you on the site and such is okay to give out since it is public info. Accounttypes determine what type of account the player is using whether it be a play or storage account. Play accounts allow the user to upgrade their account to their fullest potential, while a storage account is used just for the storing of points.
+
+* User: Allows the player to explore the website as a whole through logining in. Players can reset their accounts if they have lost their password in two ways, the normal method requires the player to know just their virtual and login name which is a combination of a private and public information which then is sent to their registered email account. The other way is an alternate method that require a virtual and login name plus an email address. This way should only be used in case of emergencies where the user can't access their original email account and not on a daily basis. Userinfo contains the player's avatar, music, nightvision, and time preferences. The user can use this feature to set the website style that they view website through. Bookgroups determines what content the user can view, this ranges from kid friendly content via Peter the Rabbit to more restricted content in Lotr. Users have two bookgroups one for reading and one for writing. The Reading bookgroup determines what you can see and is always less than or equal to your Writing bookgroup setting. The Writing bookgroup setting always goes up overtime and never goes down, this allows you to set bookgroup fields on content while it is being created.
+
+* Pouch: Keeps track of the user's session and the amount of points, emeralds, and dreyore that the user is carrying. In this version level upgrades are stored directly in the pouch for pouchlevels, oclevels, bloglevels, emeraldlevels, and dreyterriumlevels(dreyore).
+
+* Inventory: In this version inventory has not yet been built other then belonging to a user, and can't handle the purchasing of items as the shop category has not been added to items yet. As such this attribute has no use in Iteration 1.
+
+* Difficulty: Determines how hard the game will be for the player, by adjusting the point debt, point loan, emerald debt, and emerald loan attributes. The Hatchling Difficulty is the easiest setting and starts the player off with zero points. The Mothling Difficulty is a bit more challing and starts the player off with -600 points to their name. Additional difficulty settings will be added in later. By default the player starts with 0 points to their name and must build from the ground up.
+
+* Gameinfo: Users can choose whether they want to start with lives turned on or off. When lives are turned off they can't purchase lives and only have one life to go through the game with and once they die they must start from the very beginning. If the have lives turned on they then may have more then one life to go by and can be revived. Aging determines whether the player has a set time limit that their character can last for before they die. Once the player is happy with their setting they can activate their gameinfo and once activated it can't be unset till the player dies or completes the game. Depending on how things turn out the player might succeed or fail and that will be reflected on their character. Currently this setting still needs to go under more development and as such doesn't do anything at this point.
+
+* Userupgrade: In this first iteration all of the userupgrade all attributes for base, inc, cost and max were applied to each attribute individually on one page. This was not very scalable and each time a new attribute needed to be added the entire database had to be wiped and restarted over again. So attributes were like pouchinc, pouchcost, pouchbase, pouchmax, emeraldbase, emeraldinc, emeraldcost, emeraldmax, etc. which was not very good. This was eventually changed in iteration 2 or 3.
+
+== Central Bank
+* Dragonhoard: Is the Central Bank for the Duelingpets Website and as such controls the entire virtual pet economy. The dragonhoard has its own music and its dragon avatar that adds a bit of flavor to the site and is run by a npc called Glitchy the Dragon. Any points that the dragonhoard earns through its taxes get stored as profit and once collected get added to the treasury. The dragonhoard treasury controls the economy of the game by increasing and decreasing the sources through out the site as well as the various sinks and taxes. The dragonhoard creates emeralds that the user can purchase in exchange for points that they have. Contest points are special points that are created from the treasury that Glitchy the Dragon can hand out for raffles and other events. In Iteration 1 all attribute fields that could be priced were stored directly on the dragonhoard which made things not very scalable as newly added features required the database to be cleared and then reloaded. This was eventually changed in iteration 2 or 3. The dragonhoard does not print out money and is reliant on the players themselves to make purchases.
+
+* Economy: Keeps track of the points flowing in and out of the economy. Econtype determines whether we are looking at a sink, source, or a tax transaction. Contenttype determines what attribute the economy transaction is coming from be it blog, colorscheme or others. Amount determines the value in points that is being taken in or out of the system.
+
+== Webcontrols
+* Webcontrol: Manages the Duelingpets website systems which includes opening and closing the registration booth. In addition to this the admin can change the music, mascot, banner and favicon images. Blacklisted names are names that the Duelingpets staff found to be bots during the registration process and are used to filter out other bots if they try to come back. Blacklisted domains are domains that the Duelingpets staff found to be bots during the registration process. The filter can be applied on a global domain level regardless of what the name part of the domain was or it can be specific to just that email address. Maintenancemode allows the Admin and Mods to shut down specific parts of the website to perform routine maintenance. Once fixed the page can be returned to normal operation but while it is down the user will be sent to a maintenance page to inform the user that the page is down. Artpages are used to apply a mascot with a message to a particular page. This is used to give the website a bit of flair.
+
+* Suspendedtimelimit: Allows the Admin and Mods to meet out fines to users that misbehave and ban them for a period of time. Depending on the severity of the rule break users may be fined a set of points and potentially emeralds that will be removed from their account. While the user is banned they will be unable to login to their account. Users will be given a reason of why they were banned and who applied the ban so they can discuss their case with the Duelingpets staff. There are no permabans from the site as all are set to expire after a set period of time.

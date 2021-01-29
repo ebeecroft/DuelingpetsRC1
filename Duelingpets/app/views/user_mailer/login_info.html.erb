@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+   </head>
+   <body>
+      <h1>Login Information</h1>
+      <p>Greetings <%= @user.vname %> your initial password for the
+         site is <%= @password %> and is used to login after your
+         account has been activated. In addition to this you will
+         need to use your login name <%= @user.login_id %> as well,
+         but remember to keep your login name private. Your
+         activation token <%= @user.pouch.remember_token %> is only
+         used to activate your account. Your virtual name
+         <%= @user.vname %> is your public profile and identifies
+         you to the rest of the world.
+      </p>
+      <p>This information should help you get started. There will
+         be a tutorial on the website that will explain how the
+         site works and additional parameters that haven't been
+         talked about yet. I hope you have fun exploring the site
+         and welcome to Duelingpets.
+      </p>
+      <br>
+      <p>The Duelingpets Staff Team</p>
+   </body>
+</html>

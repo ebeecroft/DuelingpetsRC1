@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  message: MyText
+  created_on: 2019-12-16 03:58:27
+  user1_unread: false
+  user2_unread: false
+  user_id: 1
+  pmbox_id: 1
+
+two:
+  title: MyString
+  message: MyText
+  created_on: 2019-12-16 03:58:27
+  user1_unread: false
+  user2_unread: false
+  user_id: 1
+  pmbox_id: 1

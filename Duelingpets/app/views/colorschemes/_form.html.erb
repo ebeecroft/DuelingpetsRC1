@@ -1,0 +1,198 @@
+<%= form_with(model: [@user, @colorscheme], local: true) do |form| %>
+  <% if @colorscheme.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@colorscheme.errors.count, "error") %> prohibited this colorscheme from being saved:</h2>
+           <ul>
+              <% @colorscheme.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :description %>
+    <%= form.text_area :description %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :nightcolor %>
+    <%= form.check_box :nightcolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :backgroundcolor %>
+    <%= form.text_field :backgroundcolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :headercolor %>
+    <%= form.text_field :headercolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :subheader1color %>
+    <%= form.text_field :subheader1color %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :subheader2color %>
+    <%= form.text_field :subheader2color %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :subheader3color %>
+    <%= form.text_field :subheader3color %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :textcolor %>
+    <%= form.text_field :textcolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :editbuttoncolor %>
+    <%= form.text_field :editbuttoncolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :editbuttonbackgcolor %>
+    <%= form.text_field :editbuttonbackgcolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :destroybuttoncolor %>
+    <%= form.text_field :destroybuttoncolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :destroybuttonbackgcolor %>
+    <%= form.text_field :destroybuttonbackgcolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :submitbuttoncolor %>
+    <%= form.text_field :submitbuttoncolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :submitbuttonbackgcolor %>
+    <%= form.text_field :submitbuttonbackgcolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :navigationcolor %>
+    <%= form.text_field :navigationcolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :navigationlinkcolor %>
+    <%= form.text_field :navigationlinkcolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :navigationhovercolor %>
+    <%= form.text_field :navigationhovercolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :navigationhoverbackgcolor %>
+    <%= form.text_field :navigationhoverbackgcolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :onlinestatuscolor %>
+    <%= form.text_field :onlinestatuscolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :profilecolor %>
+    <%= form.text_field :profilecolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :profilehovercolor %>
+    <%= form.text_field :profilehovercolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :profilehoverbackgcolor %>
+    <%= form.text_field :profilehoverbackgcolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :sessioncolor %>
+    <%= form.text_field :sessioncolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :navlinkcolor %>
+    <%= form.text_field :navlinkcolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :navlinkhovercolor %>
+    <%= form.text_field :navlinkhovercolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :navlinkhoverbackgcolor %>
+    <%= form.text_field :navlinkhoverbackgcolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :explanationborder %>
+    <%= form.text_field :explanationborder %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :explanationbackgcolor %>
+    <%= form.text_field :explanationbackgcolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :explanheadercolor %>
+    <%= form.text_field :explanheadercolor %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :explantextcolor %>
+    <%= form.text_field :explantextcolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :errorfieldcolor %>
+    <%= form.text_field :errorfieldcolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :errorcolor %>
+    <%= form.text_field :errorcolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :warningcolor %>
+    <%= form.text_field :warningcolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :notificationcolor %>
+    <%= form.text_field :notificationcolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :successcolor %>
+    <%= form.text_field :successcolor %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Usercolors', user_colorschemes_path %>|<%= link_to 'ColorSchemes', colorschemes_path %></p>
+<% end %>

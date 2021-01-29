@@ -1,0 +1,20 @@
+<% provide(:title, "Duelingpets: Findlogin") %>
+<% provide(:description, "There might be times when you misplace your account information. This handy tool will allow you to recover your login name should you ever need it. The account name will be sent to you so that you can login again.") %>
+<% provide(:h1, "Find Login") %>
+<div class="pageformat">
+   <p><%= image_tag(@artpage.art_url(:thumb)) %></p>
+   <p class="textindent"><%= textFormater("Multi", @artpage.message, "All").html_safe %></p>
+</div>
+<br>
+<div class="pageformat">
+   <%= form_for(:session, url: findloginpost_path) do |f| %>
+      <p><%= f.label :email, "Email" %></p>
+      <p><%= f.text_field :email %></p>
+      <br>
+      <p><%= f.submit "Retrieve account", class: "button submitbutton" %></p>
+   <% end %>
+</div>
+<br>
+<div class="pageformat">
+   <p class="formlinks"><%= link_to "Back", root_path %></p>
+</div>

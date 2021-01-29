@@ -1,0 +1,29 @@
+<%= form_with(model: [@gallery, @mainfolder], local: true) do |form| %>
+  <% if @mainfolder.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@mainfolder.errors.count, "error") %> prohibited this mainfolder from being saved:</h2>
+           <ul>
+              <% @mainfolder.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :description %>
+    <%= form.text_area :description %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', user_gallery_path(@gallery.user, @gallery) %></p>
+<% end %>

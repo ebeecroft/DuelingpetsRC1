@@ -1,0 +1,17 @@
+<% provide(:h1, "Pouchtype List") %>
+<% if @pouchtypes.count >= 10 %>
+   <div class="formlinks"><%= paginate @pouchtypes %></div>
+   <br>
+<% end %>
+<% @pouchtypes.each do |pouchtype| %>
+   <div class="pageformat">
+      <p>Created: <%= distance_of_time_in_words_to_now pouchtype.created_on %> ago on (<%= pouchtype.created_on.strftime("%B-%d-%Y") %>)</p>
+      <div class="container"><p class="formlinks">Name: <%= link_to pouchtype.name, pouchtypes_path %></p></div> <div class="container"><%= button_to 'Edit', edit_pouchtype_path(pouchtype), method: :get, class: "button editbutton" %></div>
+   </div>
+   <br>
+<% end %>
+<div class="pageformat">
+   <p><%= button_to 'New Pouchtype', new_pouchtype_path, method: :get %></p>
+   <br>
+   <p class="formlinks"><%= link_to 'Back', root_path %></p>
+</div>

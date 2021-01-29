@@ -1,0 +1,27 @@
+<% provide(:h1, "Junkdealer") %>
+<div class="pageformat">
+   <p>I am Finsworth the Skunk, and I am here to accept any items you wish to get rid of. I know that you may be a bit under time pressure to do so. However I do not like being cheated, and if you try to push too many of your items on me, I may get Glitchy the Dragon to ban you!
+Aside from that I am more then happy to do business with you. So what do you have for me that you want to get rid of?</p>
+   <br>
+   <p>Ahh you have a <%= @item.name %> that you like to get rid of.</p>
+   <p>For that I will give you <%= @points %> points in exchange for it.</p>
+   <br>
+   <p class="formlinks"><%= link_to @item.name, user_item_path(@item.user, @item) %></p>
+   <% if getItemImage(@slotindex, @invslot, "Imagecheck").to_s != "" %>
+      <p><%= image_tag(getItemImage(@slotindex, @invslot, "Image")) %></p>
+   <% end %>
+   <p>Durability: <%= getDurability(@slotindex, @invslot, "Current") %>/<%= getDurability(@slotindex, @invslot, "Starter") %></p>
+   <p>Rarity: <%= @item.rarity %></p>
+   <p>Equipable: <%= @item.equipable %></p>
+   <p>Type: <%= @item.itemtype.name %></p>
+   <p>Cost: <%= @item.cost %></p>
+   <p>Emeralds: <%= @item.emeraldcost %></p>
+   <p class="formlinks">Artist: <%= getUserPrivilege(@item.user) %><%= link_to @item.user.vname, user_path(@item.user) %></p>
+   <br>
+   <p>Stats</p>
+   <%= getStats(@slotindex, @invslot) %>
+   <br>
+   <p>Do you accept my deal?</p>
+   <br>
+   <div class="container"><%= button_to 'Yes', items_deal1_path(:slotindex_id=>@slotindex, :inventoryslot_id=>@invslot), method: :post, class: "button editbutton" %></div> or <div class="container"><%= button_to 'No', items_deal2_path(:slotindex_id=>@slotindex, :inventoryslot_id=>@invslot), method: :post, class: "button destroybutton" %></div>
+</div>

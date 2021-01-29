@@ -1,0 +1,44 @@
+<%= form_with(model: [@user, @bookworld], local: true) do |form| %>
+  <% if @bookworld.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@bookworld.errors.count, "error") %> prohibited this bookworld from being saved:</h2>
+           <ul>
+              <% @bookworld.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :description %>
+    <%= form.text_area :description %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :price %>
+    <%= form.number_field :price %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :open_world %>
+    <%= form.check_box :open_world %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :privateworld %>
+    <%= form.check_box :privateworld %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', user_path(@bookworld.user) %></p>
+<% end %>

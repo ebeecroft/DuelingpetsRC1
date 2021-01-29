@@ -1,0 +1,63 @@
+<% provide(:h1, @creature.name) %>
+<p id="notice"><%= notice %></p>
+<div class="pageformat">
+   <% if current_user && (current_user.id == @creature.user_id || current_user.pouch.privilege == "Admin") %>
+      <div class="container"><%= button_to 'Edit', edit_user_creature_path(@creature.user, @creature), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [@creature.user, @creature], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+   <% end %>
+   <p>Created: <%= distance_of_time_in_words_to_now @creature.created_on %> ago on (<%= @creature.created_on.strftime("%B-%d-%Y") %>)</p>
+   <% if !@creature.reviewed_on.nil? %>
+      <p>Reviewed: <%= distance_of_time_in_words_to_now @creature.reviewed_on %> ago on (<%= @creature.reviewed_on.strftime("%B-%d-%Y") %>)</p>
+   <% end %>
+   <p>Updated: <%= distance_of_time_in_words_to_now @creature.updated_on %> ago on (<%= @creature.updated_on.strftime("%B-%d-%Y") %>)</p>
+   <% if @creature.image.to_s != "" %>
+      <br>
+      <p><%= image_tag(@creature.image_url(:thumb)) %></p>
+   <% end %>
+   <% if @creature.ogg.to_s != "" || @creature.mp3.to_s != "" %>
+      <br>
+      <p>Theme song: <%= audio_tag(getMusicOrVideo("Sound", @creature), :controls => true) %></p>
+   <% end %>
+   <% if @creature.voiceogg.to_s != "" || @creature.voicemp3.to_s != "" %>
+      <br>
+      <p>Character's voice: <%= audio_tag(getMusicOrVideo("Sound", @creature), :controls => true) %></p>
+   <% end %>
+   <br>
+   <p>Level: <%= @creature.level %></p>
+   <p>Hp: <%= @creature.hp %></p>
+   <p>Atk: <%= @creature.atk %></p>
+   <p>Def: <%= @creature.def %></p>
+   <p>Agi: <%= @creature.agility %></p>
+   <p>Strength: <%= @creature.strength %></p>
+   <p>MP: <%= @creature.mp %></p>
+   <p>Matk: <%= @creature.matk %></p>
+   <p>Mdef: <%= @creature.mdef %></p>
+   <p>Magi: <%= @creature.magi %></p>
+   <p>Mstr: <%= @creature.mstr %></p>
+   <p>Hunger: <%= @creature.hunger %></p>
+   <p>Thirst: <%= @creature.thirst %></p>
+   <p>Fun: <%= @creature.fun %></p>
+   <p>Lives: <%= @creature.lives %></p>
+   <p>Rarity: <%= @creature.rarity %></p>
+   <p>Unlimited lives: <%= @creature.unlimitedlives %></p>
+   <p>Retired pet: <%= @creature.retiredpet %></p>
+   <p>Starter: <%= @creature.starter %></p>
+   <p>Emerald cost: <%= @creature.emeraldcost %></p>
+   <p>Cost: <%= @creature.cost %></p>
+   <p>Type: <%= @creature.creaturetype.name %></p>
+   <p>Element: <%= @creature.element.name %></p>
+   <br>
+   <p class="textindent"><%= textFormater("Multi", @creature.description, "All").html_safe %></p>
+   <br>
+   <% if @creature.user.userinfo.miniavatar.to_s != "" %>
+      <p><%= image_tag(@creature.user.userinfo.miniavatar_url(:thumb)) %></p>
+   <% end %>
+   <p class="formlinks">Artist: <%= getUserPrivilege(@creature.user) %><%= link_to @creature.user.vname, user_path(@creature.user) %></p>
+   <p>Status: <%= getActivity(@creature.user) %>
+      <% if getActivity(@creature.user) != "Online" && getActivity(@creature.user) != "Inoperable" %>
+         for <%= distance_of_time_in_words_to_now getTime(@creature.user) %>
+      <% end %>
+   </p>
+</div>
+<br>
+<p class="formlinks"><%= link_to "User Creatures", user_creatures_path(@creature.user) %> |
+<%= link_to "Creature List", creatures_path %></p>

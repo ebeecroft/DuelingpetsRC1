@@ -1,0 +1,71 @@
+<% provide(:h1, @mainfolder.title) %>
+<p id="notice"><%= notice %></p>
+<div class="pageformat">
+   <% if current_user && (current_user.id == @mainfolder.gallery.user_id || current_user.pouch.privilege == "Admin") %>
+      <div class="container"><%= button_to 'Edit', edit_gallery_mainfolder_path(@mainfolder.gallery, @mainfolder), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [@mainfolder.gallery, @mainfolder], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+   <% end %>
+   <p>Created: <%= distance_of_time_in_words_to_now @mainfolder.created_on %> ago on (<%= @mainfolder.created_on.strftime("%B-%d-%Y") %>)</p>
+   <p>Updated: <%= distance_of_time_in_words_to_now @mainfolder.updated_on %> ago on (<%= @mainfolder.updated_on.strftime("%B-%d-%Y") %>)</p>
+   <br>
+   <% if @mainfolder.user.userinfo.miniavatar.to_s != "" %>
+      <p><%= image_tag(@mainfolder.user.userinfo.miniavatar_url(:thumb)) %></p>
+   <% end %>
+   <p class="formlinks">Artist: <%= getUserPrivilege(@mainfolder.user) %><%= link_to @mainfolder.user.vname, user_path(@mainfolder.user) %></p>
+   <p>Gallery: <%= @mainfolder.gallery.name %></p>
+   <p>Total subfolders: <%= @mainfolder.subfolders.count %></p>
+   <p>Status: <%= getActivity(@mainfolder.user) %>
+      <% if getActivity(@mainfolder.user) != "Online" && getActivity(@mainfolder.user) != "Inoperable" %>
+         for <%= distance_of_time_in_words_to_now getTime(@mainfolder.user) %>
+      <% end %>
+   </p>
+   <br>
+   <p class="textindent"><%= textFormater("Multi", @mainfolder.description, "All").html_safe %></p>
+   <br>
+   <div class="formlinks"><%= paginate @subfolders %></div>
+   <br>
+   <% @subfolders.each_with_index do |subfolder, index| %>
+      <% if(index % 3 == 2) %>
+         <div class="container">
+      <% else %>
+         <!--Container space-->
+         <div class="container">
+      <% end %>
+         <p class="formlinks"><%= link_to subfolder.title, mainfolder_subfolder_path(subfolder.mainfolder, subfolder) %></p>
+         <% if current_user && (current_user.id == subfolder.mainfolder.user_id || current_user.pouch.privilege == "Admin") %>
+            <div class="container"><%= button_to 'Edit', edit_mainfolder_subfolder_path(subfolder.mainfolder, subfolder), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [subfolder.mainfolder, subfolder], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+         <% end %>
+         <p>Created</p>
+         <p><%= distance_of_time_in_words_to_now subfolder.created_on %> ago on</p>
+         <p>(<%= subfolder.created_on.strftime("%B-%d-%Y") %>)</p>
+         <p>Updated</p>
+         <p><%= distance_of_time_in_words_to_now subfolder.updated_on %> ago on</p>
+         <p>(<%= subfolder.updated_on.strftime("%B-%d-%Y") %>)</p>
+         <br>
+         <% if !getSubfolderArt(subfolder).nil? %>
+            <p><%= image_tag(getSubfolderArt(subfolder).image_url(:thumb)) %></p>
+            <br>
+         <% end %>
+         <% if subfolder.user.userinfo.miniavatar.to_s != "" %>
+            <p><%= image_tag(subfolder.user.userinfo.miniavatar_url(:thumb)) %></p>
+         <% end %>
+         <p class="formlinks">Artist: <%= getUserPrivilege(subfolder.user) %><%= link_to subfolder.user.vname, user_path(subfolder.user) %></p>
+         <p>Total arts: <%= subfolder.arts.count %></p>
+         <p>Status: <%= getActivity(subfolder.user) %>
+            <% if getActivity(subfolder.user) != "Online" && getActivity(subfolder.user) != "Inoperable" %>
+               for <%= distance_of_time_in_words_to_now getTime(subfolder.user) %>
+            <% end %>
+         </p>
+         <br>
+         <p class="textindent"><%= textFormater("Multi", subfolder.description, "All").html_safe %></p>
+      </div>
+      <% if index % 3 == 2 %>
+         <br>
+         <br>      
+      <% end %>
+   <% end %>
+   <% if(current_user && current_user.id == @mainfolder.user_id) %>
+      <p><%= button_to "New Subfolder", new_mainfolder_subfolder_path(@mainfolder), method: :get, class: "button submitbutton" %></p>
+      <br>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to "Back", user_gallery_path(@mainfolder.gallery.user, @mainfolder.gallery) %></p>

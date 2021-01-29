@@ -1,0 +1,32 @@
+<% provide(:h1, "Channel List") %>
+<div class="formlinks"><%= paginate @channels %></div>
+<br>
+<% @channels.each do |channel| %>
+   <div class="pageformat">
+      <p>Created: <%= distance_of_time_in_words_to_now channel.created_on %> ago on (<%= channel.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now channel.updated_on %> ago on (<%= channel.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <% if channel.ogg.to_s != "" || channel.mp3.to_s != "" %>
+         <br>
+         <p>Theme song: <%= audio_tag(getMusicOrVideo("Sound", channel), :controls => true) %></p>
+      <% end %>
+      <br>
+      <div class="container"><p class="formlinks">Name: <%= link_to channel.name, user_channel_path(channel.user, channel) %></p></div> <div class="container"><%= button_to 'Edit', edit_user_channel_path(channel.user, channel), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [channel.user, channel], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <p>Private channel: <%= channel.privatechannel %></p>
+      <br>
+      <% if channel.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(channel.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Director: <%= getUserPrivilege(channel.user) %><%= link_to channel.user.vname, user_path(channel.user) %></p>
+      <p>Group: <%= channel.bookgroup.name %></p>
+      <p>Viewer: <%= channel.gviewer.name %></p>
+      <p>Status: <%= getActivity(channel.user) %>
+         <% if getActivity(channel.user) != "Online" && getActivity(channel.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(channel.user) %>
+         <% end %>
+      </p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", channel.description, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

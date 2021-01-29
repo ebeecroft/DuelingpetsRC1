@@ -1,0 +1,15 @@
+<% provide(:h1, "Fight List") %>
+<% if @fights.count > 9 %>
+   <div class="formlinks"><%= paginate @fights %></div>
+   <br>
+<% end %>
+<% @fights.each do |fight| %>
+   <div class="pageformat">
+      <p><%= fight.partner.name %></p>
+      <p>Wins: <%= fight.win %></p>
+      <p>Draws: <%= fight.draw %></p>
+      <p>Losses: <%= fight.loss %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

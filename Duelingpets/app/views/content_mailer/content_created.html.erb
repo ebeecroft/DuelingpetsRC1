@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+   </head>
+   <body>
+      <% if @type == "Colorsheme" %>
+         <h1>You created a new Colorscheme: <%= @content.name %> for the site!</h1>
+      <% elsif @type == "Suggestion" %>
+         <h1>You created a new Suggestion: <%= @content.title %> for the site!</h1>
+      <% elsif @type == "Watch" %>
+         <h1><%= @content.from_user.vname %> has decided to watch you!</h1>
+      <% elsif @type == "Referral" %>
+         <h1><%= @content.to_user.vname %> was referred to this site by you!</h1>
+      <% end %>
+      <p>
+         <% if @type == "Colorscheme" %>
+            It is nice to see that you are adding content to our virtual petsite,
+            and we would like to thank you for our effort. We do realize that
+            creating a colorscheme is very hard work. Yet it allows other users
+            to have a way to display this site in the colors of their own
+            choosing. We do understand that this feature is quite taxing on you,
+            as filling in all the different colors and having them fit well is
+            a bit of a chore. In recognition of your effort we like to offer you
+            these <%= @points %> points for you to spend at your leisure.
+         <% elsif @type == "Suggestion" %>
+            The Duelingpets team is always open to hearing new suggestions for
+            the site. This could be new features that you think might be cool
+            for us to implement or simple bug fixes. Since you have take the
+            time to send us your suggestions to us we have decided to give you
+            <%= @points %> points that you can spend on what you want.
+         <% elsif @type == "Watch" %>
+            It seems like you have generated quite the following and well
+            designed content like this proves it. Its important that you continue
+            to develop your talent and expand on it. Create your own content cause
+            you enjoy doing it and if things are getting you down then well take
+            a bit of a break from it. Your watchers watch you cause they know you
+            draw high quality art and because they enjoy your whimsical nature.
+            As an appreciation of your efforts we would like to award you these
+            <%= @points %> points for you to spend at your leisure.
+         <% elsif @type == "Referral" %>
+            Thanks for bringing in some new members to the site, it helps grow our
+            community and make it stronger. I appreciate the effort that you put
+            into finding some friends of yours to join this wonderful site. Who
+            knows maybe your friends might find some additional members. Yet our
+            new members might be a bit lost and may require some guidance to
+            navigate this site, I am sure you will be up to this task. In
+            recognition of your efforts we would like to award you these
+            <%= @points %> points for you to spend at your leisure.
+         <% end %>
+      </p>
+      <br>
+      <p>The Duelingpets Staff Team</p>
+   </body>
+</html>

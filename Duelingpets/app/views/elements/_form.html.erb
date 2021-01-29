@@ -1,0 +1,42 @@
+<%= form_with(model: [@user, @element], local: true) do |form| %>
+  <% if @element.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@element.errors.count, "error") %> prohibited this element from being saved:</h2>
+           <ul>
+              <% @element.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :description %>
+    <%= form.text_area :description %>
+  </div>
+  <br>
+  <p class="pageformat">Image files</p>
+  <div class="field">
+     <%= image_tag @element.itemart_url(:thumb).to_s if @element.itemart? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :itemart %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_itemart_url, "or Itemart URL" %><br />
+    <%= form.text_field :remote_itemart_url %>
+    <%= form.hidden_field :itemart_cache %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', user_path(@element.user) %></p>
+<% end %>

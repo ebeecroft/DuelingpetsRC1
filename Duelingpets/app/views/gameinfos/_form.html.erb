@@ -1,0 +1,42 @@
+<%= form_with(model: @gameinfo, local: true) do |form| %>
+  <% if @gameinfo.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@gameinfo.errors.count, "error") %> prohibited this gameinfo from being saved:</h2>
+           <ul>
+              <% @gameinfo.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :difficulty_id %>
+    <%= form.number_field :difficulty_id %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :lives_enabled %>
+    <%= form.check_box :lives_enabled %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :ageing_enabled %>
+    <%= form.check_box :ageing_enabled %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :startgame %>
+    <%= form.check_box :startgame %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :gamecompleted %>
+    <%= form.check_box :gamecompleted %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+<% end %>

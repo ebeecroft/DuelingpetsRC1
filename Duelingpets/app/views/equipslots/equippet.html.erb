@@ -1,0 +1,25 @@
+<% provide(:h1, "Equip pet/player") %>
+<div class="pageformat">
+   <p class="formlinks"><%= link_to @item.name, user_item_path(@item.user, @item) %></p>
+   <% if getItemImage(@slotindex, @invslot, "Imagecheck").to_s != "" %>
+      <p><%= image_tag(getItemImage(@slotindex, @invslot, "Image")) %></p>
+   <% end %>
+   <p>Durability: <%= getDurability(@slotindex, @invslot, "Current") %>/<%= getDurability(@slotindex, @invslot, "Starter") %></p>
+   <p>Rarity: <%= @item.rarity %></p>
+   <p>Equipable: <%= @item.equipable %></p>
+   <p>Type: <%= @item.itemtype.name %></p>
+   <p>Cost: <%= @item.cost %></p>
+   <p>Emeralds: <%= @item.emeraldcost %></p>
+   <p class="formlinks">Artist: <%= getUserPrivilege(@item.user) %><%= link_to @item.user.vname, user_path(@item.user) %></p>
+   <br>
+   <p>Stats</p>
+   <%= getStats(@slotindex, @invslot) %>
+   <%= form_for(:equipslot, url: equipslots_useitem_path(:slotindex_id=>@slotindex, :inventoryslot_id=>@invslot), method: :post) do |form| %>
+      <br>
+      <p>Action: <%= form.collection_select(:itemaction_id, @actiongroup, :id, :name) %></p>
+      <br>
+      <p>Pet: <%= form.collection_select(:partner_id, @pets, :id, :name) %></p>
+      <br>
+      <p><%= form.submit "Use item", class: "button submitbutton" %></p>
+   <% end %>
+</div>

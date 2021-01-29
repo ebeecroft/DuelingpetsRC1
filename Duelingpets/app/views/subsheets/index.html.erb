@@ -1,0 +1,30 @@
+<% provide(:h1, "Subsheet List") %>
+<% if @subsheets.count >= 10 %>
+   <div class="formlinks"><%= paginate @subsheets %></div>
+   <br>
+<% end %>
+<% @subsheets.each do |subsheet| %>
+   <div class="pageformat">
+      <p>Created: <%= distance_of_time_in_words_to_now subsheet.created_on %> ago on (<%= subsheet.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now subsheet.updated_on %> ago on (<%= subsheet.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <div class="container"><p class="formlinks">Title: <%= link_to subsheet.title, mainsheet_subsheet_path(subsheet.mainsheet, subsheet) %></p></div> <div class="container"><%= button_to 'Edit', edit_mainsheet_subsheet_path(subsheet.mainsheet, subsheet), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [subsheet.mainsheet, subsheet], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <br>
+      <% if subsheet.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(subsheet.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Composer: <%= getUserPrivilege(subsheet.user) %><%= link_to subsheet.user.vname, user_path(subsheet.user) %></p>
+      <p class="formlinks">Mainsheet: <%= link_to subsheet.mainsheet.title, jukebox_mainsheet_path(subsheet.mainsheet.jukebox, subsheet.mainsheet) %></p>
+      <p>Collab mode: <%= subsheet.collab_mode %></p>
+      <p>Fave folder: <%= subsheet.fave_folder %></p>
+      <p>Private sheet: <%= subsheet.privatesubsheet %></p>
+      <p>Status: <%= getActivity(subsheet.user) %>
+         <% if getActivity(subsheet.user) != "Online" && getActivity(subsheet.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(subsheet.user) %>
+         <% end %>
+      </p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", subsheet.description, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

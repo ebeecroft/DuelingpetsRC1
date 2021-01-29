@@ -1,0 +1,64 @@
+<% if optional %>
+   <% provide(:h1, @user.vname +  "'s monsters") %>
+<% else %>
+   <% provide(:h1, "Monster List") %>
+<% end %>
+<div class="formlinks"><%= paginate @monsters %></div>
+<br>
+<div class="pageformat">
+   <% @monsters.each_with_index do |monster, index| %>
+      <% if(index % 3 == 2) %>
+         <div class="container">
+      <% else %>
+         <!--Container space-->
+         <div class="container">
+      <% end %>
+         <p class="formlinks"><%= link_to monster.name, user_monster_path(monster.user, monster) %></p>
+         <p>Created</p>
+         <p><%= distance_of_time_in_words_to_now monster.created_on %> ago on</p>
+         <p>(<%= monster.created_on.strftime("%B-%d-%Y") %>)</p>
+         <p>Updated</p>
+         <p><%= distance_of_time_in_words_to_now monster.updated_on %> ago on</p>
+         <p>(<%= monster.updated_on.strftime("%B-%d-%Y") %>)</p>
+         <% if !monster.reviewed_on.nil? %>
+            <p>Reviewed</p>
+            <p><%= distance_of_time_in_words_to_now monster.reviewed_on %> ago on</p>
+            <p>(<%= monster.reviewed_on.strftime("%B-%d-%Y") %>)</p>
+         <% end %>
+         <% if monster.image.to_s != "" %>
+            <br>
+            <p><%= image_tag(monster.image_url(:thumb)) %></p>
+         <% end %>
+         <% if !optional %>
+            <br>
+            <% if monster.user.userinfo.miniavatar.to_s != "" %>
+               <p><%= image_tag(monster.user.userinfo.miniavatar_url(:thumb)) %></p>
+            <% end %>
+            <p class="formlinks">Artist: <%= getUserPrivilege(monster.user) %><%= link_to monster.user.vname, user_path(monster.user) %></p>
+            <p>Type: <%= monster.monstertype.name %></p>
+            <p>Element: <%= monster.element.name %></p>
+            <p>Status: <%= getActivity(monster.user) %>
+               <% if getActivity(monster.user) != "Online" && getActivity(monster.user) != "Inoperable" %>
+                  for <%= distance_of_time_in_words_to_now getTime(monster.user) %>
+               <% end %>
+            </p>
+            <br>
+         <% else %>
+            <br>
+            <p>Type: <%= monster.monstertype.name %></p>
+            <p>Element: <%= monster.element.name %></p>
+            <br>
+         <% end %>
+         <p class="textindent"><%= textFormater("Multi", monster.description, "All").html_safe %></p>
+      </div>
+      <% if index % 3 == 2 %>
+         <br>
+         <br>      
+      <% end %>
+   <% end %>
+</div>
+<% if optional %>
+   <p class="formlinks"><%= link_to 'Back', user_path(@user) %></p>
+<% else %>
+   <p class="formlinks"><%= link_to 'Back', root_path %></p>
+<% end %>

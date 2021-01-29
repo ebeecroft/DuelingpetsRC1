@@ -1,0 +1,34 @@
+<% provide(:h1, "Equipslot List") %>
+<div class="formlinks"><%= paginate @equipslots %></div>
+<br>
+<% @equipslots.each do |equipslot| %>
+   <div class="pageformat">
+      <p>Name: <%= equipslot.name %></p>
+      <p>Pet: <%= equipslot.equip.partner.name %></p>
+      <p>Item 1: <%= equipslot.item1_id %></p>
+      <p>Durability: <%= equipslot.curdur1 %>/<%= equipslot.startdur1 %></p>
+      <br>
+      <p>Item 2: <%= equipslot.item2_id %></p>
+      <p>Durability: <%= equipslot.curdur2 %>/<%= equipslot.startdur2 %></p>
+      <br>
+      <p>Item 3: <%= equipslot.item3_id %></p>
+      <p>Durability: <%= equipslot.curdur3 %>/<%= equipslot.startdur3 %></p>
+      <br>
+      <p>Item 4: <%= equipslot.item4_id %></p>
+      <p>Durability: <%= equipslot.curdur4 %>/<%= equipslot.startdur4 %></p>
+      <br>
+      <p>Item 5: <%= equipslot.item5_id %></p>
+      <p>Durability: <%= equipslot.curdur5 %>/<%= equipslot.startdur5 %></p>
+      <br>
+      <p>Item 6: <%= equipslot.item6_id %></p>
+      <p>Durability: <%= equipslot.curdur6 %>/<%= equipslot.startdur6 %></p>
+      <br>
+      <p>Item 7: <%= equipslot.item7_id %></p>
+      <p>Durability: <%= equipslot.curdur7 %>/<%= equipslot.startdur7 %></p>
+      <br>
+      <p>Item 8: <%= equipslot.item8_id %></p>
+      <p>Durability: <%= equipslot.curdur8 %>/<%= equipslot.startdur8 %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

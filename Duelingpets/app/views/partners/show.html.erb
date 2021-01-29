@@ -1,0 +1,73 @@
+<% if @partner.activepet %>
+   <% provide(:h1, @partner.name + "[Mainpet]") %>
+<% else %>
+   <% provide(:h1, @partner.name) %>
+<% end %>
+<p id="notice"><%= notice %></p>
+<div class="pageformat">
+   <% if current_user && (current_user.id == @partner.user_id || current_user.pouch.privilege == "Admin") %>
+      <div class="container"><%= button_to 'Edit', edit_user_partner_path(@partner.user, @partner), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [@partner.user, @partner], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+   <% end %>
+   <p>Adopted: <%= distance_of_time_in_words_to_now @partner.adopted_on %> ago on (<%= @partner.adopted_on.strftime("%B-%d-%Y") %>)</p>
+   <p>Updated: <%= distance_of_time_in_words_to_now @partner.updated_on %> ago on (<%= @partner.updated_on.strftime("%B-%d-%Y") %>)</p>
+   <% if @partner.creature.image.to_s != "" %>
+      <br>
+      <p><%= image_tag(@partner.creature.image_url(:thumb)) %></p>
+   <% end %>
+   <br>
+   <p>Creature: <%= @partner.creature.name %></p>
+   <p>Slots: <%= @partner.equip.equipslots.count %></p>
+   <% if @partner.inbattle %>
+      <p>Status: In battle</p>
+   <% elsif @partner.dead %>
+      <p>Status: Dead</p>
+   <% else %>
+      <p>Status: Not in battle</p>
+   <% end %>
+   <br>
+   <p>Phylevel: <%= @partner.plevel %></p>
+   <p>Phyexp: <%= @partner.pexp %></p>
+   <p>Hp: <%= @partner.chp %>/<%= @partner.hp %></p>
+   <p>Atk: <%= @partner.atk %></p>
+   <p>Def: <%= @partner.def %></p>
+   <p>Agi: <%= @partner.agility %></p>
+   <p>Strength: <%= @partner.strength %></p>
+   <br>
+   <p>Magilevel: <%= @partner.mlevel %></p>
+   <p>Magiexp: <%= @partner.mexp %></p>
+   <p>MP: <%= @partner.cmp %>/<%= @partner.mp %></p>
+   <p>Matk: <%= @partner.matk %></p>
+   <p>Mdef: <%= @partner.mdef %></p>
+   <p>Magi: <%= @partner.magi %></p>
+   <p>Mstr: <%= @partner.mstr %></p>
+   <br>
+   <p>Hunger: <%= @partner.chunger %>/<%= @partner.hunger %></p>
+   <p>Thirst: <%= @partner.cthirst %>/<%= @partner.thirst %></p>
+   <p>Fun: <%= @partner.cfun %>/<%= @partner.fun %></p>
+   <p>Lives: <%= @partner.lives %></p>
+   <p>Adoptcost: <%= @partner.adoptcost %></p>
+   <p>Cost: <%= @partner.cost %></p>
+   <br>
+   <p>Rarity: <%= @partner.creature.rarity %></p>
+   <p>Phytokens: <%= @partner.phytokens %></p>
+   <p>Magitokens: <%= @partner.magitokens %></p>
+   <% if @partner.user.userinfo.miniavatar.to_s != "" %>
+      <br>
+      <p><%= image_tag(@partner.user.userinfo.miniavatar_url(:thumb)) %></p>
+   <% end %>
+   <p class="formlinks">Partner: <%= getUserPrivilege(@partner.user) %><%= link_to @partner.user.vname, user_path(@partner.user) %></p>
+   <p>Status: <%= getActivity(@partner.user) %>
+      <% if getActivity(@partner.user) != "Online" && getActivity(@partner.user) != "Inoperable" %>
+         for <%= distance_of_time_in_words_to_now getTime(@partner.user) %>
+      <% end %>
+   </p>
+   <br>
+   <p class="textindent"><%= textFormater("Multi", @partner.description, "All").html_safe %></p>
+   <% if(current_user && current_user.id == @partner.user_id) %>
+      <br>
+      <p><%= button_to 'Equipment', partner_equip_path(@partner, @partner.equip), method: :get, class: "button submitbutton" %></p>
+      <p><%= button_to 'Fight', partner_fight_path(@partner, @partner.fight), method: :get, class: "button submitbutton" %></p>
+   <% end %>
+</div>
+<br>
+<p class="formlinks"><%= link_to "User Partners", user_partners_path(@partner.user) %></p>

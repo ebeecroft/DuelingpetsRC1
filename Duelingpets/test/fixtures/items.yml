@@ -1,0 +1,47 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  description: MyText
+  itemart: MyString
+  hp: 1
+  atk: 1
+  def: 1
+  spd: 1
+  fun: 1
+  hunger: 1
+  knowledge: 1
+  durability: 1
+  rarity: 1
+  starter: false
+  equipable: false
+  cost: 1
+  created_on: 2019-10-27 02:36:10
+  reviewed_on: 2019-10-27 02:36:10
+  updated_on: 2019-10-27 02:36:10
+  user_id: 1
+  itemtype_id: 1
+  reviewed: false
+
+two:
+  name: MyString
+  description: MyText
+  itemart: MyString
+  hp: 1
+  atk: 1
+  def: 1
+  spd: 1
+  fun: 1
+  hunger: 1
+  knowledge: 1
+  durability: 1
+  rarity: 1
+  starter: false
+  equipable: false
+  cost: 1
+  created_on: 2019-10-27 02:36:10
+  reviewed_on: 2019-10-27 02:36:10
+  updated_on: 2019-10-27 02:36:10
+  user_id: 1
+  itemtype_id: 1
+  reviewed: false

@@ -1,0 +1,60 @@
+<%= form_with(model: @warehouse, local: true) do |form| %>
+  <% if @warehouse.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@warehouse.errors.count, "error") %> prohibited this warehouse from being saved:</h2>
+           <ul>
+              <% @warehouse.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :message %>
+    <%= form.text_area :message %>
+  </div>
+  <br>
+  <p class="pageformat">Ogg files</p>
+  <div class="pageformat">
+     <%= audio_tag(@warehouse.ogg_url.to_s, :controls => true) if @warehouse.ogg? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :ogg %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_ogg_url, "or Ogg URL" %><br />
+    <%= form.text_field :remote_ogg_url %>
+    <%= form.hidden_field :ogg_cache %>
+  </div>
+  <br>
+  <p class="pageformat">MP3 files</p>
+  <div class="pageformat">
+     <%= audio_tag(@warehouse.mp3_url.to_s, :controls => true) if @warehouse.mp3? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :mp3 %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_mp3_url, "or Mp3 URL" %><br />
+    <%= form.text_field :remote_mp3_url %>
+    <%= form.hidden_field :mp3_cache %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :store_open %>
+    <%= form.check_box :store_open %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', warehouse_path(@warehouse) %></p>
+<% end %>

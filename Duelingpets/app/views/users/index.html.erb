@@ -1,0 +1,49 @@
+<% provide(:h1, "User List") %>
+<div class="formlinks"><%= paginate @users %></div>
+<br>
+<div class="pageformat">
+   <% @users.each_with_index do |user, index| %>
+       <% if(index % 3 == 2) %>
+         <div class="container">
+      <% else %>
+         <!--Container space-->
+         <div class="container">
+      <% end %>
+         <div class="container">
+            <% if user.shared %>
+               <p class="formlinks">Vname: <%= link_to user.vname, user_path(user) %>[Shared]</p>
+            <% else %>
+               <p class="formlinks">Vname: <%= link_to user.vname, user_path(user) %></p>
+            <% end %>
+         </div> <div class="container"><%= button_to 'Edit', edit_user_path(user), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', user, method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+         <% if user.userinfo.miniavatar.to_s != "" %>
+            <p><%= image_tag(user.userinfo.miniavatar_url(:thumb)) %></p>
+            <br>
+         <% end %>
+         <p>Imaginary friend: <%= user.imaginaryfriend %></p>
+         <p>Joined</p>
+         <p><%= distance_of_time_in_words_to_now user.joined_on %> ago on</p>
+         <p>(<%= user.joined_on.strftime("%B-%d-%Y") %>)</p>
+         <p>Registered</p>
+         <p><%= distance_of_time_in_words_to_now user.registered_on %> ago on</p>
+         <p>(<%= user.registered_on.strftime("%B-%d-%Y") %>)</p>
+         <p>Birthday: <%= user.birthday.strftime("%B-%d-%Y") %></p>
+         <p>Email: <%= user.email %></p>
+         <p>Country: <%= user.country %></p>
+         <p>Timezone: <%= user.country_timezone %></p>
+         <p>Writing Group: <%= getWritingGroup(user, "Name") %></p>
+         <p>Reading Group: <%= getReadingGroup(user, "Name") %></p>
+         <p>Pouch: <%= user.pouch.amount %> points</p>
+         <p>Status: <%= getActivity(user) %>
+            <% if getActivity(user) != "Online" && getActivity(user) != "Inoperable" %>
+               for <%= distance_of_time_in_words_to_now getTime(user) %>
+            <% end %>
+         </p>
+      </div>
+      <% if index % 3 == 2 %>
+         <br>
+         <br>      
+      <% end %>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

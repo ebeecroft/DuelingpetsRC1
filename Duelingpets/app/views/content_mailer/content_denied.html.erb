@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+   </head>
+   <body>
+      <% if @type == "Blog" %>
+         <h1>Your new blog <%= @content.title %> was denied!</h1>
+      <% elsif @type == "OC" %>
+         <h1>Your new oc <%= @content.name %> was denied!</h1>
+      <% elsif @type == "Movie" %>
+         <h1>Your new movie <%= @content.title %> was denied!</h1>
+      <% elsif @type == "Art" %>
+         <h1>Your new art <%= @content.title %> was denied!</h1>
+      <% elsif @type == "Sound" %>
+         <h1>Your new sound <%= @content.title %> was denied!</h1>
+      <% elsif @type == "Chapter" %>
+         <h1>Your new chapter <%= @content.title %> was denied!</h1>
+      <% elsif @type == "Element" %>
+         <h1>Your new element <%= @content.name %> was denied!</h1>
+      <% elsif @type == "Creature" %>
+         <h1>Your new creature <%= @content.name %> was denied!</h1>
+      <% elsif @type == "Monster" %>
+         <h1>Your new monster <%= @content.name %> was denied!</h1>
+      <% elsif @type == "Item" %>
+         <h1>Your new item <%= @content.name %> was denied!</h1>
+      <% end %>
+      <p>
+         Our review team has taken the time to do look over
+         the <%= @type.downcase %> you submited to our site and found
+         that it doesn't fit into the correct book group.
+         <% if @type == "Blog" %>
+            The images if any that this blog contains may
+            not be suitable to our community or needs a bit
+            of refinement before it can be approved.
+         <% elsif @type == "OC" %>
+            The image of this oc may not be suitable for our
+            community. Though there is still the possibility
+            the song or the voice itself might not be right
+            for the age group it is targeted for. The content
+            may need to be changed just a tad before it can
+            be approved.   
+         <% elsif @type == "Movie" %>
+            The video of this movie may not be suitable for our
+            community. It is also possible that the bookgroup
+            was set to the wrong type for this type of video.
+            The content may need to be changed just a tad
+            before it can be approved.
+         <% elsif @type == "Art" %>
+            The image of this artwork may not be suitable for
+            our community. It is also possible that the
+            bookgroup was set to the wrong type for this type
+            of art. The sound that is included may not be
+            appropriate for the audience it is targeting. The
+            content may need to be changed just a tad before
+            it can be approved.
+         <% elsif @type == "Sound" %>
+            The audio of this sound may not be suitable for our
+            community. It is also possible that the bookgroup
+            was set to the wrong type for this type of audio.
+            The content may need to be changed just a tad
+            before it can be approved.
+         <% elsif @type == "Chapter" %>
+            The chapter may not have fit into the correct
+            bookgroup, or the music and images might not be
+            suitable for our community. The content may need to
+            be changed just a tad before it can be approved.
+         <% elsif @type == "Element" %>
+            The image of the element may have not been suitable
+            for our community. It might be possible that the
+            description may have not been appropriate. The
+            content may need to be changed just a tad before
+            it can be approved.
+         <% elsif @type == "Creature" %>
+            The image of this creature may not be suitable for our
+            community. Though there is still the possibility
+            that the stats for the creature may be too
+            overpowered, or the creature costs too much. It is
+            also possible the music, or the voice might be not
+            appropriate for the community. The
+            content may need to be changed just a tad before
+            it can be approved.
+         <% elsif @type == "Monster" %>
+            The image of this monster may not be suitable for our
+            community. Though there is still the possibility that
+            the stats for the monster may be too overpowered, or
+            the monster costs too much. The content may need to
+            be changed just a tad before it can be approved.
+         <% elsif @type == "Item" %>
+            The image of this item may not be suitable for our
+            community. Though there is still the possibility
+            that the stats for the item may be too
+            overpowered, or the item costs too much. The
+            content may need to be changed just a tad before
+            it can be approved.
+         <% end %>
+         Our review team will get in touch with you to go
+         over the specifics. Do not worry these things
+         sometimes happen. We run these checks just to
+         be sure that our community stays safe for
+         everyone.
+      </p>
+      <br>
+      <p>The Duelingpets Staff Team</p>
+   </body>
+</html>

@@ -1,0 +1,16 @@
+<% provide(:h1, "Maintenancemode List") %>
+<div class="formlinks"><%= paginate @maintenancemodes %></div>
+<br>
+<% @maintenancemodes.each do |maintenancemode| %>
+   <div class="pageformat"><div class="container">Created on: <%= distance_of_time_in_words_to_now maintenancemode.created_on %> ago on (<%= maintenancemode.created_on.strftime("%B-%d-%Y") %>)</div> <div class="container"><%= button_to 'Edit', edit_maintenancemode_path(maintenancemode), method: :get, class: "button editbutton" %></div></div>
+   <div class="pageformat">
+      <p>Name: <%= maintenancemode.name %></p>
+      <p>Maintenance on: <%= maintenancemode.maintenance_on %></p>
+   </div>
+   <br>
+<% end %>
+<div class="pageformat">
+   <p><%= button_to 'New Maintenancemode', new_maintenancemode_path, method: :get, class: "button submitbutton" %></p>
+   <br>
+   <p class="formlinks"><%= link_to 'Back', root_path %></p>
+</div>

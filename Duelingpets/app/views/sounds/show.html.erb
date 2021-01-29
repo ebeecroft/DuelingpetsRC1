@@ -1,0 +1,170 @@
+<% provide(:h1, @sound.title) %>
+<p id="notice"><%= notice %></p>
+<div class="pageformat">
+   <% if current_user && (current_user.id == @sound.user_id || current_user.pouch.privilege == "Admin") %>
+      <div class="container"><%= button_to 'Edit', edit_subsheet_sound_path(@sound.subsheet, @sound), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [@sound.subsheet, @sound], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+   <% end %>
+   <p>Created: <%= distance_of_time_in_words_to_now @sound.created_on %> ago on (<%= @sound.created_on.strftime("%B-%d-%Y") %>)</p>
+   <p>Updated: <%= distance_of_time_in_words_to_now @sound.updated_on %> ago on (<%= @sound.updated_on.strftime("%B-%d-%Y") %>)</p>
+   <% if !@sound.reviewed_on.nil? %>
+      <p>Reviewed: <%= distance_of_time_in_words_to_now @sound.reviewed_on %> ago on (<%= @sound.reviewed_on.strftime("%B-%d-%Y") %>)</p>
+   <% end %>
+   <% if @sound.ogg.to_s != "" || @sound.mp3.to_s != "" %>
+      <br>
+      <p><%= audio_tag(getMusicOrVideo("Sound", @sound), :controls => true) %></p>
+   <% end %>
+   <br>
+   <% if @sound.user.userinfo.miniavatar.to_s != "" %>
+      <p><%= image_tag(@sound.user.userinfo.miniavatar_url(:thumb)) %></p>
+   <% end %>
+   <p class="formlinks">Composer: <%= getUserPrivilege(@sound.user) %><%= link_to @sound.user.vname, user_path(@sound.user) %></p>
+   <p>Subsheet: <%= @sound.subsheet.title %></p>
+   <p>Group: <%= @sound.bookgroup.name %></p>
+   <p>Status: <%= getActivity(@sound.user) %>
+      <% if getActivity(@sound.user) != "Online" && getActivity(@sound.user) != "Inoperable" %>
+         for <%= distance_of_time_in_words_to_now getTime(@sound.user) %>
+      <% end %>
+   </p>
+   <br>
+   <p class="textindent"><%= textFormater("Multi", @sound.description, "All").html_safe %></p>
+   <br>
+   <p>Tag list</p>
+   <% if(!@sound.soundtag.tag1_id.nil?) %>
+      <div class="container"><%= getTagname(@sound.soundtag.tag1_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag1_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@sound.soundtag.tag2_id.nil?) %>
+      <div class="container"><%= " " + getTagname(@sound.soundtag.tag2_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag2_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@sound.soundtag.tag3_id.nil?) %>
+      <div class="container"><%= " " + getTagname(@sound.soundtag.tag3_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag3_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@sound.soundtag.tag4_id.nil?) %>
+      <div class="container"><%= getTagname(@sound.soundtag.tag4_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag4_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@sound.soundtag.tag5_id.nil?) %>
+      <div class="container"><%= getTagname(@sound.soundtag.tag5_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag5_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@sound.soundtag.tag6_id.nil?) %>
+      <div class="container"><%= getTagname(@sound.soundtag.tag6_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag6_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@sound.soundtag.tag7_id.nil?) %>
+      <div class="container"><%= getTagname(@sound.soundtag.tag7_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag7_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@sound.soundtag.tag8_id.nil?) %>
+      <div class="container"><%= getTagname(@sound.soundtag.tag8_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag8_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@sound.soundtag.tag9_id.nil?) %>
+      <div class="container"><%= getTagname(@sound.soundtag.tag9_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag9_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@sound.soundtag.tag10_id.nil?) %>
+      <div class="container"><%= getTagname(@sound.soundtag.tag10_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag10_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@sound.soundtag.tag11_id.nil?) %>
+      <div class="container"><%= getTagname(@sound.soundtag.tag11_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag11_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@sound.soundtag.tag12_id.nil?) %>
+      <div class="container"><%= getTagname(@sound.soundtag.tag12_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag12_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@sound.soundtag.tag13_id.nil?) %>
+      <div class="container"><%= getTagname(@sound.soundtag.tag13_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag13_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@sound.soundtag.tag14_id.nil?) %>
+      <div class="container"><%= getTagname(@sound.soundtag.tag14_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag14_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@sound.soundtag.tag15_id.nil?) %>
+      <div class="container"><%= getTagname(@sound.soundtag.tag15_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag15_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@sound.soundtag.tag16_id.nil?) %>
+      <div class="container"><%= getTagname(@sound.soundtag.tag16_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag16_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@sound.soundtag.tag17_id.nil?) %>
+      <div class="container"><%= getTagname(@sound.soundtag.tag17_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag17_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@sound.soundtag.tag18_id.nil?) %>
+      <div class="container"><%= getTagname(@sound.soundtag.tag18_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag18_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@sound.soundtag.tag19_id.nil?) %>
+      <div class="container"><%= getTagname(@sound.soundtag.tag19_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag19_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@sound.soundtag.tag20_id.nil?) %>
+      <div class="container"><%= getTagname(@sound.soundtag.tag20_id) %></div>
+      <% if(current_user && current_user.id == @sound.user_id) %>
+         <div class="container"><%= button_to 'X', soundtags_removetag_path(:soundtag_id=>@sound.soundtag.id, :tagid=>@sound.soundtag.tag20_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <br>
+   <% if current_user && current_user.id == @sound.user_id %>
+      <br>
+      <%= form_for(:soundtag, url: soundtags_addtag_path(:soundtag_id=>@sound.soundtag.id), method: :post) do |form| %>
+         <p>
+            <%= form.label :name, "Tagname" %>
+            <%= form.text_field :name %>
+         </p>
+         <br>
+         <p>
+            <%= form.label :tagslot, "Pick a slot from 1 - 20" %>
+            <%= form.number_field :tagslot %>
+         </p>
+         <br>
+         <div class="pageformat"><%= form.submit "Add Tag", class: "button submitbutton" %></div>
+      <% end %>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to "Back", mainsheet_subsheet_path(@sound.subsheet.mainsheet, @sound.subsheet) %></p>

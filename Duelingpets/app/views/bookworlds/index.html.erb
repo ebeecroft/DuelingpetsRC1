@@ -1,0 +1,39 @@
+<% if optional %>
+   <% provide(:h1, @user.vname +  "'s bookworlds") %>
+<% else %>
+   <% provide(:h1, "Bookworld List") %>
+<% end %>
+<% if @bookworlds.count >= 10 %>
+   <div class="formlinks"><%= paginate @bookworlds %></div>
+   <br>
+<% end %>
+<% @bookworlds.each do |bookworld| %>
+   <div class="pageformat">
+      <p class="formlinks"><%= link_to bookworld.name, user_bookworld_path(bookworld.user, bookworld) %></p>
+      <p>Created: <%= distance_of_time_in_words_to_now bookworld.created_on %> ago on (<%= bookworld.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now bookworld.updated_on %> ago on (<%= bookworld.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Book price: <%= bookworld.price %></p>
+      <p>Open world: <%= bookworld.open_world %></p>
+      <p>Private world: <%= bookworld.privateworld %></p>
+      <% if !optional %>
+         <br>
+         <% if bookworld.user.userinfo.miniavatar.to_s != "" %>
+            <p><%= image_tag(bookworld.user.userinfo.miniavatar_url(:thumb)) %></p>
+         <% end %>
+         <p class="formlinks">Writer: <%= getUserPrivilege(bookworld.user) %><%= link_to bookworld.user.vname, user_path(bookworld.user) %></p>
+         <p>Status: <%= getActivity(bookworld.user) %>
+            <% if getActivity(bookworld.user) != "Online" && getActivity(bookworld.user) != "Inoperable" %>
+               for <%= distance_of_time_in_words_to_now getTime(bookworld.user) %>
+            <% end %>
+         </p>
+         <br>
+      <% end %>
+      <p class="textindent"><%= textFormater("Multi", bookworld.description, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<% if optional %>
+   <p class="formlinks"><%= link_to 'Back', user_path(@user) %></p>
+<% else %>
+   <p class="formlinks"><%= link_to 'Back', root_path %></p>
+<% end %>

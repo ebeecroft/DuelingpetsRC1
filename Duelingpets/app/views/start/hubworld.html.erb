@@ -1,0 +1,24 @@
+<% provide(:h1, "Hubworld") %>
+<div class="pageformat">
+   <p>Hubworld a navigation system for everything.</p>
+   <div class="hublinks">
+      <div class=""><%= link_to "Hoard", dragonhoards_path %></div>
+      <div class=""><%= link_to "News", blogs_path %></div>
+      <% if current_user %>
+         <div class=""><%= link_to "Cave", monsters_cave_path %></div>
+         <div class=""><%= link_to "Warehouse", warehouse_path("Hardware-Store") %></div>
+      <% end %>
+      <div class=""><%= link_to "Colorschemes", colorschemes_path %></div>
+      <div class=""><%= link_to "Tags", tags_path %></div>
+      <div class=""><%= link_to "OCs", ocs_path %></div>
+      <div class=""><%= link_to "Items", items_path %></div>
+      <div class=""><%= link_to "Elements", elements_path %></div>
+      <div class=""><%= link_to "Monsters", monsters_path %></div>
+      <div class=""><%= link_to "Creatures", creatures_path %></div>
+      <div class=""><%= link_to "Jukeboxes", jukeboxes_path %></div>
+      <div class=""><%= link_to "Channels", channels_path %></div>
+      <div class=""><%= link_to "Galleries", galleries_path %></div>
+      <div class=""><%= link_to "Bookworlds", bookworlds_path %></div>
+      <div class=""><%#= link_to "Forums", forums_path %></div>
+   </div>
+</div>

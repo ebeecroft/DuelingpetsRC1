@@ -1,0 +1,170 @@
+<% provide(:h1, @movie.title) %>
+<p id="notice"><%= notice %></p>
+<div class="pageformat">
+   <% if current_user && (current_user.id == @movie.user_id || current_user.pouch.privilege == "Admin") %>
+      <div class="container"><%= button_to 'Edit', edit_subplaylist_movie_path(@movie.subplaylist, @movie), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [@movie.subplaylist, @movie], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+   <% end %>
+   <p>Created: <%= distance_of_time_in_words_to_now @movie.created_on %> ago on (<%= @movie.created_on.strftime("%B-%d-%Y") %>)</p>
+   <p>Updated: <%= distance_of_time_in_words_to_now @movie.updated_on %> ago on (<%= @movie.updated_on.strftime("%B-%d-%Y") %>)</p>
+   <% if !@movie.reviewed_on.nil? %>
+      <p>Reviewed: <%= distance_of_time_in_words_to_now @movie.reviewed_on %> ago on (<%= @movie.reviewed_on.strftime("%B-%d-%Y") %>)</p>
+   <% end %>
+   <% if @movie.ogv.to_s != "" || @movie.mp4.to_s != "" %>
+      <br>
+      <p><%= video_tag(getMusicOrVideo("Movie", @movie), :controls => true) %></p>
+   <% end %>
+   <br>
+   <% if @movie.user.userinfo.miniavatar.to_s != "" %>
+      <p><%= image_tag(@movie.user.userinfo.miniavatar_url(:thumb)) %></p>
+   <% end %>
+   <p class="formlinks">Director: <%= getUserPrivilege(@movie.user) %><%= link_to @movie.user.vname, user_path(@movie.user) %></p>
+   <p>Subplaylist: <%= @movie.subplaylist.title %></p>
+   <p>Group: <%= @movie.bookgroup.name %></p>
+   <p>Status: <%= getActivity(@movie.user) %>
+      <% if getActivity(@movie.user) != "Online" && getActivity(@movie.user) != "Inoperable" %>
+         for <%= distance_of_time_in_words_to_now getTime(@movie.user) %>
+      <% end %>
+   </p>
+   <br>
+   <p class="textindent"><%= textFormater("Multi", @movie.description, "All").html_safe %></p>
+   <br>
+   <p>Tag list</p>
+   <% if(!@movie.movietag.tag1_id.nil?) %>
+      <div class="container"><%= getTagname(@movie.movietag.tag1_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag1_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@movie.movietag.tag2_id.nil?) %>
+      <div class="container"><%= " " + getTagname(@movie.movietag.tag2_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag2_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@movie.movietag.tag3_id.nil?) %>
+      <div class="container"><%= " " + getTagname(@movie.movietag.tag3_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag3_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@movie.movietag.tag4_id.nil?) %>
+      <div class="container"><%= getTagname(@movie.movietag.tag4_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag4_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@movie.movietag.tag5_id.nil?) %>
+      <div class="container"><%= getTagname(@movie.movietag.tag5_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag5_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@movie.movietag.tag6_id.nil?) %>
+      <div class="container"><%= getTagname(@movie.movietag.tag6_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag6_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@movie.movietag.tag7_id.nil?) %>
+      <div class="container"><%= getTagname(@movie.movietag.tag7_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag7_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@movie.movietag.tag8_id.nil?) %>
+      <div class="container"><%= getTagname(@movie.movietag.tag8_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag8_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@movie.movietag.tag9_id.nil?) %>
+      <div class="container"><%= getTagname(@movie.movietag.tag9_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag9_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@movie.movietag.tag10_id.nil?) %>
+      <div class="container"><%= getTagname(@movie.movietag.tag10_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag10_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@movie.movietag.tag11_id.nil?) %>
+      <div class="container"><%= getTagname(@movie.movietag.tag11_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag11_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@movie.movietag.tag12_id.nil?) %>
+      <div class="container"><%= getTagname(@movie.movietag.tag12_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag12_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@movie.movietag.tag13_id.nil?) %>
+      <div class="container"><%= getTagname(@movie.movietag.tag13_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag13_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@movie.movietag.tag14_id.nil?) %>
+      <div class="container"><%= getTagname(@movie.movietag.tag14_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag14_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@movie.movietag.tag15_id.nil?) %>
+      <div class="container"><%= getTagname(@movie.movietag.tag15_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag15_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@movie.movietag.tag16_id.nil?) %>
+      <div class="container"><%= getTagname(@movie.movietag.tag16_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag16_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@movie.movietag.tag17_id.nil?) %>
+      <div class="container"><%= getTagname(@movie.movietag.tag17_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag17_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@movie.movietag.tag18_id.nil?) %>
+      <div class="container"><%= getTagname(@movie.movietag.tag18_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag18_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@movie.movietag.tag19_id.nil?) %>
+      <div class="container"><%= getTagname(@movie.movietag.tag19_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag19_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <% if(!@movie.movietag.tag20_id.nil?) %>
+      <div class="container"><%= getTagname(@movie.movietag.tag20_id) %></div>
+      <% if(current_user && current_user.id == @movie.user_id) %>
+         <div class="container"><%= button_to 'X', movietags_removetag_path(:movietag_id=>@movie.movietag.id, :tagid=>@movie.movietag.tag20_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+   <% end %>
+   <br>
+   <% if current_user && current_user.id == @movie.user_id %>
+      <br>
+      <%= form_for(:movietag, url: movietags_addtag_path(:movietag_id=>@movie.movietag.id), method: :post) do |form| %>
+         <p>
+            <%= form.label :name, "Tagname" %>
+            <%= form.text_field :name %>
+         </p>
+         <br>
+         <p>
+            <%= form.label :tagslot, "Pick a slot from 1 - 20" %>
+            <%= form.number_field :tagslot %>
+         </p>
+         <br>
+         <div class="pageformat"><%= form.submit "Add Tag", class: "button submitbutton" %></div>
+      <% end %>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to "Back", mainplaylist_subplaylist_path(@movie.subplaylist.mainplaylist, @movie.subplaylist) %></p>

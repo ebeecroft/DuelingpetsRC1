@@ -1,0 +1,36 @@
+<% provide(:h1, "PM Outbox") %>
+<% if @pms.count >= 10 %>
+   <div class="formlinks"><%= paginate @pms %></div>
+   <br>
+<% end %>
+<% @pms.each do |pm| %>
+   <div class="pageformat">
+      <div class="container"><p class="formlinks">Title: <%= link_to pm.title, pmbox_pm_path(pm.pmbox, pm) %></p></div> <div class="container"><%= button_to 'Edit', edit_pmbox_pm_path(pm.pmbox, pm), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [pm.pmbox, pm], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <p>Created: <%= distance_of_time_in_words_to_now pm.created_on %> ago on (<%= pm.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now pm.updated_on %> ago on(<%= pm.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <% if pm.image.to_s != "" %>
+         <p>Art content is active!</p>
+      <% end %>
+      <% if pm.ogg.to_s != "" || pm.mp3.to_s != "" %>
+         <p>Audio content is active!</p>
+      <% end %>
+      <% if pm.ogv.to_s != "" || pm.mp4.to_s != "" %>
+         <p>Video content is active!</p>
+      <% end %>
+      <br>
+      <% if pm.pmbox.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(pm.pmbox.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">To: <%= getUserPrivilege(pm.pmbox.user) %><%= link_to pm.pmbox.user.vname, user_path(pm.pmbox.user) %></p>
+      <p>Unread status: <%= pm.user2_unread %></p>
+      <p>Status: <%= getActivity(pm.pmbox.user) %>
+         <% if getActivity(pm.pmbox.user) != "Online" && getActivity(pm.pmbox.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(pm.pmbox.user) %>
+         <% end %>
+      </p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", pm.message, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', user_path(current_user) %></p>

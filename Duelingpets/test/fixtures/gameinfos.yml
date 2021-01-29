@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  difficulty_id: 1
+  lives_enabled: false
+  ageing_enabled: false
+  activated_on: 2019-08-04 06:12:57
+  startgame: false
+  gamecompleted: false
+  success: 1
+  failure: 1
+
+two:
+  difficulty_id: 1
+  lives_enabled: false
+  ageing_enabled: false
+  activated_on: 2019-08-04 06:12:57
+  startgame: false
+  gamecompleted: false
+  success: 1
+  failure: 1

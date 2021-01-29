@@ -1,0 +1,88 @@
+<% provide(:h1, @jukebox.name) %>
+<p id="notice"><%= notice %></p>
+<% if current_user %>
+   <p class="centerpagecontent"><%= playMusicLoop("Jukebox", @jukebox) %></p>
+   <div class="pageformat">
+      <% if current_user.id == @jukebox.user.id %>
+         <% if @jukebox.ogg.to_s != "" || @jukebox.mp3.to_s != "" %>
+            <div class="container">
+               <% if @jukebox.music_on %>
+                  <p><%= button_to 'Turn off music', jukeboxes_music_path(:id=>@jukebox.id), method: :post, class: "button submitbutton" %></p>
+               <% else %>
+                  <p><%= button_to 'Turn on music', jukeboxes_music_path(:id=>@jukebox.id), method: :post, class: "button submitbutton" %></p>
+               <% end %>
+            </div>
+         <% end %>
+      <% end %>
+      <div class="container">
+         <% if current_user.userinfo.mute_on %>
+            <p><%= button_to 'Unmute music', muteAudio_path(:pageType => "Jukebox", :pageContent => [@jukebox.user, @jukebox]), method: :post, class: "button submitbutton" %></p>
+            <br>
+         <% else %>
+            <p><%= button_to 'Mute music', muteAudio_path(:pageType => "Jukebox", :pageContent => [@jukebox.user, @jukebox]), method: :post, class: "button submitbutton" %></p>
+            <br>
+         <% end %>
+      </div>
+      <br>
+   </div>
+<% end %>
+<div class="pageformat">
+   <% if current_user && (current_user.id == @jukebox.user_id || current_user.pouch.privilege == "Admin") %>
+      <div class="container"><%= button_to 'Edit', edit_user_jukebox_path(@jukebox.user, @jukebox), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [@jukebox.user, @jukebox], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+   <% end %>
+   <p>Created: <%= distance_of_time_in_words_to_now @jukebox.created_on %> ago on (<%= @jukebox.created_on.strftime("%B-%d-%Y") %>)</p>
+   <p>Updated: <%= distance_of_time_in_words_to_now @jukebox.updated_on %> ago on (<%= @jukebox.updated_on.strftime("%B-%d-%Y") %>)</p>
+   <p>Private jukebox: <%= @jukebox.privatejukebox %></p>
+   <br>
+   <% if @jukebox.user.userinfo.miniavatar.to_s != "" %>
+      <p><%= image_tag(@jukebox.user.userinfo.miniavatar_url(:thumb)) %></p>
+   <% end %>
+   <p class="formlinks">Composer: <%= getUserPrivilege(@jukebox.user) %><%= link_to @jukebox.user.vname, user_path(@jukebox.user) %></p>
+   <p>Group: <%= @jukebox.bookgroup.name %></p>
+   <p>Viewer: <%= @jukebox.gviewer.name %></p>
+   <p>Total mainsheets: <%= @jukebox.mainsheets.count %></p>
+   <p>Status: <%= getActivity(@jukebox.user) %>
+      <% if getActivity(@jukebox.user) != "Online" && getActivity(@jukebox.user) != "Inoperable" %>
+         for <%= distance_of_time_in_words_to_now getTime(@jukebox.user) %>
+      <% end %>
+   </p>
+   <br>
+   <p class="textindent"><%= textFormater("Multi", @jukebox.description, "All").html_safe %></p>
+   <br>
+   <% if @mainsheets.count >= 10 %>
+      <div class="formlinks"><%= paginate @mainsheets %></div>
+      <br>
+   <% end %>
+   <% @mainsheets.each do |mainsheet| %>
+      <p class="formlinks"><%= link_to mainsheet.title, jukebox_mainsheet_path(mainsheet.jukebox, mainsheet) %></p>
+      <% if current_user && (current_user.id == mainsheet.jukebox.user_id || current_user.pouch.privilege == "Admin") %>
+         <div class="container"><%= button_to 'Edit', edit_jukebox_mainsheet_path(mainsheet.jukebox, mainsheet), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [mainsheet.jukebox, mainsheet], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <% end %>
+      <p>Created: <%= distance_of_time_in_words_to_now mainsheet.created_on %> ago on (<%= mainsheet.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now mainsheet.updated_on %> ago on(<%= mainsheet.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <br>
+      <% if !getMainsheetMusic(mainsheet).nil? %>
+         <p><%= audio_tag(getMusicOrVideo("Sound", getMainsheetMusic(mainsheet)), :controls => true) %></p>
+         <br>
+      <% end %>
+      <% if mainsheet.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(mainsheet.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Composer: <%= getUserPrivilege(mainsheet.user) %><%= link_to mainsheet.user.vname, user_path(mainsheet.user) %></p>
+      <p>Total subsheets: <%= mainsheet.subsheets.count %></p>
+      <p>Status: <%= getActivity(mainsheet.user) %>
+         <% if getActivity(mainsheet.user) != "Online" && getActivity(mainsheet.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(mainsheet.user) %>
+         <% end %>
+      </p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", mainsheet.description, "All").html_safe %></p>
+      <br>
+   <% end %>
+   <% if(current_user && current_user.id == @jukebox.user_id) %>
+      <p><%= button_to "New Mainsheet", new_jukebox_mainsheet_path(@jukebox), method: :get, class: "button submitbutton" %></p>
+      <br>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to "User Jukeboxes", user_jukeboxes_path(@jukebox.user) %> |
+<%= link_to "Jukebox List", jukeboxes_path %></p>

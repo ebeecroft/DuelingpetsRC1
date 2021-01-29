@@ -1,0 +1,25 @@
+<% provide(:h1, "Mainfolder List") %>
+<div class="formlinks"><%= paginate @mainfolders %></div>
+<br>
+<% @mainfolders.each do |mainfolder| %>
+   <div class="pageformat">
+      <p>Created: <%= distance_of_time_in_words_to_now mainfolder.created_on %> ago on (<%= mainfolder.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now mainfolder.updated_on %> ago on (<%= mainfolder.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <div class="container"><p class="formlinks">Title: <%= link_to mainfolder.title, gallery_mainfolder_path(mainfolder.gallery, mainfolder) %></p></div> <div class="container"><%= button_to 'Edit', edit_gallery_mainfolder_path(mainfolder.gallery, mainfolder), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [mainfolder.gallery, mainfolder], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <br>
+      <% if mainfolder.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(mainfolder.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Artist: <%= getUserPrivilege(mainfolder.user) %><%= link_to mainfolder.user.vname, user_path(mainfolder.user) %></p>
+      <p class="formlinks">Gallery: <%= link_to mainfolder.gallery.name, user_gallery_path(mainfolder.user, mainfolder.gallery) %></p>
+      <p>Status: <%= getActivity(mainfolder.user) %>
+         <% if getActivity(mainfolder.user) != "Online" && getActivity(mainfolder.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(mainfolder.user) %>
+         <% end %>
+      </p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", mainfolder.description, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

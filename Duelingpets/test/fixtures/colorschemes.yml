@@ -1,0 +1,41 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  colortype: MyString
+  description: MyText
+  created_on: 2019-07-13 04:59:18
+  user_id: 1
+  activated: false
+  democolor: false
+  backgroundcolor: MyString
+  headercolor: MyString
+  textcolor: MyString
+  defaultbuttoncolor: MyString
+  defaultbuttonbackgcolor: MyString
+  editbuttoncolor: MyString
+  editbuttonbackgcolor: MyString
+  destroybuttoncolor: MyString
+  destroybuttonbackgcolor: MyString
+  submitbuttoncolor: MyString
+  submitbuttonbackgcolor: MyString
+
+two:
+  name: MyString
+  colortype: MyString
+  description: MyText
+  created_on: 2019-07-13 04:59:18
+  user_id: 1
+  activated: false
+  democolor: false
+  backgroundcolor: MyString
+  headercolor: MyString
+  textcolor: MyString
+  defaultbuttoncolor: MyString
+  defaultbuttonbackgcolor: MyString
+  editbuttoncolor: MyString
+  editbuttonbackgcolor: MyString
+  destroybuttoncolor: MyString
+  destroybuttonbackgcolor: MyString
+  submitbuttoncolor: MyString
+  submitbuttonbackgcolor: MyString

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+   </head>
+   <body>
+      <% if @type == "Retrieve" %>
+         <h1>User <%= @content.user.vname %> gained <%= @points %>!</h1>
+      <% elsif @type == "Refund" %>
+         <h1>Your points have been returned to you!</h1>
+      <% elsif @type == "Donated" %>
+         <h1>User <%= @content.user.vname %> donated some points!</h1>
+      <% elsif @type == "Goal" %>
+         <h1>User <%= @content.donationbox.user.vname %> achieved their goal!</h1>
+      <% end %>
+      <p>
+         <% if @type == "Retrieve" %>
+            Well its seems like you enjoy collecting treasure as
+            much as us dragons do. Rawr.. hehehe.. Lets see how
+            much you got there. Hmm <%= @content.progress %> points
+            its a good amount for you player. You did quite well,
+            however I am afraid you will need to pay some taxes
+            on your earnings. Its a modest amount but it is there
+            to keep the game balanced and also to help out my
+            dragonhoard.
+         <% elsif @type == "Refund" %>
+            Unfortunately its seems that the donation system for
+            <%= @content.user.vname %> didn't work out. As such
+            your points have been returned to you as well as the
+            other donors. The timing may have been bad for the
+            user or the admin refunded your points because the
+            donotionbox owner was inactive for six months.
+         <% elsif @type == "Donated" %>
+            Well done <%= @content.donationbox.user.vname %> you
+            seemed to have a good selection of donors to
+            contribute to your cause. You are well on your way
+            to achieving your goal. Though the larger your goal
+            is, the harder it will be to achieve. If you can
+            keep this up you will achieve your goal in no time.
+         <% elsif @type == "Goal" %>
+            Congratualations <%= @content.donationbox.user.vname %>
+            you have just passed your goal of
+            <%= @content.donationbox.goal %> points. It is quite
+            amazing you made it this far. Now you will be able to
+            retrieve your points from your donationbox but it will
+            cost a bit of points to do so, though you will still
+            have plenty of points left from the sale.
+         <% end %>
+      </p>
+      <p>
+         <% if @type == "Retrieve" %>
+            Your tax rate is <%= @taxrate %> percent and as such I will be
+            taking <%= @tax %> points away from you. This leaves you
+            with <%= @points %> points remaining. Still you have
+            a lot more points than you started with. People must
+            love you quite a good deal for you have achieved this
+            many points. Now that you have taken your points I
+            have deactivated your donation system since you have
+            achieved your goal. Feel free to start up again if
+            you like.
+         <% elsif @type == "Refund" %>
+            Still I believe the owner will return back again when
+            he feels ready. Hopefully it does work out better for
+            him during the next turn around. Anyway here is your
+            <%= @points %> points back. Sometimes these things
+            happen when we plan our goals to be a lot bigger than
+            our expectations.
+         <% elsif @type == "Donated" %>
+            Your well on your way to becoming a treasure
+            collecting dragon like me. Rawr... Still it will take
+            a bit of time till you hit your goal. I know you will
+            do well by the way. User <%= @content.user.vname %>
+            donated <%= @points %> to your donationbox.
+         <% elsif @type == "Goal" %>
+            Lets see how well you did, it appears that you made
+            <%= @tax %> points. When we subtract your goal points
+            from the progress points you have <%= @points %> points.
+            You seem to have done quite well. I am sure you will put
+            these new points to good use. I wish you the best of luck
+            in your next donation run.
+         <% end %>
+      </p>
+      <br>
+      <p>
+         Your humble helper Glitchy The Dragon
+      </p>
+   </body>
+</html>

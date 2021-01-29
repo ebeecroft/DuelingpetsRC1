@@ -1,0 +1,44 @@
+<%= form_with(model: [@mainfolder, @subfolder], local: true) do |form| %>
+  <% if @subfolder.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@subfolder.errors.count, "error") %> prohibited this subfolder from being saved:</h2>
+           <ul>
+              <% @subfolder.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :description %>
+    <%= form.text_area :description %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :collab_mode %>
+    <%= form.check_box :collab_mode %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :fave_folder %>
+    <%= form.check_box :fave_folder %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :privatesubsheet %>
+    <%= form.check_box :privatesubfolder %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', gallery_mainfolder_path(@mainfolder.gallery, @mainfolder) %></p>
+<% end %>

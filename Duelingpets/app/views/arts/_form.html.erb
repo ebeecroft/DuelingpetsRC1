@@ -1,0 +1,73 @@
+<%= form_with(model: [@subfolder, @art], local: true) do |form| %>
+  <% if @art.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@art.errors.count, "error") %> prohibited this art from being saved:</h2>
+           <ul>
+              <% @art.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :description %>
+    <%= form.text_area :description %>
+  </div>
+  <br>
+  <p class="pageformat">Image files</p>
+  <div class="field">
+     <%= image_tag @art.image_url(:thumb).to_s if @art.image? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :image %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_image_url, "or Image URL" %><br />
+    <%= form.text_field :remote_image_url %>
+    <%= form.hidden_field :image_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Ogg files</p>
+  <div class="pageformat">
+     <%= audio_tag(@art.ogg_url.to_s, :controls => true) if @art.ogg? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :ogg %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_ogg_url, "or Ogg URL" %>
+     <%= form.text_field :remote_ogg_url %>
+     <%= form.hidden_field :ogg_cache %>
+  </div>
+  <br>
+  <p class="pageformat">MP3 files</p>
+  <div class="pageformat">
+     <%= audio_tag(@art.mp3_url.to_s, :controls => true) if @art.mp3? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :mp3 %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_mp3_url, "or Mp3 URL" %>
+     <%= form.text_field :remote_mp3_url %>
+     <%= form.hidden_field :mp3_cache %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :bookgroup_id, "Select Group" %>
+    <%= form.collection_select(:bookgroup_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', mainfolder_subfolder_path(@subfolder.mainfolder, @subfolder) %></p>
+<% end %>

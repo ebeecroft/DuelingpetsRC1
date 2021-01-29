@@ -1,0 +1,59 @@
+<% provide(:h1, "Pet Market") %>
+<div class="formlinks"><%= paginate @creatures %></div>
+<br>
+<div class="pageformat">
+   <%= form_for(:wpetden, url: dragonhoards_purchase2_path, method: :post) do |form| %>
+      <% if @slots.count > 0 %>
+         <p><%= form.collection_select(:wpetden_id, @slots, :id, :name) %></p>
+      <% else %>
+         <p>Wpetdens are required to buy creatures!</p>
+      <% end %>
+      <br>
+      <div class="formlinks"><%= paginate @creatures %></div>
+      <br>
+      <% @creatures.each_with_index do |creature, index| %>
+         <% if(index % 4 == 3) %>
+            <div class="container">
+         <% else %>
+            <!--Container space-->
+            <div class="container">
+         <% end %>
+            <% if @slots.count > 0 %>
+               <% if index == 0 %>
+                  <p class="formlinks"><%= link_to creature.name, user_creature_path(creature.user, creature) %><%= form.radio_button :creature_id, creature.id, :checked => true %></p>
+               <% else %>
+                  <p class="formlinks"><%= link_to creature.name, user_creature_path(creature.user, creature) %><%= form.radio_button :creature_id, creature.id %></p>
+               <% end %>
+               <% if creature.image.to_s != "" %>
+                  <p><%= image_tag(creature.image_url(:thumb)) %></p>
+               <% end %>
+               <p>Type: <%= creature.creaturetype.name %></p>
+               <p>Lives: <%= creature.lives %></p>
+               <p>Rarity: <%= creature.rarity %></p>
+               <p class="formlinks">Artist: <%= getUserPrivilege(creature.user) %><%= link_to creature.name, user_path(creature.user) %></p>
+               <p>Emeralds: <%= creature.emeraldcost %></p>
+               <!--Add tax in later-->
+               <p>Points: <%= creature.cost %></p>
+               <br>
+               <p>Stats</p>
+               <div class="container"><%= getPetmarketStats(creature, "Physical") %></div>
+               <br>
+               <br>
+               <div class="container"><%= getPetmarketStats(creature, "Magical") %></div>
+               <div class="container"><%= getPetmarketStats(creature, "Stamina") %></div>
+            <% end %>
+         </div>
+         <% if @slots.count > 0 %>
+            <% if index % 4 == 3 %>
+               <br>
+               <br>
+            <% end %>
+         <% end %>
+      <% end %>
+      <% if @slots.count > 0 %>
+         <p><%= form.submit "Purchase", class: "button submitbutton" %></p>
+         <br>
+      <% end %>
+   <% end %>
+   <p class="formlinks"><%= link_to "Hoard", dragonhoards_path %></p>
+</div>

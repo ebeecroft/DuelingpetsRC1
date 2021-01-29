@@ -1,0 +1,21 @@
+<% if current_user && activePet.to_s != "" %>
+   <div class="sidenav">
+      <br>
+      <div class="activepet">
+         <p><%= link_to activePet.name, user_partner_path(current_user, activePet) %></p>
+         <% if activePet.creature.image.to_s != "" %>
+            <p><%= image_tag(activePet.creature.image_url(:thumb), :width => 60) %></p>
+         <% end %>
+         <p>Type: <%= activePet.creature.name %></p>
+         <p>Phylevel: <%= activePet.plevel %></p>
+         <p>Magilevel: <%= activePet.mlevel %></p>
+         <p>HP: <%= activePet.chp %>/<%= activePet.hp %></p>
+         <p>MP: <%= activePet.cmp %>/<%= activePet.mp %></p>
+         <p>Hunger: <%= activePet.chunger %>/<%= activePet.hunger %></p>
+         <p>Thirst: <%= activePet.cthirst %>/<%= activePet.thirst %></p>
+         <p>Fun: <%= activePet.cfun %>/<%= activePet.fun %></p>
+         <p>Lives: <%= activePet.lives %></p>
+         <p>Rarity: <%= activePet.creature.rarity %></p>
+      </div>
+   </div>
+<% end %>

@@ -1,0 +1,84 @@
+<% provide(:h1, "Creature Review") %>
+<div class="formlinks"><%= paginate @creatures %></div>
+<br>
+<div class="pageformat">
+   <% @creatures.each_with_index do |creature, index| %>
+      <% if(index % 3 == 2) %>
+         <div class="container">
+      <% else %>
+         <!--Container space-->
+         <div class="container">
+      <% end %>
+         <div class="container"><p class="formlinks">Name: <%= link_to creature.name, user_creature_path(creature.user, creature) %></p></div> <div class="container"><%= button_to 'Approve', creatures_review1_path(:creature_id=>creature.id), method: :post, class: "button editbutton" %></div> <div class="container"><%= button_to 'Deny', creatures_review2_path(:creature_id=>creature.id), method: :post, class: "button destroybutton" %></div>
+         <p>Created</p>
+         <p><%= distance_of_time_in_words_to_now creature.created_on %> ago on</p>
+         <p>(<%= creature.created_on.strftime("%B-%d-%Y") %>)</p>
+         <p>Updated</p>
+         <p><%= distance_of_time_in_words_to_now creature.updated_on %> ago on</p>
+         <p>(<%= creature.updated_on.strftime("%B-%d-%Y") %>)</p>
+         <% if creature.image.to_s != "" %>
+            <br>
+            <p><%= image_tag(creature.image_url(:thumb)) %></p>
+         <% end %>
+         <% if creature.activepet.to_s != "" %>
+            <br>
+            <p>Activepet image</p>
+            <p><%= image_tag(creature.activepet_url(:thumb)) %></p>
+         <% end %>
+         <% if creature.ogg.to_s != "" || creature.mp3.to_s != "" %>
+            <br>
+            <p>Theme song: <%= audio_tag(getMusicOrVideo("Sound", creature), :controls => true) %></p>
+         <% end %>
+         <% if creature.voiceogg.to_s != "" || creature.voicemp3.to_s != "" %>
+            <br>
+            <p>Character's voice: <%= audio_tag(getMusicOrVideo("Sound", creature), :controls => true) %></p>
+         <% end %>
+         <br>
+         <p>Physical Stats</p>
+         <p>Level: <%= creature.level %></p>
+         <p>Hp: <%= creature.hp %></p>
+         <p>Atk: <%= creature.atk %></p>
+         <p>Def: <%= creature.def %></p>
+         <p>Agi: <%= creature.agility %></p>
+         <p>Strength: <%= creature.strength %></p>
+         <br>
+         <p>Magical Stats</p>
+         <p>MP: <%= creature.mp %></p>
+         <p>Matk: <%= creature.matk %></p>
+         <p>Mdef: <%= creature.mdef %></p>
+         <p>Magi: <%= creature.magi %></p>
+         <p>Mstr: <%= creature.mstr %></p>
+         <br>
+         <p>Stamina Stats</p>
+         <p>Hunger: <%= creature.hunger %></p>
+         <p>Thirst: <%= creature.thirst %></p>
+         <p>Fun: <%= creature.fun %></p>
+         <p>Lives: <%= creature.lives %></p>
+         <p>Rarity: <%= creature.rarity %></p>
+         <p>Unlimited lives: <%= creature.unlimitedlives %></p>
+         <p>Retired pet: <%= creature.retiredpet %></p>
+         <p>Starter: <%= creature.starter %></p>
+         <p>Emerald cost: <%= creature.emeraldcost %></p>
+         <p>Cost: <%= creature.cost %></p>
+         <p>Type: <%= creature.creaturetype.name %></p>
+         <p>Element: <%= creature.element.name %></p>
+         <br>
+         <% if creature.user.userinfo.miniavatar.to_s != "" %>
+            <p><%= image_tag(creature.user.userinfo.miniavatar_url(:thumb)) %></p>
+         <% end %>
+         <p class="formlinks">Artist: <%= getUserPrivilege(creature.user) %><%= link_to creature.user.vname, user_path(creature.user) %></p>
+         <p>Status: <%= getActivity(creature.user) %>
+            <% if getActivity(creature.user) != "Online" && getActivity(creature.user) != "Inoperable" %>
+               for <%= distance_of_time_in_words_to_now getTime(creature.user) %>
+            <% end %>
+         </p>
+         <br>
+         <p class="textindent"><%= textFormater("Multi", creature.description, "All").html_safe %></p>
+      </div>
+      <% if index % 3 == 2 %>
+         <br>
+         <br>      
+      <% end %>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

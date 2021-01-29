@@ -1,0 +1,71 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  description: MyText
+  ogg: MyString
+  mp3: MyString
+  adbanner: MyString
+  admascot: MyString
+  largeimage1: MyString
+  largeimage2: MyString
+  largeimage3: MyString
+  smallimage1: MyString
+  smallimage2: MyString
+  smallimage3: MyString
+  smallimage4: MyString
+  smallimage5: MyString
+  created_on: 2019-08-16 00:39:00
+  reviewed_on: 2019-08-16 00:39:00
+  updated_on: 2019-08-16 00:39:00
+  blogtype_id: 1
+  bookgroup_id: 1
+  blogviewer_id: 1
+  user_id: 1
+  largeimage1purchased: false
+  largeimage2purchased: false
+  largeimage3purchased: false
+  smallimage1purchased: false
+  smallimage2purchased: false
+  smallimage3purchased: false
+  smallimage4purchased: false
+  smallimage5purchased: false
+  musicpurchased: false
+  adbannerpurchased: false
+  pointsreceived: false
+  reviewed: false
+
+two:
+  title: MyString
+  description: MyText
+  ogg: MyString
+  mp3: MyString
+  adbanner: MyString
+  admascot: MyString
+  largeimage1: MyString
+  largeimage2: MyString
+  largeimage3: MyString
+  smallimage1: MyString
+  smallimage2: MyString
+  smallimage3: MyString
+  smallimage4: MyString
+  smallimage5: MyString
+  created_on: 2019-08-16 00:39:00
+  reviewed_on: 2019-08-16 00:39:00
+  updated_on: 2019-08-16 00:39:00
+  blogtype_id: 1
+  bookgroup_id: 1
+  blogviewer_id: 1
+  user_id: 1
+  largeimage1purchased: false
+  largeimage2purchased: false
+  largeimage3purchased: false
+  smallimage1purchased: false
+  smallimage2purchased: false
+  smallimage3purchased: false
+  smallimage4purchased: false
+  smallimage5purchased: false
+  musicpurchased: false
+  adbannerpurchased: false
+  pointsreceived: false
+  reviewed: false

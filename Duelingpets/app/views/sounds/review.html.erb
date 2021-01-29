@@ -1,0 +1,37 @@
+<% provide(:h1, "Sound Review") %>
+<% if @sounds.count >= 10 %>
+   <div class="formlinks"><%= paginate @sounds %></div>
+   <br>
+<% end %>
+<% @sounds.each do |sound| %>
+   <div class="pageformat">
+      <div class="container"><%= button_to 'Approve', sounds_review1_path(:sound_id=>sound.id), method: :post, class: "button editbutton" %></div> <div class="container"><%= button_to 'Deny', sounds_review2_path(:sound_id=>sound.id), method: :post, class: "button destroybutton" %></div>
+      <p>Created: <%= distance_of_time_in_words_to_now sound.created_on %> ago on (<%= sound.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now sound.updated_on %> ago on (<%= sound.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <% if !sound.reviewed_on.nil? %>
+         <p>Reviewed: <%= distance_of_time_in_words_to_now sound.reviewed_on %> ago on (<%= sound.reviewed_on.strftime("%B-%d-%Y") %>)</p>
+      <% end %>
+      <br>
+      <p class="formlinks">Name: <%= link_to sound.title, subsheet_sound_path(sound.subsheet, sound) %></p>
+      <% if sound.ogg.to_s != "" || sound.mp3.to_s != "" %>
+         <br>
+         <p><%= audio_tag(getMusicOrVideo("Sound", sound), :controls => true) %></p>
+      <% end %>
+      <br>
+      <% if sound.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(sound.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Owner: <%= getUserPrivilege(sound.user) %><%= link_to sound.user.vname, user_path(sound.user) %></p>
+      <p>Subsheet: <%= sound.subsheet.title %></p>
+      <p>Group: <%= sound.bookgroup.name %></p>
+      <p>Status: <%= getActivity(sound.user) %>
+         <% if getActivity(sound.user) != "Online" && getActivity(sound.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(sound.user) %>
+         <% end %>
+      </p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", sound.description, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

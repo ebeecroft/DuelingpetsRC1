@@ -1,0 +1,28 @@
+<% provide(:h1, "Referral List") %>
+<% if @referrals.count >= 10 %>
+   <div class="formlinks"><%= paginate @referrals %></div>
+   <br>
+<% end %>
+<% @referrals.each do |referral| %>
+   <div class="pageformat">
+      <p><%= button_to 'Edit', edit_user_referral_path(referral.user, referral), method: :get, class: "button editbutton" %></p>
+      <p>Created: <%= distance_of_time_in_words_to_now referral.created_on %> ago on (<%= referral.created_on.strftime("%B-%d-%Y") %>)</p>
+      <% if referral.user.userinfo.miniavatar.to_s != "" %>
+         <br>
+         <p><%= image_tag(referral.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">User: <%= getUserPrivilege(referral.user) %><%= link_to referral.user.vname, user_path(referral.user) %></p>
+      <% if referral.referred_by.userinfo.miniavatar.to_s != "" %>
+         <br>
+         <p><%= image_tag(referral.referred_by.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Referred by: <%= getUserPrivilege(referral.referred_by) %><%= link_to referral.referred_by.vname, user_path(referral.referred_by) %></p>
+      <p>Status: <%= getActivity(referral.user) %>
+         <% if getActivity(referral.user) != "Online" && getActivity(referral.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(referral.user) %>
+         <% end %>
+      </p> 
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

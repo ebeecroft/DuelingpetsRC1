@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+   </head>
+   <body>
+      <% if @type == "PM" %>
+         <h1>New PM from <%= @content.user.vname %>!</h1>
+      <% elsif @type == "PMreply" %>
+         <h1>New PMreply from <%= @content.user.vname %>!</h1>
+      <% end %>
+      <p>
+         <% if @type == "PM" %>
+            Hi there <%= @content.pmbox.user.vname %> a user
+            by the name of <%= @content.user.vname %> has
+            sent you a new PM message with the title:
+            <%= @content.title %>. There might be some
+            artwork, videos or music tied to this pm. The
+            message says: <%= @content.message %>
+         <% elsif @type == "PMreply" %>
+            <% if(@content.user_id == @content.pm.user_id) %>
+               Hi there <%= @content.pm.pmbox.user.vname %> your
+               pm partner <%= @content.pm.user.vname %> has sent
+               you a pmreply to the PM <%= @content.pm.title %>.
+               There might be some artwork, videos or music tied
+               to this pmreply. The message says:
+               <%= @content.message %>
+            <% elsif(@content.user_id == @content.pm.pmbox.user.id) %>
+               Hi there <%= @content.pm.user.vname %> your
+               pm partner <%= @content.pm.pmbox.user.vname %> has sent
+               you a pmreply to the PM <%= @content.pm.title %>.
+               There might be some artwork, videos or music tied
+               to this pmreply. The message says:
+               <%= @content.message %>
+            <% end %>
+         <% end  %>
+      </p>
+      <p>
+         <% if @type == "PM" %>
+            To communicate back to this user you will need
+            to write a pmreply to the original pm that you
+            received. You will need to navigate to your
+            inbox located at this url: <%= @url %> and then
+            navigate to the show view of the pm. Please be
+            kind and considerate to the original poster.
+         <% elsif @type == "PMreply" %>
+            To reply to your pm partner you will need to
+            write a pmreply to the original pm for it to
+            become visable to your partner. To do so you
+            must navigate to your inbox located at this
+            url: <%= @url %>. You will then need to
+            navigate to the show view of the pm. Please
+            be kind and considerate to the original poster.
+         <% end %>
+      </p>
+      <br>
+      <p>From Bolt Greywing the Admin</p>
+   </body>
+</html>

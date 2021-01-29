@@ -1,0 +1,83 @@
+<% provide(:h1, @inventory.user.vname + "'s Inventory") %>
+<p id="notice"><%= notice %></p>
+<div class="pageformat">
+   <p>Slot limit: <%= @inventory.inventoryslots.count %>/<%= @inventory.capacity %></p>
+   <br>
+   <div class="formlinks"><%= paginate @inventoryslots %></div>
+   <br>
+   <% @inventoryslots.each do |inventoryslot| %>
+      <p><div class="container"><%= button_to 'Edit', edit_inventory_inventoryslot_path(inventoryslot.inventory, inventoryslot), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [inventoryslot.inventory, inventoryslot], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div></p>
+      <br>
+      <%= form_for(:equipslot, url: equipslots_applyitem_path, method: :post) do |form| %>
+         <% if(!checkSlot(inventoryslot)) %>
+            <p><%= inventoryslot.name %><%= form.radio_button :inventoryslot_id, inventoryslot.id, :checked => true %></p>
+            <p>Action: <%= form.collection_select(:itemaction_id, @actiongroup, :id, :name) %></p>
+            <br>
+            <% if !inventoryslot.item1_id.nil? %>
+               <%= render 'showform', slotindex: "1", slot: inventoryslot, form: form %>
+            <% end %>
+            <% if !inventoryslot.item2_id.nil? %>
+               <%= render 'showform', slotindex: "2", slot: inventoryslot, form: form %>
+            <% end %>
+            <% if !inventoryslot.item3_id.nil? %>
+               <%= render 'showform', slotindex: "3", slot: inventoryslot, form: form %>
+            <% end %>
+            <% if !inventoryslot.item4_id.nil? %>
+               <%= render 'showform', slotindex: "4", slot: inventoryslot, form: form %>
+            <% end %>
+            <% if !inventoryslot.item5_id.nil? %>
+               <% if(!inventoryslot.item1_id.nil? && !inventoryslot.item2_id.nil? && !inventoryslot.item3_id.nil? && !inventoryslot.item4_id.nil?) %>
+                  <br>
+                  <br>
+               <% end %>
+               <%= render 'showform', slotindex: "5", slot: inventoryslot, form: form %>
+            <% end %>
+            <% if !inventoryslot.item6_id.nil? %>
+               <%= render 'showform', slotindex: "6", slot: inventoryslot, form: form %>
+            <% end %>
+            <% if !inventoryslot.item7_id.nil? %>
+               <%= render 'showform', slotindex: "7", slot: inventoryslot, form: form %>
+            <% end %>
+            <% if !inventoryslot.item8_id.nil? %>
+               <%= render 'showform', slotindex: "8", slot: inventoryslot, form: form %>
+            <% end %>
+            <% if !inventoryslot.item9_id.nil? %>
+               <% if(!inventoryslot.item5_id.nil? && !inventoryslot.item6_id.nil? && !inventoryslot.item7_id.nil? && !inventoryslot.item8_id.nil?) %>
+                  <br>
+                  <br>
+               <% end %>
+               <%= render 'showform', slotindex: "9", slot: inventoryslot, form: form %>
+            <% end %>
+            <% if !inventoryslot.item10_id.nil? %>
+               <%= render 'showform', slotindex: "10", slot: inventoryslot, form: form %>
+            <% end %>
+            <% if !inventoryslot.item11_id.nil? %>
+               <%= render 'showform', slotindex: "11", slot: inventoryslot, form: form %>
+            <% end %>
+            <% if !inventoryslot.item12_id.nil? %>
+               <%= render 'showform', slotindex: "12", slot: inventoryslot, form: form %>
+            <% end %>
+            <% if !inventoryslot.item13_id.nil? %>
+               <% if(!inventoryslot.item9_id.nil? && !inventoryslot.item10_id.nil? && !inventoryslot.item11_id.nil? && !inventoryslot.item12_id.nil?) %>
+                  <br>
+                  <br>
+               <% end %>
+               <%= render 'showform', slotindex: "13", slot: inventoryslot, form: form %>
+            <% end %>
+            <% if !inventoryslot.item14_id.nil? %>
+               <%= render 'showform', slotindex: "14", slot: inventoryslot, form: form %>
+            <% end %>
+            <br>
+            <div class="pageformat"><%= form.submit "Applyitem", class: "button submitbutton" %></div>
+         <% else %>
+            <p><%= inventoryslot.name %></p>
+         <% end %>
+      <% end %>
+      <br>
+   <% end %>
+   <% if(@inventory.inventoryslots.count < @inventory.capacity) %>
+      <p><%= button_to "New Itempouch", new_inventory_inventoryslot_path(@inventory), method: :get, class: "button submitbutton" %></p>
+   <% end %>
+</div>
+<br>
+<p class="formlinks"><%= link_to "Back", user_path(@inventory.user) %></p>

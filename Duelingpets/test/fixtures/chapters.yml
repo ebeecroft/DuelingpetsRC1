@@ -1,0 +1,43 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  story: MyText
+  bookcover: MyString
+  storyscene: MyString
+  voice1ogg: MyString
+  voice1mp3: MyString
+  voice2ogg: MyString
+  voice2mp3: MyString
+  voice3ogg: MyString
+  voice3mp3: MyString
+  created_on: 2020-03-20 02:59:24
+  updated_on: 2020-03-20 02:59:24
+  reviewed_on: 2020-03-20 02:59:24
+  user_id: 1
+  bookgroup_id: 1
+  book_id: 1
+  gchapter_id: 1
+  reviewed: false
+  pointsreceived: false
+
+two:
+  title: MyString
+  story: MyText
+  bookcover: MyString
+  storyscene: MyString
+  voice1ogg: MyString
+  voice1mp3: MyString
+  voice2ogg: MyString
+  voice2mp3: MyString
+  voice3ogg: MyString
+  voice3mp3: MyString
+  created_on: 2020-03-20 02:59:24
+  updated_on: 2020-03-20 02:59:24
+  reviewed_on: 2020-03-20 02:59:24
+  user_id: 1
+  bookgroup_id: 1
+  book_id: 1
+  gchapter_id: 1
+  reviewed: false
+  pointsreceived: false

@@ -1,0 +1,22 @@
+<% provide(:h1, "PMbox List") %>
+<% if @pmboxes.count >= 10 %>
+   <div class="formlinks"><%= paginate @pmboxes %></div>
+   <br>
+<% end %>
+<% @pmboxes.each do |pmbox| %>
+   <div class="pageformat">
+      <p>Capacity: <%= pmbox.pms.count %>/<%= pmbox.capacity %></p>
+      <p>Box open: <%= pmbox.box_open %></p>
+      <% if pmbox.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(pmbox.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p>Owner: <%= getUserPrivilege(pmbox.user) %><%= link_to pmbox.user.vname, user_path(pmbox.user) %></p>
+      <p>Status: <%= getActivity(pmbox.user) %>
+         <% if getActivity(pmbox.user) != "Online" && getActivity(pmbox.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(pmbox.user) %>
+         <% end %>
+      </p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

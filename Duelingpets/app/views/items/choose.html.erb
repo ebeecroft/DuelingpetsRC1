@@ -1,0 +1,11 @@
+<% provide(:h1, "Choose Itemtype") %>
+<%= form_for(:item, url: items_choosepost_path, method: :post) do |form| %>
+   <div class="pageformat">
+      <%= form.label :itemtype_id, "Select Itemtype" %>
+      <%= form.collection_select(:itemtype_id, @itemtypes, :id, :name) %>
+   </div>
+   <br>
+   <div class="pageformat">
+      <p><%= form.submit "Create item", class: "button submitbutton" %></p>
+   </div>
+<% end %>

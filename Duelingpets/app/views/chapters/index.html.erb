@@ -1,0 +1,54 @@
+<% provide(:h1, "Chapter List") %>
+<% if @chapters.count >= 10 %>
+   <div class="formlinks"><%= paginate @chapters %></div>
+   <br>
+<% end %>
+<% @chapters.each do |chapter| %>
+   <div class="pageformat">
+      <p>Created: <%= distance_of_time_in_words_to_now chapter.created_on %> ago on (<%= chapter.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now chapter.updated_on %> ago on (<%= chapter.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <% if !chapter.reviewed_on.nil? %>
+         <p>Reviewed: <%= distance_of_time_in_words_to_now chapter.reviewed_on %> ago on (<%= chapter.reviewed_on.strftime("%B-%d-%Y") %>)</p>
+      <% end %>
+      <div class="container"><p class="formlinks">Title: <%= link_to chapter.title, book_chapter_path(chapter.book, chapter) %></p></div> <div class="container"><%= button_to 'Edit', edit_book_chapter_path(chapter.book, chapter), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [chapter.book, chapter], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <% if chapter.voice1ogg.to_s != "" || chapter.voice1mp3.to_s != "" %>
+         <br>
+         <p><%= audio_tag(getChaptermusic("Voice1", chapter), :controls => true) %></p>
+      <% end %>
+      <% if chapter.voice2ogg.to_s != "" || chapter.voice2mp3.to_s != "" %>
+         <br>
+         <p><%= audio_tag(getChaptermusic("Voice2", chapter), :controls => true) %></p>
+      <% end %>
+      <% if chapter.voice3ogg.to_s != "" || chapter.voice3mp3.to_s != "" %>
+         <br>
+         <p><%= audio_tag(getChaptermusic("Voice3", chapter), :controls => true) %></p>
+      <% end %>
+      <% if chapter.bookcover.to_s != "" %>
+         <br>
+         <p><%= image_tag(chapter.bookcover_url(:thumb)) %></p>
+      <% else %>
+         <% if chapter.storyscene.to_s != "" %>
+            <br>
+            <p><%= image_tag(chapter.storyscene_url(:thumb)) %></p>
+         <% end %>
+      <% end %>
+      <br>
+      <% if chapter.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(chapter.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Writer: <%= getUserPrivilege(chapter.user) %><%= link_to chapter.user.vname, user_path(chapter.user) %></p>
+      <p class="formlinks">Book: <%= link_to chapter.book.name, bookworld_book_path(chapter.book.bookworld, chapter.book) %></p>
+      <p>Gchapter: <%= chapter.gchapter.title %></p>
+      <p>Group: <%= chapter.bookgroup.name %></p>
+      <p>Points received: <%= chapter.pointsreceived %></p>
+      <p>Status: <%= getActivity(chapter.user) %>
+         <% if getActivity(chapter.user) != "Online" && getActivity(chapter.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(chapter.user) %>
+         <% end %>
+      </p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", chapter.description, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

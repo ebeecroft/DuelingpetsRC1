@@ -1,0 +1,28 @@
+<% provide(:h1, "Blogreply List") %>
+<div class="formlinks"><%= paginate @blogreplies %></div>
+<br>
+<% @blogreplies.each do |blogreply| %>
+   <div class="pageformat">
+      <div class="container"><%= button_to 'Edit', edit_blog_blogreply_path(blogreply.blog, blogreply), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [blogreply.blog, blogreply], method: :delete, data: { confirm: 'Are you sure?' }, class: "button editbutton" %></div>
+      <p>Created: <%= distance_of_time_in_words_to_now blogreply.created_on %> ago on (<%= blogreply.created_on.strftime("%B-%d-%Y") %>)</p>
+      <% if !blogreply.reviewed_on.nil? %>
+         <p>Reviewed on: <%= distance_of_time_in_words_to_now blogreply.reviewed_on %> ago on(<%= blogreply.reviewed_on.strftime("%B-%d-%Y") %>)</p>
+      <% end %>
+      <p>Updated: <%= distance_of_time_in_words_to_now blogreply.updated_on %> ago on (<%= blogreply.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Blog: <%= blogreply.blog.title %></p>
+      <br>
+      <% if blogreply.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(blogreply.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Owner: <%= getUserPrivilege(blogreply.user) %><%= link_to blogreply.user.vname, user_path(blogreply.user) %></p>
+      <p>Status: <%= getActivity(blogreply.user) %>
+         <% if getActivity(blogreply.user) != "Online" && getActivity(blogreply.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(blogreply.user) %>
+         <% end %>
+      </p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", blogreply.message, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

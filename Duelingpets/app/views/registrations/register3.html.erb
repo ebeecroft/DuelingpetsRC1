@@ -1,0 +1,18 @@
+<% provide(:h1, "Parent Email") %>
+<div class="pageformat">
+   <p>Before we can create an account for you, we need to get your parent's consent.</p>
+   <p>To do so we need a parent's email address to send them a consent form.</p>
+</div>
+<br>
+<%= form_for(:session, url: registrations_emailpost_path) do |form| %>
+   <div class="pageformat">
+      <p>
+         <%= form.label :parentemail, "What is your parent's email?" %></p>
+         <%= form.text_field :parentemail %>
+      </p>
+      <br>
+      <p><%= form.submit "Submit", class: "button submitbutton" %></p>
+   </div>
+<% end %>
+<br>
+<p class="formlinks"><%= link_to "Back", root_path %></p>

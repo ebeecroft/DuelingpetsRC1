@@ -1,0 +1,100 @@
+<% provide(:h1, @gallery.name) %>
+<p id="notice"><%= notice %></p>
+<% if current_user %>
+   <p class="centerpagecontent"><%= playMusicLoop("Gallery", @gallery) %></p>
+   <div class="pageformat">
+      <% if current_user.id == @gallery.user.id %>
+         <% if @gallery.ogg.to_s != "" || @gallery.mp3.to_s != "" %>
+            <div class="container">
+               <% if @gallery.music_on %>
+                  <p><%= button_to 'Turn off music', galleries_music_path(:id=>@gallery.id), method: :post, class: "button submitbutton" %></p>
+               <% else %>
+                  <p><%= button_to 'Turn on music', galleries_music_path(:id=>@gallery.id), method: :post, class: "button submitbutton" %></p>
+               <% end %>
+            </div>
+         <% end %>
+      <% end %>
+      <div class="container">
+         <% if current_user.userinfo.mute_on %>
+            <p><%= button_to 'Unmute music', muteAudio_path(:pageType => "Gallery", :pageContent => [@gallery.user, @gallery]), method: :post, class: "button submitbutton" %></p>
+            <br>
+         <% else %>
+            <p><%= button_to 'Mute music', muteAudio_path(:pageType => "Gallery", :pageContent => [@gallery.user, @gallery]), method: :post, class: "button submitbutton" %></p>
+            <br>
+         <% end %>
+      </div>
+      <br>
+   </div>
+<% end %>
+<div class="pageformat">
+   <% if current_user && (current_user.id == @gallery.user_id || current_user.pouch.privilege == "Admin") %>
+      <div class="container"><%= button_to 'Edit', edit_user_gallery_path(@gallery.user, @gallery), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [@gallery.user, @gallery], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+   <% end %>
+   <p>Created: <%= distance_of_time_in_words_to_now @gallery.created_on %> ago on (<%= @gallery.created_on.strftime("%B-%d-%Y") %>)</p>
+   <p>Updated: <%= distance_of_time_in_words_to_now @gallery.updated_on %> ago on (<%= @gallery.updated_on.strftime("%B-%d-%Y") %>)</p>
+   <p>Private gallery: <%= @gallery.privategallery %></p>
+   <br>
+   <% if @gallery.user.userinfo.miniavatar.to_s != "" %>
+      <p><%= image_tag(@gallery.user.userinfo.miniavatar_url(:thumb)) %></p>
+   <% end %>
+   <p class="formlinks">Artist: <%= getUserPrivilege(@gallery.user) %><%= link_to @gallery.user.vname, user_path(@gallery.user) %></p>
+   <p>Group: <%= @gallery.bookgroup.name %></p>
+   <p>Viewer: <%= @gallery.gviewer.name %></p>
+   <p>Total mainfolders: <%= @gallery.mainfolders.count %></p>
+   <p>Status: <%= getActivity(@gallery.user) %>
+      <% if getActivity(@gallery.user) != "Online" && getActivity(@gallery.user) != "Inoperable" %>
+         for <%= distance_of_time_in_words_to_now getTime(@gallery.user) %>
+      <% end %>
+   </p>
+   <br>
+   <p class="textindent"><%= textFormater("Multi", @gallery.description, "All").html_safe %></p>
+   <br>
+   <div class="formlinks"><%= paginate @mainfolders %></div>
+   <br>
+   <% @mainfolders.each_with_index do |mainfolder, index| %>
+      <% if(index % 3 == 2) %>
+         <div class="container">
+      <% else %>
+         <!--Container space-->
+         <div class="container">
+      <% end %>
+         <p class="formlinks"><%= link_to mainfolder.title, gallery_mainfolder_path(mainfolder.gallery, mainfolder) %></p>
+         <% if current_user && (current_user.id == mainfolder.gallery.user_id || current_user.pouch.privilege == "Admin") %>
+            <div class="container"><%= button_to 'Edit', edit_gallery_mainfolder_path(mainfolder.gallery, mainfolder), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [mainfolder.gallery, mainfolder], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+         <% end %>
+         <p>Created</p>
+         <p><%= distance_of_time_in_words_to_now mainfolder.created_on %> ago on</p>
+         <p>(<%= mainfolder.created_on.strftime("%B-%d-%Y") %>)</p>
+         <p>Updated</p>
+         <p><%= distance_of_time_in_words_to_now mainfolder.updated_on %> ago on</p>
+         <p>(<%= mainfolder.updated_on.strftime("%B-%d-%Y") %>)</p>
+         <br>
+         <% if !getMainfolderArt(mainfolder).nil? %>
+            <p><%= image_tag(getMainfolderArt(mainfolder).image_url(:thumb)) %></p>
+            <br>
+         <% end %>
+         <% if mainfolder.user.userinfo.miniavatar.to_s != "" %>
+            <p><%= image_tag(mainfolder.user.userinfo.miniavatar_url(:thumb)) %></p>
+         <% end %>
+         <p class="formlinks">Artist: <%= getUserPrivilege(mainfolder.user) %><%= link_to mainfolder.user.vname, user_path(mainfolder.user) %></p>
+         <p>Total subfolders: <%= mainfolder.subfolders.count %></p>
+         <p>Status: <%= getActivity(mainfolder.user) %>
+            <% if getActivity(mainfolder.user) != "Online" && getActivity(mainfolder.user) != "Inoperable" %>
+               for <%= distance_of_time_in_words_to_now getTime(mainfolder.user) %>
+            <% end %>
+         </p>
+         <br>
+         <p class="textindent"><%= textFormater("Multi", mainfolder.description, "All").html_safe %></p>
+      </div>
+      <% if index % 3 == 2 %>
+         <br>
+         <br>      
+      <% end %>
+   <% end %>
+   <% if(current_user && current_user.id == @gallery.user_id) %>
+      <p><%= button_to "New Mainfolder", new_gallery_mainfolder_path(@gallery), method: :get, class: "button submitbutton" %></p>
+      <br>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to "User Galleries", user_galleries_path(@gallery.user) %> |
+<%= link_to "Gallery List", galleries_path %></p>

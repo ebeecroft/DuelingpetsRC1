@@ -1,0 +1,102 @@
+<% provide(:h1, "Admincontrol panel") %>
+<div class="pageformat">
+   <p>Channels</p>
+   <p class="formlinks">Channel list: <%= link_to "Channel", channels_list_path %></p>
+   <p class="formlinks">Mainplaylist index: <%= link_to "Mainplaylist", mainplaylists_path %></p>
+   <p class="formlinks">Subplaylist index: <%= link_to "Subplaylist", subplaylists_path %></p>
+   <p class="formlinks">Movie index: <%= link_to "Movie", movies_path %></p>
+   <p class="formlinks">Movie review: <%= link_to "Review", movies_review_path %></p>
+   <br>
+   <p>Jukeboxes</p>
+   <p class="formlinks">Jukebox list: <%= link_to "Jukebox", jukeboxes_list_path %></p>
+   <p class="formlinks">Mainsheet index: <%= link_to "Mainsheet", mainsheets_path %></p>
+   <p class="formlinks">Subsheet index: <%= link_to "Subsheet", subsheets_path %></p>
+   <p class="formlinks">Sound index: <%= link_to "Sound", sounds_path %></p>
+   <p class="formlinks">Sound review: <%= link_to "Review", sounds_review_path %></p>
+   <br>
+   <p>Galleries</p>
+   <p class="formlinks">Gallery list: <%= link_to "Gallery", galleries_list_path %></p>
+   <p class="formlinks">Mainfolder index: <%= link_to "Mainfolder", mainfolders_path %></p>
+   <p class="formlinks">Subfolder index: <%= link_to "Subfolder", subfolders_path %></p>
+   <p class="formlinks">Art index: <%= link_to "Art", arts_path %></p>
+   <p class="formlinks">Art review: <%= link_to "Review", arts_review_path %></p>
+   <br>
+   <p>Bookworlds</p>
+   <p class="formlinks">Bookworld list: <%= link_to "Bookworld", bookworlds_list_path %></p>
+   <p class="formlinks">Book index: <%= link_to "Book", books_path %></p>
+   <p class="formlinks">Chapter index: <%= link_to "Chapter", chapters_path %></p>
+   <p class="formlinks">Chapter review: <%= link_to "Review", chapters_review_path %></p>
+   <p class="formlinks">Gchapter index: <%= link_to "Gchapter", gchapters_path %></p>
+   <br>
+   <p>Player content</p>
+   <p class="formlinks">Colorscheme list: <%= link_to "Colorscheme", colorschemes_list_path %></p>
+   <p class="formlinks">Blog list: <%= link_to "Blog", blogs_list_path %></p>
+   <p class="formlinks">Blog review: <%= link_to "Review", blogs_review_path %></p>
+   <p class="formlinks">Reply list: <%= link_to "Reply", blogreplies_path %></p>
+   <p class="formlinks">Reply review: <%#= link_to "Review", blogreplies_review_path %></p>
+   <p class="formlinks">Tag list: <%= link_to "Tag", tags_list_path %></p>
+   <p class="formlinks">OC list: <%= link_to "OC", ocs_list_path %></p>
+   <p class="formlinks">OC review: <%= link_to "Review", ocs_review_path %></p>
+   <p class="formlinks">Item list: <%= link_to "Item", items_list_path %></p>
+   <p class="formlinks">Item review: <%= link_to "Review", items_review_path %></p>
+   <p class="formlinks">Monster list: <%= link_to "Monster", monsters_list_path %></p>
+   <p class="formlinks">Monster review: <%= link_to "Review", monsters_review_path %></p>
+   <p class="formlinks">Creature list: <%= link_to "Creature", creatures_list_path %></p>
+   <p class="formlinks">Creature review: <%= link_to "Review", creatures_review_path %></p>
+   <p class="formlinks">Partner index: <%= link_to "Partner", partners_list_path %></p>
+   <br>
+   <p>Communications/Donations</p>
+   <p class="formlinks">PMbox index: <%= link_to "PMbox", pmboxes_path %></p>
+   <p class="formlinks">PM index: <%= link_to "PM", pms_path %></p>
+   <p class="formlinks">PMreply index: <%= link_to "PMreply", pmreplies_path %></p>
+   <p class="formlinks">Shoutbox index: <%= link_to "Shoutbox", shoutboxes_path %></p>
+   <p class="formlinks">Shout index: <%= link_to "Shout", shouts_path %></p>
+   <p class="formlinks">Donationbox index: <%= link_to "Donationbox", donationboxes_path %></p>
+   <p class="formlinks">Donor index: <%= link_to "Donor", donors_path %></p>
+   <p class="formlinks">Referral index: <%= link_to "Referral", referrals_path %></p>
+   <br>
+   <p>User attributes</p>
+   <p class="formlinks">User index: <%= link_to "User", users_path %></p>
+   <p class="formlinks">Userinfo index: <%= link_to "Userinfo", userinfos_path %></p>
+   <p class="formlinks">Bookgroup index: <%= link_to "Bookgroup", bookgroups_path %></p>
+   <p class="formlinks">Pouch index: <%= link_to "Pouch", pouches_path %></p>
+   <p class="formlinks">Pouchtype index: <%= link_to "Pouchtype", pouchtypes_path %></p>
+   <p class="formlinks">Pouchslot index: <%= link_to "Pouchslot", pouchslots_path %></p>
+   <p class="formlinks">Userupgrade index: <%= link_to "Userupgrade", userupgrades_path %></p>
+   <p class="formlinks">Equip index: <%= link_to "Equip", equips_path %></p>
+   <p class="formlinks">Equipslot index: <%= link_to "Equipslot", equipslots_path %></p>
+   <p class="formlinks">Gameinfo index: <%= link_to "Gameinfo", gameinfos_path %></p>
+   <p class="formlinks">Inventory index: <%= link_to "Inventory", inventories_path %></p>
+   <p class="formlinks">Inventoryslot index: <%= link_to "Inventoryslot", inventoryslots_path %></p>
+   <br>
+   <p>Webcontrols</p>
+   <p class="formlinks">Webcontrol index: <%= link_to "Webcontrol", webcontrols_path %></p>
+   <p class="formlinks">Maintenancemode index: <%= link_to "Maintenancemode", maintenancemodes_path %></p>
+   <p class="formlinks">Blacklistedname index: <%= link_to "Blacklistedname", blacklistednames_path %></p>
+   <p class="formlinks">Blacklisteddomain index: <%= link_to "Blacklisteddomain", blacklisteddomains_path %></p>
+   <p class="formlinks">Suspendedtimelimit index: <%= link_to "Timelimit", suspendedtimelimits_path %></p>
+   <p class="formlinks">Economy list: <%= link_to "Economy", economies_path %></p>
+   <p class="formlinks">Registration index: <%= link_to "Registration", registrations_path %></p>
+   <p class="formlinks">Regtokens index: <%= link_to "Regtoken", regtokens_path %></p>
+   <p class="formlinks">Accounttype index: <%= link_to "Accounttype", accounttypes_path %></p>
+   <p class="formlinks">Artpage index: <%= link_to "Artpage", artpages_path %></p>
+   <p class="formlinks">Baseinc index: <%= link_to "Baseinc", baseincs_path %></p>
+   <p class="formlinks">Baserate index: <%= link_to "Baserate", baserates_path %></p>
+   <p class="formlinks">Creaturetype index: <%= link_to "Creaturetype", creaturetypes_path %></p>
+   <p class="formlinks">Itemtype index: <%= link_to "Itemtype", itemtypes_path %></p>
+   <p class="formlinks">Difficulty index: <%= link_to "Difficulty", difficulties_path %></p>
+   <!-- Dreyore is controlled by glitchy!-->
+   <p class="formlinks">Dreyore index: <%= link_to "Dreyore", dreyores_path %></p>
+   <p class="formlinks">Fieldcost index: <%= link_to "Fieldcost", fieldcosts_path %></p>
+   <p class="formlinks">Ratecost index: <%= link_to "Ratecost", ratecosts_path %></p>
+   <!-- End of section of glitchy! -->
+   <p class="formlinks">Blogtype index: <%= link_to "Blogtype", blogtypes_path %></p>
+   <p class="formlinks">Gviewers index: <%= link_to "Gviewer", gviewers_path %></p>
+   <p class="formlinks">Itemactions index: <%= link_to "Itemaction", itemactions_path %></p>
+   <p class="formlinks">Faq list: <%= link_to "Faq", faqs_list_path %></p>
+   <p class="formlinks">Faq review: <%= link_to "Review", faqs_review_path %></p>
+   <br>
+   <p><%= button_to gateValue, registrations_gate_path, method: :post, class: "button submitbutton" %></p>
+   <br>
+   <p class="formlinks"><%= link_to 'Back', root_path %></p>
+</div>

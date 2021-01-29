@@ -1,0 +1,68 @@
+<% provide(:h1, "Notifications") %>
+<div class="pageformat">
+   <p>Donationbox: <%= boxstatus("Donationbox") %></p>
+   <p>Shoutbox: <%= boxstatus("Shoutbox") %></p>
+   <p>PMbox: <%= boxstatus("PMbox") %></p>
+   <br>
+   <% if staff %>
+      <% if getNotifications("Blog") > 0 %>
+         <p>You have <%= getNotifications("Blog") %> blogs awaiting your review!</p>
+         <br>
+      <% end %>
+      <% if getNotifications("OC") > 0 %>
+         <p>You have <%= getNotifications("OC") %> ocs awaiting your review!</p>
+         <br>
+      <% end %>
+      <% if getNotifications("Item") > 0 %>
+         <p>You have <%= getNotifications("Item") %> items awaiting your review!</p>
+         <br>
+      <% end %>
+      <% if getNotifications("Monster") > 0 %>
+         <p>You have <%= getNotifications("Monster") %> monsters awaiting your review!</p>
+         <br>
+      <% end %>
+      <% if getNotifications("Creature") > 0 %>
+         <p>You have <%= getNotifications("Creature") %> creatures awaiting your review!</p>
+         <br>
+      <% end %>
+      <% if getNotifications("Art") > 0 %>
+         <p>You have <%= getNotifications("Art") %> arts awaiting your review!</p>
+         <br>
+      <% end %>
+      <% if getNotifications("Sound") > 0 %>
+         <p>You have <%= getNotifications("Sound") %> sounds awaiting your review!</p>
+         <br>
+      <% end %>
+      <% if getNotifications("Movie") > 0 %>
+         <p>You have <%= getNotifications("Movie") %> movies awaiting your review!</p>
+         <br>
+      <% end %>
+      <% if getNotifications("Chapter") > 0 %>
+         <p>You have <%= getNotifications("Chapter") %> chapters awaiting your review!</p>
+         <br>
+      <% end %>
+      <% if current_user.pouch.privilege == "Keymaster" %>
+         <% if getNotifications("Registration") > 0 %>
+            <p>You have <%= getNotifications("Registration") %> registrations awaiting your review!</p>
+            <br>
+         <% end %>
+      <% end %>
+   <% end %>
+   <% if getNotifications("Colorscheme") > 0 %>
+      <p>You have <%= getNotifications("Colorscheme") %> colorscheme in beta!</p>
+      <br>
+   <% end %>
+   <% if getNotifications("Shout") > 0 %>
+      <p>You have <%= getNotifications("Shout") %> shouts awaiting your review!</p>
+      <br>
+   <% end %>
+   <% if getNotifications("PM") > 0 %>
+      <p>You have <%= getNotifications("PM") %> unread pms!</p>
+      <br>
+   <% end %>
+   <% if getNotifications("Partner") > 0 %>
+      <p>You have <%= getNotification("Partner") %> in battle!</p>
+      <br>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to "Back", root_path %></p>

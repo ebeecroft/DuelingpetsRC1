@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title><%= yield(:title) %></title>
+      <%= csrf_meta_tags %>
+      <%= csp_meta_tag %>
+      <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+      <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+      <%= favicon_link_tag displayType("Favicon") %>
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta name="description" content="<%= yield(:description) %>" />
+   </head>
+   <body id="pagestyle">
+      <%= render 'start/duelingpets.css.erb' %>
+      <link rel="canonical" href="<%= yield(:canonical) %>" />
+      <link rel="alternate" href="<%= yield(:alternate) %>" />
+      <p><%= image_tag(displayType("Banner"), id: "banner") %></p>
+      <%= render 'start/userprofile' %>
+      <!--User Activity section-->
+      <div class="navindent">
+         <div id="activity">Online: <%= getUserStatus("Online") %> Inactive: <%= getUserStatus("Inactive") %> Offline: <%= getUserStatus("Offline") %> Gone: <%= getUserStatus("Gone") %></div>
+      </div>
+      <br>
+      <!--End of User Activity section-->
+
+      <!--Navigation section-->
+      <div class="navindent">
+         <% unless current_page?(root_path) %>
+            <div class="navigation"><%= link_to "Home", root_path %></div>
+         <% end %>
+         <div class="navigation"><%= link_to "Hub World", hubworld_path %></div>
+      </div>
+      <br>
+      <% if current_user && !current_user.pouch.expiretime.nil? %>
+         <p id="sessionindent"><%= current_user.vname %>'s session expires in: <%= distance_of_time_in_words_to_now current_user.pouch.expiretime %></p>
+         <br>
+      <% end %>
+      <!--End of Navigation section-->
+
+      <!--Message section-->
+      <% if flash %>
+         <div id="pageindent">
+            <% flash.each do |key, value| %>
+               <div class="alert alert-<%= key %>"><%= value %></div>
+               <br>
+            <% end %>
+         </div>
+      <% end %>
+      <% if current_user && !current_user.userinfo.daycolor.activated %>
+         <div class="pageformat">
+            <p><%= button_to 'Undo color', colorschemes_undo_path, method: :post, class: "button submitbutton" %></p>
+            <br>
+         </div>
+      <% end %>
+      <!--End of Message section-->
+      <div>
+         <% if current_user && activePet.to_s != "" %>
+            <div id="maincontent">
+               <h1 id="pageheader"><%= yield(:h1) %></h1>
+               <br>
+               <%= yield %>
+            </div>
+         <% else %>
+            <h1 id="pageheader"><%= yield(:h1) %></h1>
+            <br>
+            <%= yield %>
+         <% end %>
+         <%= render 'start/activepet' %>
+      </div>
+      <!--Footer section-->
+      <br>
+      <div class="navindent">
+         <% unless current_page?(root_path) %>
+            <div class="navigation"><%= link_to "Home", root_path %></div>
+         <% end %>
+         <div class="navigation"><%= link_to "About Us", aboutus_path %></div>
+         <div class="navigation"><%= link_to "Contact", contact_path %></div>
+         <div class="navigation"><%= link_to "Economy", economy_path %></div>
+         <div class="navigation"><%= link_to "Privacy", privacy_path %></div>
+         <div class="navigation"><%= link_to "Help", faqs_path %></div>
+         <div class="navigation"><%#= link_to "Sitemap", sitemap_path %></div>
+         <% if current_user %>
+            <div class="navigation"><%#= link_to "Suggestion", new_user_suggestion_path(current_user) %></div>
+         <% end %>
+      </div>
+      <!--End of Footer section-->
+   </body>
+</html>

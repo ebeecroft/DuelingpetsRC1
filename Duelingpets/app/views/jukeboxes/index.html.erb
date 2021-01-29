@@ -1,0 +1,41 @@
+<% if optional %>
+   <% provide(:h1, @user.vname +  "'s jukeboxes") %>
+<% else %>
+   <% provide(:h1, "Jukebox List") %>
+<% end %>
+<div class="formlinks"><%= paginate @jukeboxes %></div>
+<br>
+<% @jukeboxes.each do |jukebox| %>
+   <div class="pageformat">
+      <p class="formlinks"><%= link_to jukebox.name, user_jukebox_path(jukebox.user, jukebox) %></p>
+      <p>Created: <%= distance_of_time_in_words_to_now jukebox.created_on %> ago on (<%= jukebox.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now jukebox.updated_on %> ago on (<%= jukebox.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <% if !optional %>
+         <br>
+         <% if jukebox.user.userinfo.miniavatar.to_s != "" %>
+            <p><%= image_tag(jukebox.user.userinfo.miniavatar_url(:thumb)) %></p>
+         <% end %>
+         <p class="formlinks">Composer: <%= getUserPrivilege(jukebox.user) %><%= link_to jukebox.user.vname, user_path(jukebox.user) %></p>
+         <p>Group: <%= jukebox.bookgroup.name %></p>
+         <p>Viewer: <%= jukebox.gviewer.name %></p>
+         <p>Status: <%= getActivity(jukebox.user) %>
+            <% if getActivity(jukebox.user) != "Online" && getActivity(jukebox.user) != "Inoperable" %>
+               for <%= distance_of_time_in_words_to_now getTime(jukebox.user) %>
+            <% end %>
+         </p>
+         <br>
+      <% else %>
+         <br>
+         <p>Group: <%= jukebox.bookgroup.name %></p>
+         <p>Viewer: <%= jukebox.gviewer.name %></p>
+         <br>
+      <% end %>
+      <p class="textindent"><%= textFormater("Multi", jukebox.description, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<% if optional %>
+   <p class="formlinks"><%= link_to 'Back', user_path(@user) %></p>
+<% else %>
+   <p class="formlinks"><%= link_to 'Back', root_path %></p>
+<% end %>

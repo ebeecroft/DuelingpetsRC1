@@ -1,0 +1,146 @@
+<div class="pageformat">
+   <% if current_user.userinfo.mute_on %>
+      <p><%= button_to 'Unmute music', muteAudio_path(:pageType => "NewMonster"), method: :post, class: "button submitbutton" %></p>
+      <br>
+   <% else %>
+      <p><%= button_to 'Mute music', muteAudio_path(:pageType => "NewMonster"), method: :post, class: "button submitbutton" %></p>
+      <br>
+   <% end %>
+</div>
+<%= form_with(model: [@user, @monster], local: true) do |form| %>
+  <p class="centerpagecontent"><%= playMusicLoop("Creative", nil) %></p>
+  <% if @monster.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@monster.errors.count, "error") %> prohibited this monster from being saved:</h2>
+           <ul>
+              <% @monster.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :description %>
+    <%= form.text_area :description %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :mischief %>
+    <%= form.text_field :mischief %>
+  </div>
+  <br>
+  <p class="pageformat">Physical Skills(gens 4 free points)</p>
+  <div class="pageformat">
+    <%= form.label :hp, "HP(min is 30)" %>
+    <%= form.number_field :hp %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :atk, "ATK(min is 16)" %>
+    <%= form.number_field :atk %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :def, "DEF(min is 16)" %>
+    <%= form.number_field :def %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :agility, "AGI(min is 16)" %>
+    <%= form.number_field :agility %>
+  </div>
+  <br>
+  <p class="pageformat">Magical Skills(gens 4 free points)</p>
+  <div class="pageformat">
+    <%= form.label :mp, "MP(min is 0)" %>
+    <%= form.number_field :mp %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :matk, "MATK(min is 0)" %>
+    <%= form.number_field :matk %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :mdef, "MDEF(min is 0)" %>
+    <%= form.number_field :mdef %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :magi, "MAGI(min is 0)" %>
+    <%= form.number_field :magi %>
+  </div>
+  <br>
+  <p class="pageformat">Monster Skills(gens 1 free point)</p>
+  <div class="pageformat">
+    <%= form.label :exp, "Exp(min is 10)" %>
+    <%= form.number_field :exp %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :monstertype_id, "Select Monstertype" %>
+    <%= form.collection_select(:monstertype_id, @monstertypes, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :monstertype_id, "Select Element" %>
+    <%= form.collection_select(:element_id, @elements, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :rarity %>
+    <%= form.number_field :rarity %>
+  </div>
+  <br>
+  <p class="pageformat">Monster image</p>
+  <div class="pageformat">
+     <%= image_tag @monster.image_url(:thumb).to_s if @monster.image? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :image %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_image_url, "or Image URL" %>
+     <%= form.text_field :remote_image_url %>
+     <%= form.hidden_field :image_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Ogg files</p>
+  <div class="pageformat">
+     <%= audio_tag(@monster.ogg_url.to_s, :controls => true) if @monster.ogg? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :ogg %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_ogg_url, "or Ogg URL" %>
+     <%= form.text_field :remote_ogg_url %>
+     <%= form.hidden_field :ogg_cache %>
+  </div>
+  <br>
+  <p class="pageformat">MP3 files</p>
+  <div class="pageformat">
+     <%= audio_tag(@monster.mp3_url.to_s, :controls => true) if @monster.mp3? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :mp3 %>
+  </div>
+  <div class="pageformat">
+     <%= form.label :remote_mp3_url, "or Mp3 URL" %>
+     <%= form.text_field :remote_mp3_url %>
+     <%= form.hidden_field :mp3_cache %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', user_path(@monster.user) %></p>
+<% end %>

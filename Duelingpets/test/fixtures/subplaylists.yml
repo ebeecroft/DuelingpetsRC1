@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  description: MyText
+  created_on: 2020-05-13 03:30:20
+  updated_on: 2020-05-13 03:30:20
+  user_id: 1
+  mainplaylist_id: 1
+  collab_mode: false
+  fave_folder: false
+  privatesubplaylist: false
+
+two:
+  title: MyString
+  description: MyText
+  created_on: 2020-05-13 03:30:20
+  updated_on: 2020-05-13 03:30:20
+  user_id: 1
+  mainplaylist_id: 1
+  collab_mode: false
+  fave_folder: false
+  privatesubplaylist: false

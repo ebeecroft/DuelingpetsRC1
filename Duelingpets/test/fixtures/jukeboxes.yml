@@ -1,0 +1,25 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  description: MyText
+  ogg: MyString
+  mp3: MyString
+  created_on: 2020-01-07 04:38:54
+  updated_on: 2020-01-07 04:38:54
+  user_id: 1
+  bookgroup_id: 1
+  music_on: false
+  privatejukebox: false
+
+two:
+  name: MyString
+  description: MyText
+  ogg: MyString
+  mp3: MyString
+  created_on: 2020-01-07 04:38:54
+  updated_on: 2020-01-07 04:38:54
+  user_id: 1
+  bookgroup_id: 1
+  music_on: false
+  privatejukebox: false

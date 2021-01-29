@@ -1,0 +1,106 @@
+<% provide(:h1, "Wpetden List") %>
+<div class="formlinks"><%= paginate @wpetdens %></div>
+<br>
+<% @wpetdens.each do |wpetden| %>
+   <div class="pageformat">
+      <p>Name: <%= wpetden.name %></p>
+      <p>Warehouse: <%= wpetden.warehouse.name %></p>
+      <% if !wpetden.creature1_id.nil? %>
+         <p>Creature 1: <%= wpetden.creature1_id %></p>
+         <p>Quantity: <%= wpetden.qty1 %></p>
+         <p>Tax: <%= wpetden.tax1 %></p>
+         <br>
+      <% end %>
+      <% if !wpetden.creature2_id.nil? %>
+         <p>Creature 2: <%= wpetden.creature2_id %></p>
+         <p>Quantity: <%= wpetden.qty2 %></p>
+         <p>Tax: <%= wpetden.tax2 %></p>
+         <br>
+      <% end %>
+      <% if !wpetden.creature3_id.nil? %>
+         <p>Creature 3: <%= wpetden.creature3_id %></p>
+         <p>Quantity: <%= wpetden.qty3 %></p>
+         <p>Tax: <%= wpetden.tax3 %></p>
+         <br>
+      <% end %>
+      <% if !wpetden.creature4_id.nil? %>
+         <p>Creature 4: <%= wpetden.creature4_id %></p>
+         <p>Quantity: <%= wpetden.qty4 %></p>
+         <p>Tax: <%= wpetden.tax4 %></p>
+         <br>
+      <% end %>
+      <% if !wpetden.creature5_id.nil? %>
+         <p>Creature 5: <%= wpetden.creature5_id %></p>
+         <p>Quantity: <%= wpetden.qty5 %></p>
+         <p>Tax: <%= wpetden.tax5 %></p>
+         <br>
+      <% end %>
+      <% if !wpetden.creature6_id.nil? %>
+         <p>Creature 6: <%= wpetden.creature6_id %></p>
+         <p>Quantity: <%= wpetden.qty6 %></p>
+         <p>Tax: <%= wpetden.tax6 %></p>
+         <br>
+      <% end %>
+      <% if !wpetden.creature7_id.nil? %>
+         <p>Creature 7: <%= wpetden.creature7_id %></p>
+         <p>Quantity: <%= wpetden.qty7 %></p>
+         <p>Tax: <%= wpetden.tax7 %></p>
+         <br>
+      <% end %>
+      <% if !wpetden.creature8_id.nil? %>
+         <p>Creature 8: <%= wpetden.creature8_id %></p>
+         <p>Quantity: <%= wpetden.qty8 %></p>
+         <p>Tax: <%= wpetden.tax8 %></p>
+         <br>
+      <% end %>
+      <% if !wpetden.creature9_id.nil? %>
+         <p>Creature 9: <%= wpetden.creature9_id %></p>
+         <p>Quantity: <%= wpetden.qty9 %></p>
+         <p>Tax: <%= wpetden.tax9 %></p>
+         <br>
+      <% end %>
+      <% if !wpetden.creature10_id.nil? %>
+         <p>Creature 10: <%= wpetden.creature10_id %></p>
+         <p>Quantity: <%= wpetden.qty10 %></p>
+         <p>Tax: <%= wpetden.tax10 %></p>
+         <br>
+      <% end %>
+      <% if !wpetden.creature11_id.nil? %>
+         <p>Creature 11: <%= wpetden.creature11_id %></p>
+         <p>Quantity: <%= wpetden.qty11 %></p>
+         <p>Tax: <%= wpetden.tax11 %></p>
+         <br>
+      <% end %>
+      <% if !wpetden.creature12_id.nil? %>
+         <p>Creature 12: <%= wpetden.creature12_id %></p>
+         <p>Quantity: <%= wpetden.qty12 %></p>
+         <p>Tax: <%= wpetden.tax12 %></p>
+         <br>
+      <% end %>
+      <% if !wpetden.creature13_id.nil? %>
+         <p>Creature 13: <%= wpetden.creature13_id %></p>
+         <p>Quantity: <%= wpetden.qty13 %></p>
+         <p>Tax: <%= wpetden.tax13 %></p>
+         <br>
+      <% end %>
+      <% if !wpetden.creature14_id.nil? %>
+         <p>Creature 14: <%= wpetden.creature14_id %></p>
+         <p>Quantity: <%= wpetden.qty14 %></p>
+         <p>Tax: <%= wpetden.tax14 %></p>
+         <br>
+      <% end %>
+      <% if !wpetden.creature15_id.nil? %>
+         <p>Creature 15: <%= wpetden.creature15_id %></p>
+         <p>Quantity: <%= wpetden.qty15 %></p>
+         <p>Tax: <%= wpetden.tax15 %></p>
+         <br>
+      <% end %>
+      <% if !wpetden.creature16_id.nil? %>
+         <p>Creature 16: <%= wpetden.creature16_id %></p>
+         <p>Quantity: <%= wpetden.qty16 %></p>
+         <p>Tax: <%= wpetden.tax16 %></p>
+      <% end %>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

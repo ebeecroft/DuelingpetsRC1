@@ -1,0 +1,87 @@
+<% provide(:h1, "OC List") %>
+<div class="formlinks"><%= paginate @ocs %></div>
+<br>
+<div class="pageformat">
+   <% @ocs.each_with_index do |oc, index| %>
+      <% if(index % 3 == 2) %>
+         <div class="container">
+      <% else %>
+         <!--Container space-->
+         <div class="container">
+      <% end %>
+         <div class="container"><p class="formlinks"><%= link_to oc.name, user_oc_path(oc.user, oc) %></p></div> <div class="container"><%= button_to 'Edit', edit_user_oc_path(oc.user, oc), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [oc.user, oc], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+         <p>Created</p>
+         <p><%= distance_of_time_in_words_to_now oc.created_on %> ago on</p>
+         <p>(<%= oc.created_on.strftime("%B-%d-%Y") %>)</p>
+         <p>Updated</p>
+         <p><%= distance_of_time_in_words_to_now oc.updated_on %> ago on</p>
+         <p>(<%= oc.updated_on.strftime("%B-%d-%Y") %>)</p>
+         <% if !oc.reviewed_on.nil? %>
+            <p>Reviewed</p>
+            <p><%= distance_of_time_in_words_to_now oc.reviewed_on %> ago on</p>
+            <p>(<%= oc.reviewed_on.strftime("%B-%d-%Y") %>)</p>
+         <% end %>
+         <% if oc.image.to_s != "" %>
+            <br>
+            <p><%= image_tag(oc.image_url(:thumb)) %></p>
+         <% end %>
+         <% if oc.ogg.to_s != "" || oc.mp3.to_s != "" %>
+            <br>
+            <p>Theme song: <%= audio_tag(getMusicOrVideo("Sound", oc), :controls => true) %></p>
+         <% end %>
+         <% if oc.voiceogg.to_s != "" || oc.voicemp3.to_s != "" %>
+            <br>
+            <p>Character's voice: <%= audio_tag(getMusicOrVideo("Sound", oc), :controls => true) %></p>
+         <% end %>
+         <br>
+         <p>Nickname: <%= oc.nickname %></p>
+         <p>Species: <%= oc.species %></p>
+         <p>Age: <%= oc.age %></p>
+         <p>Alignment: <%= oc.alignment %></p>
+         <p>Personality</p>
+         <p class="textindent"><%= textFormater("Multi", oc.personality, "All").html_safe %></p>
+         <p>Likes/Dislikes</p>
+         <p class="textindent"><%= textFormater("Multi", oc.likesanddislikes, "All").html_safe %></p>
+         <p>Background/History</p>
+         <p class="textindent"><%= textFormater("Multi", oc.backgroundandhistory, "All").html_safe %></p>
+         <p>Relatives</p>
+         <p class="textindent"><%= textFormater("Multi", oc.relatives, "All").html_safe %></p>
+         <p>Family</p>
+         <p class="textindent"><%= textFormater("Multi", oc.family, "All").html_safe %></p>
+         <p>Friends</p>
+         <p class="textindent"><%= textFormater("Multi", oc.friends, "All").html_safe %></p>
+         <p>World</p>
+         <p class="textindent"><%= textFormater("Multi", oc.world, "All").html_safe %></p>
+         <p>Alliances</p>
+         <p class="textindent"><%= textFormater("Multi", oc.alliance, "All").html_safe %></p>
+         <p>Elements</p>
+         <p class="textindent"><%= textFormater("Multi", oc.elements, "All").html_safe %></p>
+         <p>Appearance</p>
+         <p class="textindent"><%= textFormater("Multi", oc.appearance, "All").html_safe %></p>
+         <p>Clothing</p>
+         <p class="textindent"><%= textFormater("Multi", oc.clothing, "All").html_safe %></p>
+         <p>Accessories</p>
+         <p class="textindent"><%= textFormater("Multi", oc.accessories, "All").html_safe %></p>
+         <br>
+         <p>Story</p>
+         <p class="textindent"><%= textFormater("Multi", oc.description, "All").html_safe %></p>
+         <br>
+         <% if oc.user.userinfo.miniavatar.to_s != "" %>
+            <p><%= image_tag(oc.user.userinfo.miniavatar_url(:thumb)) %></p>
+         <% end %>
+         <p class="formlinks">Owner: <%= getUserPrivilege(oc.user) %><%= link_to oc.user.vname, user_path(oc.user) %></p>
+         <p>Group: <%= oc.bookgroup.name %></p>
+         <p>Viewer: <%= oc.gviewer.name %></p>
+         <p>Status: <%= getActivity(oc.user) %>
+            <% if getActivity(oc.user) != "Online" && getActivity(oc.user) != "Inoperable" %>
+               for <%= distance_of_time_in_words_to_now getTime(oc.user) %>
+            <% end %>
+         </p>
+      </div>
+      <% if index % 3 == 2 %>
+         <br>
+         <br>      
+      <% end %>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

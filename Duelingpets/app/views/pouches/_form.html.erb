@@ -1,0 +1,23 @@
+<%= form_with(model: @pouch, local: true) do |form| %>
+  <% if @pouch.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@pouch.errors.count, "error") %> prohibited this pouch from being saved:</h2>
+           <ul>
+              <% @pouch.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="formformat">
+    <%= form.label :privilege %>
+    <%= form.text_field :privilege %>
+  </div>
+  <br>
+  <div class="formformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+<% end %>

@@ -1,0 +1,229 @@
+<%= form_with(model: [@pouch, @pouchslot], local: true) do |form| %>
+  <% if @pouchslot.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@pouchslot.errors.count, "error") %> prohibited this pouchslot from being saved:</h2>
+           <ul>
+              <% @pouchslot.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :pouchtype1_id, "Select Pouchtype1" %>
+    <%= form.collection_select(:pouchtype1_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype2_id, "Select Pouchtype2" %>
+    <%= form.collection_select(:pouchtype2_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype3_id, "Select Pouchtype3" %>
+    <%= form.collection_select(:pouchtype3_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype4_id, "Select Pouchtype4" %>
+    <%= form.collection_select(:pouchtype4_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype5_id, "Select Pouchtype5" %>
+    <%= form.collection_select(:pouchtype5_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype6_id, "Select Pouchtype6" %>
+    <%= form.collection_select(:pouchtype6_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype7_id, "Select Pouchtype7" %>
+    <%= form.collection_select(:pouchtype7_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype8_id, "Select Pouchtype8" %>
+    <%= form.collection_select(:pouchtype8_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype9_id, "Select Pouchtype9" %>
+    <%= form.collection_select(:pouchtype9_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype10_id, "Select Pouchtype10" %>
+    <%= form.collection_select(:pouchtype10_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype11_id, "Select Pouchtype11" %>
+    <%= form.collection_select(:pouchtype11_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype12_id, "Select Pouchtype12" %>
+    <%= form.collection_select(:pouchtype12_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype13_id, "Select Pouchtype13" %>
+    <%= form.collection_select(:pouchtype13_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype14_id, "Select Pouchtype14" %>
+    <%= form.collection_select(:pouchtype14_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype15_id, "Select Pouchtype15" %>
+    <%= form.collection_select(:pouchtype15_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype16_id, "Select Pouchtype16" %>
+    <%= form.collection_select(:pouchtype16_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype17_id, "Select Pouchtype17" %>
+    <%= form.collection_select(:pouchtype17_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype18_id, "Select Pouchtype18" %>
+    <%= form.collection_select(:pouchtype18_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype19_id, "Select Pouchtype19" %>
+    <%= form.collection_select(:pouchtype19_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype20_id, "Select Pouchtype20" %>
+    <%= form.collection_select(:pouchtype20_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype21_id, "Select Pouchtype21" %>
+    <%= form.collection_select(:pouchtype21_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype22_id, "Select Pouchtype22" %>
+    <%= form.collection_select(:pouchtype22_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype23_id, "Select Pouchtype23" %>
+    <%= form.collection_select(:pouchtype23_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype24_id, "Select Pouchtype24" %>
+    <%= form.collection_select(:pouchtype24_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype25_id, "Select Pouchtype25" %>
+    <%= form.collection_select(:pouchtype25_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype26_id, "Select Pouchtype26" %>
+    <%= form.collection_select(:pouchtype26_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype27_id, "Select Pouchtype27" %>
+    <%= form.collection_select(:pouchtype27_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype28_id, "Select Pouchtype28" %>
+    <%= form.collection_select(:pouchtype28_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype29_id, "Select Pouchtype29" %>
+    <%= form.collection_select(:pouchtype29_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype30_id, "Select Pouchtype30" %>
+    <%= form.collection_select(:pouchtype30_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype31_id, "Select Pouchtype31" %>
+    <%= form.collection_select(:pouchtype31_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype32_id, "Select Pouchtype32" %>
+    <%= form.collection_select(:pouchtype32_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype33_id, "Select Pouchtype33" %>
+    <%= form.collection_select(:pouchtype33_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype34_id, "Select Pouchtype34" %>
+    <%= form.collection_select(:pouchtype34_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype35_id, "Select Pouchtype35" %>
+    <%= form.collection_select(:pouchtype35_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype36_id, "Select Pouchtype36" %>
+    <%= form.collection_select(:pouchtype36_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype37_id, "Select Pouchtype37" %>
+    <%= form.collection_select(:pouchtype37_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype38_id, "Select Pouchtype38" %>
+    <%= form.collection_select(:pouchtype38_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype39_id, "Select Pouchtype39" %>
+    <%= form.collection_select(:pouchtype39_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype40_id, "Select Pouchtype40" %>
+    <%= form.collection_select(:pouchtype40_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype41_id, "Select Pouchtype41" %>
+    <%= form.collection_select(:pouchtype41_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :pouchtype42_id, "Select Pouchtype42" %>
+    <%= form.collection_select(:pouchtype42_id, @group, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', root_path %></p>
+<% end %>

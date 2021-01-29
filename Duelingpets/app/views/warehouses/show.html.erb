@@ -1,0 +1,227 @@
+<% provide(:h1, @warehouse.name) %>
+<p id="notice"><%= notice %></p>
+<% if current_user %>
+   <p class="centerpagecontent"><%= playMusicLoop("Warehouse", @warehouse) %></p>
+   <div class="pageformat">
+      <div class="container">
+         <% if current_user.userinfo.mute_on %>
+            <p><%= button_to 'Unmute music', muteAudio_path(:pageType => "Warehouse", :pageContent => @warehouse), method: :post, class: "button submitbutton" %></p>
+            <br>
+         <% else %>
+            <p><%= button_to 'Mute music', muteAudio_path(:pageType => "Warehouse", :pageContent => @warehouse), method: :post, class: "button submitbutton" %></p>
+            <br>
+         <% end %>
+      </div>
+      <br>
+   </div>
+<% end %>
+<div class="pageformat">
+   <div class="container">Treasury: <%= @warehouse.treasury %></div> 
+   <% if current_user && current_user.pouch.privilege == "Glitchy" %>
+      <div class="container"><%= button_to 'Transfer', warehouses_tsetup_path(:warehouse_id=>@warehouse.id), method: :post, class: "button submitbutton" %></div>
+      <div class="container"><%= button_to 'Edit Warehouse', edit_warehouse_path(@warehouse.name), method: :get, class: "button editbutton" %></div>
+      <br>
+   <% end %>
+   <p>Emeralds: <%= @warehouse.emeralds %></p>
+   <% if current_user && current_user.pouch.privilege == "Glitchy" %>
+      <div class="container">Profit: <%= @warehouse.profit %></div> <div class="container"><%= button_to 'Withdraw', warehouses_withdraw_path(:warehouse_id=>@warehouse.id),method: :post, class: "button submitbutton" %></div>
+      <p>Hoard points: <%= @warehouse.hoardpoints %></p>
+   <% end %>
+   <br>
+   <p>Created: <%= distance_of_time_in_words_to_now @warehouse.created_on %> ago on (<%= @warehouse.created_on.strftime("%B-%d-%Y") %>)</p>
+   <p>Updated: <%= distance_of_time_in_words_to_now @warehouse.updated_on %> ago on (<%= @warehouse.updated_on.strftime("%B-%d-%Y") %>)</p>
+   <br>
+   <p>Warehouse avatar goes here</p>
+   <p><%= textFormater("Multi", @warehouse.message, "All").html_safe %></p>
+   <br>
+   <% if @warehouse.store_open %>
+      <%= form_for(:partner, url: warehouses_buypet_path(:warehouse_id => @warehouse.id), method: :post) do |form| %>
+         <p>Partner Name</p>
+         <p><%= form.text_field :name %></p>
+         <br>
+         <p>Description</p>
+         <p><%= form.text_area :description %></p>
+         <br>
+         <div class="formlinks"><%= paginate @wpetdens %></div>
+         <br>
+         <% @wpetdens.each do |wpetden| %>
+            <% if(!checkWarehouse(wpetden, "Den")) %>
+               <p><%= wpetden.name %><%= form.radio_button :wpetden_id, wpetden.id, :checked => true %></p>
+               <br>
+               <% if !wpetden.creature1_id.nil? %>
+                  <%= render 'petform', petindex: 1, slot: wpetden, form: form %>
+               <% end %>
+               <% if !wpetden.creature2_id.nil? %>
+                  <%= render 'petform', petindex: 2, slot: wpetden, form: form %>
+               <% end %>
+               <% if !wpetden.creature3_id.nil? %>
+                  <%= render 'petform', petindex: 3, slot: wpetden, form: form %>
+               <% end %>
+               <% if !wpetden.creature4_id.nil? %>
+                  <%= render 'petform', petindex: 4, slot: wpetden, form: form %>
+               <% end %>
+               <% if !wpetden.creature5_id.nil? %>
+                  <%= render 'petform', petindex: 5, slot: wpetden, form: form %>
+               <% end %>
+               <% if !wpetden.creature6_id.nil? %>
+                  <%= render 'petform', petindex: 6, slot: wpetden, form: form %>
+               <% end %>
+               <% if !wpetden.creature7_id.nil? %>
+                  <%= render 'petform', petindex: 7, slot: wpetden, form: form %>
+               <% end %>
+               <% if !wpetden.creature8_id.nil? %>
+                  <%= render 'petform', petindex: 8, slot: wpetden, form: form %>
+               <% end %>
+               <% if !wpetden.creature9_id.nil? %>
+                  <%= render 'petform', petindex: 9, slot: wpetden, form: form %>
+               <% end %>
+               <% if !wpetden.creature10_id.nil? %>
+                  <%= render 'petform', petindex: 10, slot: wpetden, form: form %>
+               <% end %>
+               <% if !wpetden.creature11_id.nil? %>
+                  <%= render 'petform', slotindex: 11, slot: wpetden, form: form %>
+               <% end %>
+               <% if !wpetden.creature12_id.nil? %>
+                  <%= render 'petform', petindex: 12, slot: wpetden, form: form %>
+               <% end %>
+               <% if !wpetden.creature13_id.nil? %>
+                  <%= render 'petform', petindex: 13, slot: wpetden, form: form %>
+               <% end %>
+               <% if !wpetden.creature14_id.nil? %>
+                  <%= render 'petform', petindex: 14, slot: wpetden, form: form %>
+               <% end %>
+               <% if !wpetden.creature15_id.nil? %>
+                  <%= render 'petform', petindex: 15, slot: wpetden, form: form %>
+               <% end %>
+               <% if !wpetden.creature16_id.nil? %>
+                  <%= render 'petform', petindex: 16, slot: wpetden, form: form %>
+               <% end %>
+               <p><%= form.submit "Buy Pet", class: "button submitbutton" %></p>
+               <br>
+            <% else %>
+               <p><%= wpetden.name %></p>
+               <p>Sorry this den is currently out of creatures! Please check back later!</p>
+               <br>
+            <% end %>
+         <% end %>
+      <% end %>
+      <%= form_for(:inventoryslot, url: warehouses_buyitem_path(:warehouse_id => @warehouse.id), method: :post) do |form| %>
+         <% if @slots.count > 0 %>
+            <p>Inventory slot</p>
+            <p><%= form.collection_select(:inventoryslot_id, @slots, :id, :name) %></p>
+         <% else %>
+            <p>Inventoryslots are required to buy items!</p>
+         <% end %>
+         <br>
+         <div class="formlinks"><%= paginate @witemshelves %></div>
+         <br>
+         <% @witemshelves.each do |witemshelf| %>
+            <% if(!checkWarehouse(witemshelf, "Shelf")) %>
+               <p><%= witemshelf.name %><%= form.radio_button :witemshelf_id, witemshelf.id, :checked => true %></p>
+               <br>
+               <% if !witemshelf.item1_id.nil? %>
+                  <%= render 'showform', slotindex: 1, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item2_id.nil? %>
+                  <%= render 'showform', slotindex: 2, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item3_id.nil? %>
+                  <%= render 'showform', slotindex: 3, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item4_id.nil? %>
+                  <%= render 'showform', slotindex: 4, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item5_id.nil? %>
+                  <%= render 'showform', slotindex: 5, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item6_id.nil? %>
+                  <%= render 'showform', slotindex: 6, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item7_id.nil? %>
+                  <%= render 'showform', slotindex: 7, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item8_id.nil? %>
+                  <%= render 'showform', slotindex: 8, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item9_id.nil? %>
+                  <%= render 'showform', slotindex: 9, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item10_id.nil? %>
+                  <%= render 'showform', slotindex: 10, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item11_id.nil? %>
+                  <%= render 'showform', slotindex: 11, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item12_id.nil? %>
+                  <%= render 'showform', slotindex: 12, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item13_id.nil? %>
+                  <%= render 'showform', slotindex: 13, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item14_id.nil? %>
+                  <%= render 'showform', slotindex: 14, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item15_id.nil? %>
+                  <%= render 'showform', slotindex: 15, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item16_id.nil? %>
+                  <%= render 'showform', slotindex: 16, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item17_id.nil? %>
+                  <%= render 'showform', slotindex: 17, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item18_id.nil? %>
+                  <%= render 'showform', slotindex: 18, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item19_id.nil? %>
+                  <%= render 'showform', slotindex: 19, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item20_id.nil? %>
+                  <%= render 'showform', slotindex: 20, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item21_id.nil? %>
+                  <%= render 'showform', slotindex: 21, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item22_id.nil? %>
+                  <%= render 'showform', slotindex: 22, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item23_id.nil? %>
+                  <%= render 'showform', slotindex: 23, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item24_id.nil? %>
+                  <%= render 'showform', slotindex: 24, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item25_id.nil? %>
+                  <%= render 'showform', slotindex: 25, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item26_id.nil? %>
+                  <%= render 'showform', slotindex: 26, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item27_id.nil? %>
+                  <%= render 'showform', slotindex: 27, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item28_id.nil? %>
+                  <%= render 'showform', slotindex: 28, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item29_id.nil? %>
+                  <%= render 'showform', slotindex: 29, slot: witemshelf, form: form %>
+               <% end %>
+               <% if !witemshelf.item30_id.nil? %>
+                  <%= render 'showform', slotindex: 30, slot: witemshelf, form: form %>
+               <% end %>
+               <% if @slots.count > 0 %>
+                  <p><%= form.submit "Buy Item", class: "button submitbutton" %></p>
+                  <br>
+               <% end %>
+            <% else %>
+               <p><%= witemshelf.name %></p>
+               <p>Sorry this shelf is currently out of items! Please check back later!</p>
+               <br>
+            <% end %>
+         <% end %>
+      <% end %>
+   <% else %>
+      <p>We are currently out of items/pets and need to restock our inventory.</p>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to "Back", root_path %></p>

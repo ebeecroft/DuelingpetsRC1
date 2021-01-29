@@ -1,0 +1,101 @@
+<% provide(:h1, "OCTag List") %>
+<div class="formlinks"><%= paginate @octags %></div>
+<br>
+<% @octags.each do |octag| %>
+   <div class="pageformat">
+      <p class="formlinks"><%= link_to octag.oc.name, user_oc_path(octag.oc.user, octag.oc) %></p>
+      <p>Tag list</p>
+      <% if(!octag.tag1_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag1_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag1_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!octag.tag2_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag2_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag2_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!octag.tag3_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag3_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag3_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!octag.tag4_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag4_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag4_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!octag.tag5_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag5_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag5_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!octag.tag6_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag6_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag6_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!octag.tag7_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag7_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag7_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!octag.tag8_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag8_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag8_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!octag.tag9_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag9_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag9_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!octag.tag10_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag10_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag10_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!octag.tag11_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag11_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag11_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!octag.tag12_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag12_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag12_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!octag.tag13_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag13_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag13_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!octag.tag14_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag14_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag14_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!octag.tag15_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag15_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag15_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!octag.tag16_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag16_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag16_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!octag.tag17_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag17_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag17_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!octag.tag18_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag18_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag18_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!octag.tag19_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag19_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag19_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <% if(!octag.tag20_id.nil?) %>
+         <div class="container"><%= getTagname(octag.tag20_id) %></div>
+         <div class="container"><%= button_to 'X', octags_removetag_path(:octag_id=>octag.id, :tagid=>octag.tag20_id), method: :post, class: "button destroybutton" %></div>
+      <% end %>
+      <br>
+      <% if octag.oc.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(octag.oc.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Owner: <%= getUserPrivilege(octag.oc.user) %><%= link_to octag.oc.user.vname, user_path(octag.oc.user) %></p>
+      <p>Status: <%= getActivity(octag.oc.user) %>
+         <% if getActivity(octag.oc.user) != "Online" && getActivity(octag.oc.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(octag.oc.user) %>
+         <% end %>
+      </p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

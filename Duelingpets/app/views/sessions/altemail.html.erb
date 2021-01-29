@@ -1,0 +1,28 @@
+<% provide(:title, "Duelingpets: AltEmail") %>
+<% provide(:description, "If you have lost access to your email account, this mechanism will allow you to recover your account. This should only be used if you can't access your original email account.") %>
+<% provide(:h1, "Alternate Email") %>
+<div class="pageformat">
+   <p><%= image_tag(@artpage.art_url(:thumb)) %></p>
+   <p class="textindent"><%= textFormater("Multi", @artpage.message, "All").html_safe %></p>
+   <br>
+   <h2 class="subheader1">Password Recovery of Last Resort!</h2>
+</div>
+<br>
+<div class="pageformat">
+   <%= form_for(:session, url: altemailpost_path) do |f| %>
+      <p><%= f.label :login_id, "Login Name" %></p>
+      <p><%= f.text_field :login_id %></p>
+      <br>
+      <p><%= f.label :vname, "Virtual Name" %></p>
+      <p><%= f.text_field :vname %></p>
+      <br>
+      <p><%= f.label :email, "Email" %></p>
+      <p><%= f.text_field :email %></p>
+      <br>
+      <p><%= f.submit "Reset", class: "button submitbutton" %></p>
+   <% end %>
+</div>
+<br>
+<div class="pageformat">
+   <p class="formlinks"><%= link_to "Back", root_path %></p>
+</div>

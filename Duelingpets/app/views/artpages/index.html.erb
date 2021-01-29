@@ -1,0 +1,19 @@
+<% provide(:h1, "Artpage List") %>
+<% if @artpages.count >= 10 %>
+   <div class="formlinks"><%= paginate @artpages %></div>
+   <br>
+<% end %>
+<% @artpages.each do |artpage| %>
+   <div class="pageformat">
+      <div class="container"><p>Name: <%= artpage.name %></p></div> <div class="container"><%= button_to 'Edit', edit_artpage_path(artpage), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', artpage, method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <p>Created on: <%= distance_of_time_in_words_to_now artpage.created_on %> ago on (<%= artpage.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p><%= artpage.art %></p>
+      <p><%= textFormater("Multi", artpage.message, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<div class="pageformat">
+   <p><%= button_to "New Artpage", new_artpage_path, method: :get, class: "button submitbutton" %></p>
+</div>
+<br>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

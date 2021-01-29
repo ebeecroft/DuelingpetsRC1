@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+   </head>
+   <body>
+      <h1>Need help with your password <%= @user.vname %>?</h1>
+      <p>
+         So you came to visit Steford the Stoat about that
+         pesky password issue you were having. I also heard
+         that you can't access your original email
+         <%= @user.email %>. What did you say your name was
+         again? I am a bit old and my memory is not as sharp
+         as it once was. Ah yes <%= @user.vname %> your the
+         one that called upon me earlier. Let me fetch my
+         tools and I will see what I can do.
+      </p>
+      <p>
+         Well not bad I think this should work granted it is not
+         the best, still its pretty good for Stoat knowledge on
+         this thing. Heheee you humans are very silly creatures
+         always seeming to forget one thing or another. I must
+         say you could learn a thing or two from the squirrels
+         but that is neither here nor there. The new password
+         is <%= @user.password %>, please remember to change
+         this one, once you are back into your account. Also be
+         sure to update your email account as well. See you
+         later you one eyed seadog. Hahaha.
+      </p>
+      <br>
+      <p>Steford the Stoat your pirate captain</p>
+   </body>
+</html>

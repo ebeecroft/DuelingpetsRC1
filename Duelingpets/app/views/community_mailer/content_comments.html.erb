@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+   </head>
+   <body>
+      <% if @status == "Review" %>
+         <% if @type == "Blogreply" %>
+            <h1><%= @content.user.vname %>'s blogreply is awaiting your review!</h1>
+         <% end %>
+      <% elsif @status == "Approved" %>
+         <% if @type == "Blogreply" %>
+            <h1>Your new blogreply for <%= @content.blog.user.vname %> blog was approved!</h1>
+         <% end %>
+      <% elsif @status == "Denied" %>
+         <% if @type == "Blogreply" %>
+            <h1>Your new blogreply for <%= @content.blog.user.vname %> blog was denied!</h1>
+         <% end %>
+      <% end %>
+      <p>
+         <% if @status == "Review" %>
+            <% if @type == "Blogreply" %>
+               Greetings <%= @content.blog.user.vname %>
+            <% end %>
+            we have a user by the name of <%= @content.user.vname %> who is
+            <% if @type == "Blogreply" %>
+               creating some replies on your blog. As such I would like you
+               to look over the blogreply message to to see if it fits the
+               bookgroup that it belongs to.
+            <% end %>
+            Also by the way here is a url <%= @url %> to help you out
+            for the review process. If you approve this reply, it will then
+            be publicly visible for others to see in that bookgroup. If you
+            deny it, then it will not be publicly available. I hope you
+            will excercise good judgment to keep our virtual pet site
+            community safe everyone. I leave the ruling up to you.
+         <% elsif @status == "Approved" %>
+            <% if @type == "Blogreply" %>
+               The blog owner <%= @content.blog.user.vname %>
+            <% end %>
+            has taken the time to look over your reply and has determined that
+            <% if @type == "Blogreply" %>
+               it is okay to air to the public the message on their blog.
+            <% end %>
+            The bookgroup that the reply belongs to feels correct and as such
+            <% if @type == "Blogreply" %>
+               we have taken the opportunity to award the blog owner
+               <%= @points %> points for their efforts.
+            <% end %>
+         <% elsif @status == "Denied" %>
+            <% if @type == "Blogreply" %>
+               The blog owner <%= @content.blog.user.vname %>
+            <% end %>
+            has taken the time to look over your reply and has determined that
+            it doesn't fit into the correct bookgroup. Its okay as things like
+            this tend to happen from time to time. All you need to do is edit
+            the reply and try again. We want to ensure that the content is
+            suitable for our community.
+         <% end %>
+      </p>
+      <br>
+      <p>The Duelingpets Staff Team</p>
+   </body>
+</html>

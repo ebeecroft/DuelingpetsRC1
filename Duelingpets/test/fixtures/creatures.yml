@@ -1,0 +1,75 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  description: MyText
+  image: MyString
+  ogg: MyString
+  mp3: MyString
+  voiceogg: MyString
+  voicemp3: MyString
+  level: 1
+  hp: 1
+  atk: 1
+  def: 1
+  spd: 1
+  luck: 1
+  strength: 1
+  mp: 1
+  power: 1
+  charms: 1
+  force: 1
+  concealment: 1
+  flow: 1
+  will: 
+  chubbyness: 1
+  hunger: 1
+  thirst: 1
+  lives: 
+  rarity: 1
+  starter: false
+  petworth: 1
+  cost: 1
+  created_on: 2019-11-15 05:08:19
+  updated_on: 2019-11-15 05:08:19
+  reviewed_on: 2019-11-15 05:08:19
+  user_id: 1
+  creaturetype_id: 1
+  reviewed: false
+
+two:
+  name: MyString
+  description: MyText
+  image: MyString
+  ogg: MyString
+  mp3: MyString
+  voiceogg: MyString
+  voicemp3: MyString
+  level: 1
+  hp: 1
+  atk: 1
+  def: 1
+  spd: 1
+  luck: 1
+  strength: 1
+  mp: 1
+  power: 1
+  charms: 1
+  force: 1
+  concealment: 1
+  flow: 1
+  will: 
+  chubbyness: 1
+  hunger: 1
+  thirst: 1
+  lives: 
+  rarity: 1
+  starter: false
+  petworth: 1
+  cost: 1
+  created_on: 2019-11-15 05:08:19
+  updated_on: 2019-11-15 05:08:19
+  reviewed_on: 2019-11-15 05:08:19
+  user_id: 1
+  creaturetype_id: 1
+  reviewed: false

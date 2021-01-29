@@ -1,0 +1,28 @@
+<% provide(:h1, "Warehouse List") %>
+<div class="formlinks"><%= paginate @warehouses %></div>
+<br>
+<% @warehouses.each do |warehouse| %>
+   <div class="pageformat">
+      <div class="container"><p class="formlinks">Name: <%= link_to warehouse.name, warehouse_path(warehouse) %></p></div> <div class="container"><%= button_to 'Edit', edit_warehouse_path(warehouse), method: :get, class: "button editbutton" %></div>
+      <p>Created: <%= distance_of_time_in_words_to_now warehouse.created_on %> ago on (<%= warehouse.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now warehouse.updated_on %> ago on (<%= warehouse.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <% if warehouse.ogg.to_s != "" || warehouse.mp3.to_s != "" %>
+         <br>
+         <p>Theme song: <%= audio_tag(getMusicOrVideo("Sound", warehouse), :controls => true) %></p>
+      <% end %>
+      <br>
+      <p>Treasury: <%= warehouse.treasury %></p>
+      <p>Emeralds: <%= warehouse.emeralds %></p>
+      <p>Profit: <%= warehouse.profit %></p>
+      <p>Hoard points: <%= warehouse.hoardpoints %></p>
+      <% if warehouse.store_open %>
+         <p>Store is open!</p>
+      <% else %>
+         <p>Store is closed!</p>
+      <% end %>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", warehouse.message, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

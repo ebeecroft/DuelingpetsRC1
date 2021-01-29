@@ -1,0 +1,240 @@
+<%= form_with(model: @webcontrol, local: true) do |form| %>
+  <% if @webcontrol.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@webcontrol.errors.count, "error") %> prohibited this webcontrol from being saved:</h2>
+           <ul>
+              <% @webcontrol.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <p class="pageformat">Banner files</p>
+  <div class="pageformat">
+     <%= image_tag @webcontrol.banner_url(:thumb).to_s if @webcontrol.banner? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :banner %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_banner_url, "or Banner URL" %><br />
+    <%= form.text_field :remote_banner_url %>
+    <%= form.hidden_field :banner_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Mascot files</p>
+  <div class="pageformat">
+     <%= image_tag @webcontrol.mascot_url(:thumb).to_s if @webcontrol.mascot? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :mascot %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_mascot_url, "or Mascot URL" %><br />
+    <%= form.text_field :remote_mascot_url %>
+    <%= form.hidden_field :mascot_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Favicon files</p>
+  <div class="pageformat">
+     <%= image_tag @webcontrol.favicon_url(:thumb).to_s if @webcontrol.favicon? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :favicon %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_favicon_url, "or Favicon URL" %><br />
+    <%= form.text_field :remote_favicon_url %>
+    <%= form.hidden_field :favicon_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Critical Ogg files</p>
+  <div class="pageformat">
+     <%= audio_tag(@webcontrol.criticalogg_url.to_s, :controls => true) if @webcontrol.criticalogg? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :criticalogg %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_criticalogg_url, "or Critical Ogg URL" %><br />
+    <%= form.text_field :remote_criticalogg_url %>
+    <%= form.hidden_field :criticalogg_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Critical MP3 files</p>
+  <div class="pageformat">
+     <%= audio_tag(@webcontrol.criticalmp3_url.to_s, :controls => true) if @webcontrol.criticalmp3? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :criticalmp3 %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_criticalmp3_url, "or Critical Mp3 URL" %><br />
+    <%= form.text_field :remote_criticalmp3_url %>
+    <%= form.hidden_field :criticalmp3_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Beta Ogg files</p>
+  <div class="pageformat">
+     <%= audio_tag(@webcontrol.betaogg_url.to_s, :controls => true) if @webcontrol.betaogg? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :betaogg %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_betaogg_url, "or Beta Ogg URL" %><br />
+    <%= form.text_field :remote_betaogg_url %>
+    <%= form.hidden_field :betaogg_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Beta MP3 files</p>
+  <div class="pageformat">
+     <%= audio_tag(@webcontrol.betamp3_url.to_s, :controls => true) if @webcontrol.betamp3? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :betamp3 %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_betamp3_url, "or Beta Mp3 URL" %><br />
+    <%= form.text_field :remote_betamp3_url %>
+    <%= form.hidden_field :betamp3_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Grand Ogg files</p>
+  <div class="pageformat">
+     <%= audio_tag(@webcontrol.grandogg_url.to_s, :controls => true) if @webcontrol.grandogg? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :grandogg %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_grandogg_url, "or Grand Ogg URL" %><br />
+    <%= form.text_field :remote_grandogg_url %>
+    <%= form.hidden_field :grandogg_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Grand MP3 files</p>
+  <div class="pageformat">
+     <%= audio_tag(@webcontrol.grandmp3_url.to_s, :controls => true) if @webcontrol.grandmp3? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :grandmp3 %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_grandmp3_url, "or Grand Mp3 URL" %><br />
+    <%= form.text_field :remote_grandmp3_url %>
+    <%= form.hidden_field :grandmp3_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Ogg files</p>
+  <div class="pageformat">
+     <%= audio_tag(@webcontrol.ogg_url.to_s, :controls => true) if @webcontrol.ogg? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :ogg %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_ogg_url, "or Ogg URL" %><br />
+    <%= form.text_field :remote_ogg_url %>
+    <%= form.hidden_field :ogg_cache %>
+  </div>
+  <br>
+  <p class="pageformat">MP3 files</p>
+  <div class="pageformat">
+     <%= audio_tag(@webcontrol.mp3_url.to_s, :controls => true) if @webcontrol.mp3? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :mp3 %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_mp3_url, "or Mp3 URL" %><br />
+    <%= form.text_field :remote_mp3_url %>
+    <%= form.hidden_field :mp3_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Creation Ogg files</p>
+  <div class="pageformat">
+     <%= audio_tag(@webcontrol.creationogg_url.to_s, :controls => true) if @webcontrol.creationogg? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :creationogg %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_creationogg_url, "or Creation Ogg URL" %><br />
+    <%= form.text_field :remote_creationogg_url %>
+    <%= form.hidden_field :creationogg_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Creation MP3 files</p>
+  <div class="pageformat">
+     <%= audio_tag(@webcontrol.creationmp3_url.to_s, :controls => true) if @webcontrol.creationmp3? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :creationmp3 %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_creationmp3_url, "or Creation Mp3 URL" %><br />
+    <%= form.text_field :remote_creationmp3_url %>
+    <%= form.hidden_field :creationmp3_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Missingpage Ogg files</p>
+  <div class="pageformat">
+     <%= audio_tag(@webcontrol.missingpageogg_url.to_s, :controls => true) if @webcontrol.missingpageogg? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :missingpageogg %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_missingpageogg_url, "or Missingpage Ogg URL" %><br />
+    <%= form.text_field :remote_missingpageogg_url %>
+    <%= form.hidden_field :missingpageogg_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Missingpage MP3 files</p>
+  <div class="pageformat">
+     <%= audio_tag(@webcontrol.missingpagemp3_url.to_s, :controls => true) if @webcontrol.missingpagemp3? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :missingpagemp3 %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_missingpagemp3_url, "or Missingpage Mp3 URL" %><br />
+    <%= form.text_field :remote_missingpagemp3_url %>
+    <%= form.hidden_field :missingpagemp3_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Maintenance Ogg files</p>
+  <div class="pageformat">
+     <%= audio_tag(@webcontrol.maintenanceogg_url.to_s, :controls => true) if @webcontrol.maintenanceogg? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :maintenanceogg %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_maintenanceogg_url, "or Maintenance Ogg URL" %><br />
+    <%= form.text_field :remote_maintenanceogg_url %>
+    <%= form.hidden_field :maintenanceogg_cache %>
+  </div>
+  <br>
+  <p class="pageformat">Maintenance MP3 files</p>
+  <div class="pageformat">
+     <%= audio_tag(@webcontrol.maintenancemp3_url.to_s, :controls => true) if @webcontrol.maintenancemp3? %>
+  </div>
+  <div class="pageformat">
+     <%= form.file_field :maintenancemp3 %>
+  </div>
+  <div class="pageformat">
+    <%= form.label :remote_maintenancemp3_url, "or Maintenance Mp3 URL" %><br />
+    <%= form.text_field :remote_maintenancemp3_url %>
+    <%= form.hidden_field :maintenancemp3_cache %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', webcontrols_path %></p>
+<% end %>

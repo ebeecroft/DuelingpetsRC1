@@ -1,0 +1,28 @@
+<% provide(:h1, "Book List") %>
+<div class="formlinks"><%= paginate @books %></div>
+<br>
+<% @books.each do |book| %>
+   <div class="pageformat">
+      <p>Created: <%= distance_of_time_in_words_to_now book.created_on %> ago on (<%= book.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now book.updated_on %> ago on (<%= book.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <div class="container"><p class="formlinks">Title: <%= link_to book.title, bookworld_book_path(book.bookworld, book) %></p></div> <div class="container"><%= button_to 'Edit', edit_bookworld_book_path(book.bookworld, book), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [book.bookworld, book], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <br>
+      <% if book.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(book.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Writer: <%= getUserPrivilege(book.user) %><%= link_to book.user.vname, user_path(book.user) %></p>
+      <p class="formlinks">Bookworld: <%= link_to book.bookworld.name, user_bookworld_path(book.bookworld.user, book.bookworld) %></p>
+      <p>Group: <%= book.bookgroup.name %></p>
+      <p>Viewer: <%= book.gviewer.name %></p>
+      <p>Collab mode: <%= book.collab_mode %></p>
+      <p>Status: <%= getActivity(book.user) %>
+         <% if getActivity(book.user) != "Online" && getActivity(book.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(book.user) %>
+         <% end %>
+      </p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", book.description, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

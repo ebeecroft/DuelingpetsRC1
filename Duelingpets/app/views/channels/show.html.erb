@@ -1,0 +1,100 @@
+<% provide(:h1, @channel.name) %>
+<p id="notice"><%= notice %></p>
+<% if current_user %>
+   <p class="centerpagecontent"><%= playMusicLoop("Channel", @channel) %></p>
+   <div class="pageformat">
+      <% if current_user.id == @channel.user.id %>
+         <% if @channel.ogg.to_s != "" || @channel.mp3.to_s != "" %>
+            <div class="container">
+               <% if @channel.music_on %>
+                  <p><%= button_to 'Turn off music', channels_music_path(:id=>@channel.id), method: :post, class: "button submitbutton" %></p>
+               <% else %>
+                  <p><%= button_to 'Turn on music', channels_music_path(:id=>@channel.id), method: :post, class: "button submitbutton" %></p>
+               <% end %>
+            </div>
+         <% end %>
+      <% end %>
+      <div class="container">
+         <% if current_user.userinfo.mute_on %>
+            <p><%= button_to 'Unmute music', muteAudio_path(:pageType => "Channel", :pageContent => [@channel.user, @channel]), method: :post, class: "button submitbutton" %></p>
+            <br>
+         <% else %>
+            <p><%= button_to 'Mute music', muteAudio_path(:pageType => "Channel", :pageContent => [@channel.user, @channel]), method: :post, class: "button submitbutton" %></p>
+            <br>
+         <% end %>
+      </div>
+      <br>
+   </div>
+<% end %>
+<div class="pageformat">
+   <% if current_user && (current_user.id == @channel.user_id || current_user.pouch.privilege == "Admin") %>
+      <div class="container"><%= button_to 'Edit', edit_user_channel_path(@channel.user, @channel), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [@channel.user, @channel], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+   <% end %>
+   <p>Created: <%= distance_of_time_in_words_to_now @channel.created_on %> ago on (<%= @channel.created_on.strftime("%B-%d-%Y") %>)</p>
+   <p>Updated: <%= distance_of_time_in_words_to_now @channel.updated_on %> ago on (<%= @channel.updated_on.strftime("%B-%d-%Y") %>)</p>
+   <p>Private channel: <%= @channel.privatechannel %></p>
+   <br>
+   <% if @channel.user.userinfo.miniavatar.to_s != "" %>
+      <p><%= image_tag(@channel.user.userinfo.miniavatar_url(:thumb)) %></p>
+   <% end %>
+   <p class="formlinks">Director: <%= getUserPrivilege(@channel.user) %><%= link_to @channel.user.vname, user_path(@channel.user) %></p>
+   <p>Group: <%= @channel.bookgroup.name %></p>
+   <p>Viewer: <%= @channel.gviewer.name %></p>
+   <p>Total mainplaylists: <%= @channel.mainplaylists.count %></p>
+   <p>Status: <%= getActivity(@channel.user) %>
+      <% if getActivity(@channel.user) != "Online" && getActivity(@channel.user) != "Inoperable" %>
+         for <%= distance_of_time_in_words_to_now getTime(@channel.user) %>
+      <% end %>
+   </p>
+   <br>
+   <p class="textindent"><%= textFormater("Multi", @channel.description, "All").html_safe %></p>
+   <br>
+   <div class="formlinks"><%= paginate @mainplaylists %></div>
+   <br>
+   <% @mainplaylists.each_with_index do |mainplaylist, index| %>
+      <% if(index % 3 == 2) %>
+         <div class="container">
+      <% else %>
+         <!--Container space-->
+         <div class="container">
+      <% end %>
+         <p class="formlinks"><%= link_to mainplaylist.title, channel_mainplaylist_path(mainplaylist.channel, mainplaylist) %></p>
+         <% if current_user && (current_user.id == mainplaylist.channel.user_id || current_user.pouch.privilege == "Admin") %>
+            <div class="container"><%= button_to 'Edit', edit_channel_mainplaylist_path(mainplaylist.channel, mainplaylist), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [mainplaylist.channel, mainplaylist], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+         <% end %>
+         <p>Created</p>
+         <p><%= distance_of_time_in_words_to_now mainplaylist.created_on %> ago on</p>
+         <p>(<%= mainplaylist.created_on.strftime("%B-%d-%Y") %>)</p>
+         <p>Updated</p>
+         <p><%= distance_of_time_in_words_to_now mainplaylist.updated_on %> ago on</p>
+         <p>(<%= mainplaylist.updated_on.strftime("%B-%d-%Y") %>)</p>
+         <br>
+         <% if !getMainplaylistMusic(mainplaylist).nil? %>
+            <p><%= video_tag(getMusicOrVideo("Movie", getMainplaylistMusic(mainplaylist)), size: "200x200", :controls => true) %></p>
+            <br>
+         <% end %>
+         <% if mainplaylist.user.userinfo.miniavatar.to_s != "" %>
+            <p><%= image_tag(mainplaylist.user.userinfo.miniavatar_url(:thumb)) %></p>
+         <% end %>
+         <p class="formlinks">Director: <%= getUserPrivilege(mainplaylist.user) %><%= link_to mainplaylist.user.vname, user_path(mainplaylist.user) %></p>
+         <p>Total subplaylists: <%= mainplaylist.subplaylists.count %></p>
+         <p>Status: <%= getActivity(mainplaylist.user) %>
+            <% if getActivity(mainplaylist.user) != "Online" && getActivity(mainplaylist.user) != "Inoperable" %>
+               for <%= distance_of_time_in_words_to_now getTime(mainplaylist.user) %>
+            <% end %>
+         </p>
+         <br>
+         <p class="textindent"><%= textFormater("Multi", mainplaylist.description, "All").html_safe %></p>
+      </div>
+      <% if index % 3 == 2 %>
+         <br>
+         <br>      
+      <% end %>
+   <% end %>
+   <% if(current_user && current_user.id == @channel.user_id) %>
+      <p><%= button_to "New Mainplaylist", new_channel_mainplaylist_path(@channel), method: :get, class: "button submitbutton" %></p>
+      <br>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to "User Channels", user_channels_path(@channel.user) %> |
+<%= link_to "Channel List", channels_path %></p>

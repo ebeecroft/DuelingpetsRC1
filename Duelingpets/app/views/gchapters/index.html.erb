@@ -1,0 +1,13 @@
+<% provide(:h1, "Gchapter List") %>
+<% if @gchapters.count >= 10 %>
+   <div class="formlinks"><%= paginate @gchapters %></div>
+   <br>
+<% end %>
+<% @gchapters.each do |gchapter| %>
+   <div class="pageformat">
+      <p>Created: <%= distance_of_time_in_words_to_now gchapter.created_on %> ago on (<%= gchapter.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Title: <%= gchapter.title %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

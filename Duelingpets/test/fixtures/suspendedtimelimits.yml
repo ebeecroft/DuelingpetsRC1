@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  pointfines: 1
+  emeraldfines: 1
+  timelimit: 2019-07-13 05:28:58
+  reason: MyText
+  created_on: 2019-07-13 05:28:58
+  user_id: 1
+  from_user_id: 1
+
+two:
+  pointfines: 1
+  emeraldfines: 1
+  timelimit: 2019-07-13 05:28:58
+  reason: MyText
+  created_on: 2019-07-13 05:28:58
+  user_id: 1
+  from_user_id: 1

@@ -1,0 +1,115 @@
+<% provide(:h1, @monsterbattle.fight.partner.name + "'s monbattle") %>
+<p id="notice"><%= notice %></p>
+<div class="pageformat">
+   <% if current_user.userinfo.mute_on %>
+      <p class="centerpagecontent"><%= button_to 'Unmute music', muteAudio_path(:pageType => "Monsterbattle", :pageContent => [@monsterbattle.fight, @monsterbattle]), method: :post, class: "button submitbutton" %></p>
+      <br>
+   <% else %>
+      <p class="centerpagecontent"><%= button_to 'Mute music', muteAudio_path(:pageType => "Monsterbattle", :pageContent => [@monsterbattle.fight, @monsterbattle]), method: :post, class: "button submitbutton" %></p>
+      <br>
+   <% end %>
+</div>
+<%= form_for(:partner, url: monsterbattles_battle_path(:monsterbattle_id=>@monsterbattle.id), method: :post) do |form| %>
+   <p class="centerpagecontent"><%= playMusicLoop("Monsterbattle", @monsterbattle) %></p>
+   <div class="pageformat">
+      <p>Started: <%= distance_of_time_in_words_to_now @monsterbattle.started_on %> ago on (<%= @monsterbattle.started_on.strftime("%B-%d-%Y") %>)</p>
+      <% if !@monsterbattle.ended_on.nil? %>
+         <p>Ended: <%= distance_of_time_in_words_to_now @monsterbattle.ended_on %> ago on (<%= @monsterbattle.ended_on.strftime("%B-%d-%Y") %>)</p>
+      <% end %>
+      <br>
+      <p>Battleground stats</p>
+      <p>Round: <%= @monsterbattle.round %></p>
+      <% if @monsterbattle.battleover && @monsterbattle.battleresult != "Loss" %>
+         <p>Tokens: <%= @monsterbattle.tokens_earned %></p>
+         <p>Exp: <%= @monsterbattle.exp_earned %></p>
+         <p>Dreyores: <%= @monsterbattle.dreyore_earned %></p>
+         <p>Items: <%= @monsterbattle.items_earned %></p>
+      <% end %>
+      <p>Battle: <%= @monsterbattle.battleresult %></p>
+      <% if @monsterbattle.battleover %>
+         <p><%#= @monsterbattle.message %></p>
+      <% end %>
+      <br>
+      <div class="container">
+         <p>Partner</p>
+         <!-- Active pet goes up here--->
+         <p><%= @monsterbattle.fight.partner.name %></p>
+         <!-- Might change this later-->
+         <% if @monsterbattle.fight.partner.creature.image.to_s != "" %>
+            <p><%= image_tag(@monsterbattle.fight.partner.creature.image_url(:thumb)) %></p>
+         <% end %>
+         <br>
+         <p>Type: <%= @monsterbattle.fight.partner.creature.creaturetype.name %></p>
+         <div class="container">
+            <p>Physical skills</p>
+            <p>Level: <%= @monsterbattle.partner_plevel %></p>
+            <p>Exp: <%= @monsterbattle.partner_pexp %></p>
+            <p>Hp: <%= @monsterbattle.partner_chp %>/<%= @monsterbattle.partner_hp %></p>
+            <p>Atk: <%= @monsterbattle.partner_atk %></p>
+            <p>Def: <%= @monsterbattle.partner_def %></p>
+            <p>Agility: <%= @monsterbattle.partner_agility %></p>
+            <p>Strength: <%= @monsterbattle.partner_strength %></p>
+         </div>
+         <div class="container">
+            <p>Magical skills</p>
+            <p>Level: <%= @monsterbattle.partner_mlevel %></p>
+            <p>Exp: <%= @monsterbattle.partner_mexp %></p>
+            <p>Mp: <%= @monsterbattle.partner_cmp %>/<%= @monsterbattle.partner_mp %></p>
+            <p>Atk: <%= @monsterbattle.partner_matk %></p>
+            <p>Def: <%= @monsterbattle.partner_mdef %></p>
+            <p>Agility: <%= @monsterbattle.partner_magi %></p>
+            <p>Strength: <%= @monsterbattle.partner_mstr %></p>
+         </div>
+         <br>
+         <br>
+         <p>Battle traits</p>
+         <p>Lives: <%= @monsterbattle.partner_lives %></p>
+         <% if @monsterbattle.battleresult != "Not-Started" %>
+            <p>Damage: <%= @monsterbattle.partner_damage %></p>
+         <% end %>
+         <p>Rarity: <%= @monsterbattle.fight.partner.creature.rarity %></p>
+      </div>
+      <div class="container">
+         <p>Monster</p>
+         <p><%= @monsterbattle.monster.name %></p>
+         <% if @monsterbattle.monster.image.to_s != "" %>
+            <p><%= image_tag(@monsterbattle.monster.image_url(:thumb)) %></p>
+         <% end %>
+         <br>
+         <p>Type: <%= @monsterbattle.monster.monstertype.name %></p>
+         <div class="container">
+            <p>Physical skills</p>
+            <p>Level: <%= @monsterbattle.monster_plevel %></p>
+            <p>Hp: <%= @monsterbattle.monster_chp %>/<%= @monsterbattle.monster_hp %></p>
+            <p>Atk: <%= @monsterbattle.monster_atk %></p>
+            <p>Def: <%= @monsterbattle.monster_def %></p>
+            <p>Agility: <%= @monsterbattle.monster_agility %></p>
+         </div>
+         <div class="container">
+            <p>Magical skills</p>
+            <p>Level: <%= @monsterbattle.monster_mlevel %></p>
+            <p>Mp: <%= @monsterbattle.monster_cmp %>/<%= @monsterbattle.monster_mp %></p>
+            <p>Atk: <%= @monsterbattle.monster_matk %></p>
+            <p>Def: <%= @monsterbattle.monster_mdef %></p>
+            <p>Agility: <%= @monsterbattle.monster_magi %></p>
+         </div>
+         <br>
+         <br>
+         <p>Battle traits</p>
+         <p>Loot: <%= @monsterbattle.monster_loot %></p>
+         <p>Mischief: <%= @monsterbattle.monster_mischief %></p>
+         <% if @monsterbattle.battleresult != "Not-Started" %>
+            <p>Damage: <%= @monsterbattle.monster_damage %></p>
+         <% end %>
+         <p>Rarity: <%= @monsterbattle.monster.rarity %></p>
+      </div>
+   </div>
+   <br>
+   <% if current_user && current_user.id == @monsterbattle.fight.partner.user_id %>
+      <% if @monsterbattle.battleresult == "Started" || @monsterbattle.battleresult == "Not-Started" %>
+         <div class="pageformat"><%= form.submit "Battle", class: "button submitbutton" %></div>
+         <br>
+      <% end %>
+   <% end %>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', partner_fight_path(@monsterbattle.fight.partner, @monsterbattle.fight) %></p>

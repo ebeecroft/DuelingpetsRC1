@@ -1,0 +1,12 @@
+<% provide(:h1, "Monstertype List") %>
+<div class="formlinks"><%= paginate @monstertypes %></div>
+<br>
+<% @monstertypes.each do |monstertype| %>
+   <div class="pageformat">
+      <p>Created: <%= distance_of_time_in_words_to_now monstertype.created_on %> ago on (<%= monstertype.created_on.strftime("%B-%d-%Y") %>)</p>
+      <div class="container"><p class="formlinks">Name: <%= link_to monstertype.name, monstertypes_path %></p></div> <div class="container"><%= button_to 'Edit', edit_monstertype_path(monstertype), method: :get, class: "button editbutton" %></div>
+      <p>Basecost: <%= monstertype.basecost %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

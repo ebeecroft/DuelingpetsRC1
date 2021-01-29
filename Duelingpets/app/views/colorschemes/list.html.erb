@@ -1,0 +1,101 @@
+<% provide(:h1, "Colorscheme List") %>
+<% if @colorschemes.count > 10 %>
+   <div class="formlinks"><%= paginate @colorschemes %></div>
+   <br>
+<% end %>
+<% @colorschemes.each do |colorscheme| %>
+   <div class="pageformat">
+      <div class="container"><p>Name: <%= colorscheme.name %></p></div> <div class="container"><%= button_to 'Edit', edit_user_colorscheme_path(colorscheme.user, colorscheme), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [colorscheme.user, colorscheme], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <div class="container">
+         <% if colorscheme.activated %>
+            <%= button_to 'Disable', colorschemes_activate_path(:color_id => colorscheme.id), method: :post, class: "button submitbutton" %>
+         <% else %>
+            <%= button_to 'Enable', colorschemes_activate_path(:color_id => colorscheme.id), method: :post, class: "button submitbutton" %>
+         <% end %>
+      </div>
+      <p>Created on: <%= distance_of_time_in_words_to_now colorscheme.created_on %> ago on (<%= colorscheme.created_on.strftime("%B-%d-%Y") %>)</p>
+      <br>
+      <% if colorscheme.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(colorscheme.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Designer: <%= getUserPrivilege(colorscheme.user) %><%= link_to colorscheme.user.vname, user_path(colorscheme.user) %></p>
+      <p>Status: <%= getActivity(colorscheme.user) %>
+         <% if getActivity(colorscheme.user) != "Online" && getActivity(colorscheme.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(colorscheme.user) %>
+         <% end %>
+      </p>
+      <br>
+      <p>Activated: <%= colorscheme.activated %></p>
+      <p>Nightcolor: <%= colorscheme.nightcolor %></p>
+      <p>Demo color: <%= colorscheme.democolor %></p>
+      <div class="container">Background color:</div> <div class="container" style="color: <%= colorscheme.backgroundcolor %>; background-color: <%= colorscheme.headercolor %>"><%= colorscheme.backgroundcolor %></div>
+      <br>
+      <div class="container">Header color:</div> <div class="container" style="color: <%= colorscheme.headercolor %>; background-color: <%= colorscheme.backgroundcolor %>"><%= colorscheme.headercolor %></div>
+      <br>
+      <div class="container">Subheader1 color:</div> <div class="container" style="color: <%= colorscheme.subheader1color %>; background-color: <%= colorscheme.backgroundcolor %>"><%= colorscheme.subheader1color %></div>
+      <br>
+      <div class="container">Subheader2 color:</div> <div class="container" style="color: <%= colorscheme.subheader2color %>; background-color: <%= colorscheme.backgroundcolor %>"><%= colorscheme.subheader2color %></div>
+      <br>
+      <div class="container">Subheader3 color:</div> <div class="container" style="color: <%= colorscheme.subheader3color %>; background-color: <%= colorscheme.backgroundcolor %>"><%= colorscheme.subheader3color %></div>
+      <br>
+      <div class="container">Text color:</div> <div class="container" style="color: <%= colorscheme.textcolor %>; background-color: <%= colorscheme.backgroundcolor %>"><%= colorscheme.textcolor %></div>
+      <br>
+      <div class="container">Editbutton color:</div> <div class="container" style="color: <%= colorscheme.editbuttoncolor %>; background-color: <%= colorscheme.editbuttonbackgcolor %>"><%= colorscheme.editbuttoncolor %></div>
+      <br>
+      <div class="container">Editbutton backgcolor:</div> <div class="container" style="color: <%= colorscheme.editbuttonbackgcolor %>; background-color: <%= colorscheme.backgroundcolor %>"><%= colorscheme.editbuttonbackgcolor %></div>
+      <br>
+      <div class="container">Destroybutton color:</div> <div class="container" style="color: <%= colorscheme.destroybuttoncolor %>; background-color: <%= colorscheme.destroybuttonbackgcolor %>"><%= colorscheme.destroybuttoncolor %></div>
+      <br>
+      <div class="container">Destroybutton backgcolor:</div> <div class="container" style="color: <%= colorscheme.destroybuttonbackgcolor %>; background-color: <%= colorscheme.backgroundcolor %>"><%= colorscheme.destroybuttonbackgcolor %></div>
+      <br>
+      <div class="container">Submitbutton color:</div> <div class="container" style="color: <%= colorscheme.submitbuttoncolor %>; background-color: <%= colorscheme.submitbuttonbackgcolor %>"><%= colorscheme.submitbuttoncolor %></div>
+      <br>
+      <div class="container">Submitbutton backgcolor:</div> <div class="container" style="color: <%= colorscheme.submitbuttonbackgcolor %>; background-color: <%= colorscheme.backgroundcolor %>"><%= colorscheme.submitbuttonbackgcolor %></div>
+      <br>
+      <div class="container">Navigation color:</div> <div class="container" style="color: <%= colorscheme.navigationcolor %>; background-color: <%= colorscheme.backgroundcolor %>"><%= colorscheme.navigationcolor %></div>
+      <br>
+      <div class="container">Navigationlink color:</div> <div class="container" style="color: <%= colorscheme.navigationlinkcolor %>; background-color: <%= colorscheme.navigationcolor %>"><%= colorscheme.navigationlinkcolor %></div>
+      <br>
+      <div class="container">Navigationhover color:</div> <div class="container" style="color: <%= colorscheme.navigationhovercolor %>; background-color: <%= colorscheme.navigationlinkcolor %>"><%= colorscheme.navigationhovercolor %></div>
+      <br>
+      <div class="container">Navigationhover backgcolor:</div> <div class="container" style="color: <%= colorscheme.navigationhoverbackgcolor %>; background-color: <%= colorscheme.navigationhovercolor %>"><%= colorscheme.navigationhoverbackgcolor %></div>
+      <br>
+      <div class="container">Onlinestatus color:</div> <div class="container" style="color: <%= colorscheme.onlinestatuscolor %>; background-color: <%= colorscheme.navigationcolor %>"><%= colorscheme.onlinestatuscolor %></div>
+      <br>
+      <div class="container">Profile color:</div> <div class="container" style="color: <%= colorscheme.profilecolor %>; background-color: <%= colorscheme.backgroundcolor %>"><%= colorscheme.profilecolor %></div>
+      <br>
+      <div class="container">Profilehover color:</div> <div class="container" style="color: <%= colorscheme.profilehovercolor %>; background-color: <%= colorscheme.profilecolor %>"><%= colorscheme.profilehovercolor %></div>
+      <br>
+      <div class="container">Profilehover backgcolor:</div> <div class="container" style="color: <%= colorscheme.profilehoverbackgcolor %>; background-color: <%= colorscheme.profilehovercolor %>"><%= colorscheme.profilehoverbackgcolor %></div>
+      <br>
+      <div class="container">Session color:</div> <div class="container" style="color: <%= colorscheme.sessioncolor %>; background-color: <%= colorscheme.backgroundcolor %>"><%= colorscheme.sessioncolor %></div>
+      <br>
+      <div class="container">Navlink color:</div> <div class="container" style="color: <%= colorscheme.navlinkcolor %>; background-color: <%= colorscheme.backgroundcolor %>"><%= colorscheme.navlinkcolor %></div>
+      <br>
+      <div class="container">Navlinkhover color:</div> <div class="container" style="color: <%= colorscheme.navlinkhovercolor %>; background-color: <%= colorscheme.navlinkcolor %>"><%= colorscheme.navlinkhovercolor %></div>
+      <br>
+      <div class="container">Navlinkhover backgcolor:</div> <div class="container" style="color: <%= colorscheme.navlinkhoverbackgcolor %>; background-color: <%= colorscheme.navlinkhovercolor %>"><%= colorscheme.navlinkhoverbackgcolor %></div>
+      <br>
+      <div class="container">Explanation border:</div> <div class="container" style="color: <%= colorscheme.explanationborder %>; background-color: <%= colorscheme.backgroundcolor %>"><%= colorscheme.explanationborder %></div>
+      <br>
+      <div class="container">Explanheader color:</div> <div class="container" style="color: <%= colorscheme.explanheadercolor %>; background-color: <%= colorscheme.backgroundcolor %>"><%= colorscheme.explanheadercolor %></div>
+      <br>
+      <div class="container">Explanation backgcolor:</div> <div class="container" style="color: <%= colorscheme.explanationbackgcolor %>; background-color: <%= colorscheme.explanheadercolor %>"><%= colorscheme.explanationbackgcolor %></div>
+      <br>
+      <div class="container">Explantext color:</div> <div class="container" style="color: <%= colorscheme.explantextcolor %>; background-color: <%= colorscheme.explanationbackgcolor %>"><%= colorscheme.explantextcolor %></div>
+      <br>
+      <div class="container">Errorfield color:</div> <div class="container" style="color: <%= colorscheme.errorfieldcolor %>; background-color: <%= colorscheme.backgroundcolor %>"><%= colorscheme.errorfieldcolor %></div>
+      <br>
+      <div class="container">Error color:</div> <div class="container" style="color: <%= colorscheme.errorcolor %>; background-color: <%= colorscheme.backgroundcolor %>"><%= colorscheme.errorcolor %></div>
+      <br>
+      <div class="container">Warning color:</div> <div class="container" style="color: <%= colorscheme.warningcolor %>; background-color: <%= colorscheme.backgroundcolor %>"><%= colorscheme.warningcolor %></div>
+      <br>
+      <div class="container">Notification color:</div> <div class="container" style="color: <%= colorscheme.notificationcolor %>; background-color: <%= colorscheme.backgroundcolor %>"><%= colorscheme.notificationcolor %></div>
+      <br>
+      <div class="container">Success color:</div> <div class="container" style="color: <%= colorscheme.successcolor %>; background-color: <%= colorscheme.backgroundcolor %>"><%= colorscheme.successcolor %></div>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", colorscheme.description, "All").html_safe %></p>
+      <br>
+   </div>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

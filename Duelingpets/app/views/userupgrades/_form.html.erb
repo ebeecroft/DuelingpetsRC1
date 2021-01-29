@@ -1,0 +1,49 @@
+<%= form_with(model: @userupgrade, local: true) do |form| %>
+  <% if @userupgrade.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@userupgrade.errors.count, "error") %> prohibited this userupgrade from being saved:</h2>
+           <ul>
+              <% @userupgrade.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :base %>
+    <%= form.number_field :base %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :baseinc %>
+    <%= form.number_field :baseinc %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :price %>
+    <%= form.number_field :price %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :freecap %>
+    <%= form.number_field :freecap %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :membercap %>
+    <%= form.number_field :membercap %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', userupgrades_path %></p>
+<% end %>

@@ -1,0 +1,28 @@
+<% provide(:h1, "What do you need help with?") %>
+<div class="formlinks"><%= paginate @faqs %></div>
+<br>
+<% @faqs.each do |faq| %>
+   <div class="pageformat">
+      <div class="container"><%= faq.goal %></div>
+      <% if current_user && current_user.pouch.privilege == "Admin" %>
+         <div class="container"><%= button_to 'Edit', edit_faq_path(faq), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [faq], method: :delete, data: { confirm: 'Are you sure?' }, class: "button destroybutton" %></div>
+      <% end %>
+      <br>
+      <p>Created: <%= distance_of_time_in_words_to_now faq.created_on %> ago on (<%= faq.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now faq.updated_on %> ago on (<%= faq.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <br>
+      <p>Prereqs</p>
+      <p><%= textFormater("Multi", faq.prereqs, "All").html_safe %></p>
+      <br>
+      <p>Steps</p>
+      <p><%= textFormater("Multi", faq.steps, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<div class="pageformat">
+   <% if current_user && currrent_user.pouch.privilege == "Admin" %>
+      <p><%= button_to "New Faq", new_faq_path, method: :get, class: "button submitbutton" %></p>
+      <br>
+   <% end %>
+   <p class="formlinks"><%= link_to 'Back', root_path %></p>
+</div>

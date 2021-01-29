@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  goal: MyString
+  prereqs: MyText
+  steps: MyText
+  created_on: 2021-01-12 23:56:46
+  replied_on: 2021-01-12 23:56:46
+  reviewed_on: 2021-01-12 23:56:46
+  user_id: 1
+  staff_id: 1
+  reviewed: false
+
+two:
+  goal: MyString
+  prereqs: MyText
+  steps: MyText
+  created_on: 2021-01-12 23:56:46
+  replied_on: 2021-01-12 23:56:46
+  reviewed_on: 2021-01-12 23:56:46
+  user_id: 1
+  staff_id: 1
+  reviewed: false

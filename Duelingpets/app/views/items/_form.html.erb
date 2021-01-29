@@ -1,0 +1,118 @@
+<div class="pageformat">
+   <% if current_user.userinfo.mute_on %>
+      <p><%= button_to 'Unmute music', muteAudio_path(:pageType => "NewItem"), method: :post, class: "button submitbutton" %></p>
+      <br>
+   <% else %>
+      <p><%= button_to 'Mute music', muteAudio_path(:pageType => "NewItem"), method: :post, class: "button submitbutton" %></p>
+      <br>
+   <% end %>
+</div>
+<%= form_with(model: [@user, @item], local: true) do |form| %>
+  <p class="centerpagecontent"><%= playMusicLoop("Creative", nil) %></p>
+  <% if @item.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@item.errors.count, "error") %> prohibited this item from being saved:</h2>
+           <ul>
+              <% @item.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <br>
+  <div class="pageformat">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :description %>
+    <%= form.text_area :description %>
+  </div>
+  <br>
+  <p class="pageformat">Item art</p>
+  <div class="pageformat">
+     <%= image_tag @item.itemart_url(:thumb).to_s if @item.itemart? %>
+  </div>
+  <br>
+  <div class="pageformat">
+     <%= form.file_field :itemart %>
+  </div>
+  <br>
+  <div class="pageformat">
+     <%= form.label :remote_itemart_url, "or Itemart URL" %>
+     <%= form.text_field :remote_itemart_url %>
+     <%= form.hidden_field :itemart_cache %>
+  </div>
+  <br>
+  <div class="pageformat">
+     <%= form.label :durability %>
+     <%= form.number_field :durability %>
+  </div>
+  <br>
+  <div class="pageformat">
+     <%= form.label :rarity %>
+     <%= form.number_field :rarity %>
+  </div>
+  <br>
+  <div class="pageformat">
+     <%= form.label :emeraldcost %>
+     <%= form.number_field :emeraldcost %>
+  </div>
+  <br>
+  <p class="pageformat">Stats</p>
+  <% if @itemtype.name == "Food" %>
+     <div class="pageformat">
+        <%= form.label :hunger %>
+        <%= form.number_field :hunger %>
+     </div>
+  <% elsif @itemtype.name == "Drink" %>
+     <div class="pageformat">
+        <%= form.label :thirst %>
+        <%= form.number_field :thirst %>
+     </div>
+  <% elsif @itemtype.name == "Toy" %>
+     <div class="pageformat">
+        <%= form.label :fun %>
+        <%= form.number_field :fun %>
+     </div>
+  <% elsif @itemtype.name == "Weapon" || @itemtype.name == "Armor" %>
+     <div class="pageformat">
+        <%= form.label :atk %>
+        <%= form.number_field :atk %>
+     </div>
+     <br>
+     <div class="pageformat">
+        <%= form.label :def %>
+        <%= form.number_field :def %>
+     </div>
+     <br>
+     <div class="pageformat">
+        <%= form.label :agility %>
+        <%= form.number_field :agility %>
+     </div>
+  <% elsif @itemtype.name == "Magicweapon" || @itemtype.name == "Magicarmor" %>
+     <div class="pageformat">
+        <%= form.label :matk %>
+        <%= form.number_field :matk %>
+     </div>
+     <br>
+     <div class="pageformat">
+        <%= form.label :mdef %>
+        <%= form.number_field :mdef %>
+     </div>
+     <br>
+     <div class="pageformat">
+        <%= form.label :magi %>
+        <%= form.number_field :magi %>
+     </div>
+  <% end %>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', user_path(@item.user) %></p>
+<% end %>

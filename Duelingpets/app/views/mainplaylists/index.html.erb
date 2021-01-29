@@ -1,0 +1,25 @@
+<% provide(:h1, "Mainplaylist List") %>
+<div class="formlinks"><%= paginate @mainplaylists %></div>
+<br>
+<% @mainplaylists.each do |mainplaylist| %>
+   <div class="pageformat">
+      <p>Created: <%= distance_of_time_in_words_to_now mainplaylist.created_on %> ago on (<%= mainplaylist.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now mainplaylist.updated_on %> ago on (<%= mainplaylist.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <div class="container"><p class="formlinks">Title: <%= link_to mainplaylist.title, channel_mainplaylist_path(mainplaylist.channel, mainplaylist) %></p></div> <div class="container"><%= button_to 'Edit', edit_channel_mainplaylist_path(mainplaylist.channel, mainplaylist), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [mainplaylist.channel, mainplaylist], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <br>
+      <% if mainplaylist.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(mainplaylist.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Director: <%= getUserPrivilege(mainplaylist.user) %><%= link_to mainplaylist.user.vname, user_path(mainplaylist.user) %></p>
+      <p class="formlinks">Channel: <%= link_to mainplaylist.channel.name, user_channel_path(mainplaylist.user, mainplaylist.channel) %></p>
+      <p>Status: <%= getActivity(mainplaylist.user) %>
+         <% if getActivity(mainplaylist.user) != "Online" && getActivity(mainplaylist.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(mainplaylist.user) %>
+         <% end %>
+      </p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", mainplaylist.description, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

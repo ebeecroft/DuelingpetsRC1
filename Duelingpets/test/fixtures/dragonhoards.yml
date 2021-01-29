@@ -1,0 +1,63 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  message: MyText
+  created_on: 2019-08-01 21:08:03
+  ogg: MyString
+  mp3: MyString
+  taxbase: 1.5
+  taxinc: 1.5
+  colorschemepoints: 1
+  colorschemecleanup: 1
+  treasury: 1
+  contestpoints: 1
+  conversioncost: 1
+  emeraldvalue: 1
+  emeraldrate: 1.5
+  pointscreated: 1
+  profit: 1
+  denholiday: false
+  dragonimage: MyString
+  blogadbannercost: 1
+  bloglargeimagecost: 1
+  blogsmallimagecost: 1
+  blogmusiccost: 1
+  blogpoints: 1
+  dreyterrium_start: 1
+  newdreyterriumcapacity: 1
+  dreyterrium_extracted: 1
+  dreyterriumchange: 1
+  dreyterriumbasepoints: 1
+  dreyterriumcurrent_value: 1
+
+two:
+  name: MyString
+  message: MyText
+  created_on: 2019-08-01 21:08:03
+  ogg: MyString
+  mp3: MyString
+  taxbase: 1.5
+  taxinc: 1.5
+  colorschemepoints: 1
+  colorschemecleanup: 1
+  treasury: 1
+  contestpoints: 1
+  conversioncost: 1
+  emeraldvalue: 1
+  emeraldrate: 1.5
+  pointscreated: 1
+  profit: 1
+  denholiday: false
+  dragonimage: MyString
+  blogadbannercost: 1
+  bloglargeimagecost: 1
+  blogsmallimagecost: 1
+  blogmusiccost: 1
+  blogpoints: 1
+  dreyterrium_start: 1
+  newdreyterriumcapacity: 1
+  dreyterrium_extracted: 1
+  dreyterriumchange: 1
+  dreyterriumbasepoints: 1
+  dreyterriumcurrent_value: 1

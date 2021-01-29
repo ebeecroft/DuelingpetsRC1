@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  win: 1
+  draw: 1
+  loss: 1
+  partner_id: 1
+
+two:
+  win: 1
+  draw: 1
+  loss: 1
+  partner_id: 1

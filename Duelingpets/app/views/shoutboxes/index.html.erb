@@ -1,0 +1,22 @@
+<% provide(:h1, "Shoutbox List") %>
+<% if @shoutboxes.count >= 10 %>
+   <div class="formlinks"><%= paginate @shoutboxes %></div>
+   <br>
+<% end %>
+<% @shoutboxes.each do |shoutbox| %>
+   <div class="pageformat">
+      <p>Capacity: <%= shoutbox.shouts.count %>/<%= shoutbox.capacity %></p>
+      <p>Box open: <%= shoutbox.box_open %></p>
+      <% if shoutbox.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(shoutbox.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p>Owner: <%= getUserPrivilege(shoutbox.user) %><%= link_to shoutbox.user.vname, user_path(shoutbox.user) %></p>
+      <p>Status: <%= getActivity(shoutbox.user) %>
+         <% if getActivity(shoutbox.user) != "Online" && getActivity(shoutbox.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(shoutbox.user) %>
+         <% end %>
+      </p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

@@ -1,0 +1,102 @@
+<style>
+/* CSS Reset start */
+html, body, div, h1, h2, h3, h4, h5, h6, p, pre,
+a, code, em, strong, del, img, form, label,
+canvas, embed, footer, header, nav, audio,
+video {margin: 0;padding: 0;border: 0;font-size: 100%;vertical-align: baseline;}
+body {line-height: 1;}
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {display: block;}
+ol, ul {list-style: none;}
+p pre{font-family: 'Verdana', 'Arial', 'sans-serif'}
+/* CSS Reset end */
+
+/* Mainpage content styles */
+#pagestyle{background-color: <%= getColorAttribute("Backgroundcolor") %>; font-family: 'Georgia', 'Arial', 'sans-serif'; max-width: 100%; margin:0;}
+#banner{width: 100%; height: 90px;}
+.profile{padding: 0.7% 1%; text-align: right; color:<%= getColorAttribute("Profile") %>}
+.profile a{color:<%= getColorAttribute("Profile") %>}
+.profile a:visited{<%= getColorAttribute("Profilevisited") %>}
+.profile a:hover{color: <%= getColorAttribute("Profilehovercolor") %>; background: <%= getColorAttribute("Profilehoverbackgc") %>}        
+#sessionindent{padding: 0% 3%;color:<%= getColorAttribute("Sessionc") %>; font-family: 'Courier New', 'monospace'}
+.navindent{padding: 0% 3%;background: <%= getColorAttribute("Navigation") %>;text-align: center;}
+.navindent a{color: <%= getColorAttribute("Navigationlink") %>}
+.navindent a:hover{color: <%= getColorAttribute("Navigationhoverforc") %>;background: <%= getColorAttribute("Navigationhoverbackgc") %>}
+#activity{font-weight: bold; font-size: 120%; padding: 1.5% 0%; color: <%= getColorAttribute("Onlinestatus") %>; font-family: 'Courier New', 'monospace'}
+.navigation{display: inline-block; font-weight: bold; font-size: 120%; padding: 1.5% 0.3%; font-family: 'Courier New', 'monospace'}
+#pageindent{padding: 0% 3%;}
+#pageheader{font-weight: bold;text-align: center;font-size: 160%; color: <%= getColorAttribute("Header") %>; font-family: 'Chalkduster', 'Apple Chancery', 'Comic Sans MS', 'sans-serif'}
+.subheader1{font-weight: bold;text-align: center;font-size: 160%; color: <%= getColorAttribute("Subheader1") %>; font-family: 'Chalkduster', 'Apple Chancery', 'Comic Sans MS', 'Luminari', 'Snell Roundhand', 'sans-serif'}
+.subheader2{font-weight: bold;text-align: center;font-size: 160%; color: <%= getColorAttribute("Subheader2") %>; font-family: 'Chalkduster', 'Apple Chancery', 'Comic Sans MS', 'fantasy'}
+.subheader3{font-weight: bold;text-align: center;font-size: 160%; color: <%= getColorAttribute("Subheader3") %>; font-family: 'Chalkduster', 'Apple Chancery', 'Comic Sans MS', 'fantasy'}
+.hublinks a{color: <%= getColorAttribute("Profile") %>;}
+/* Mainpage content end */
+
+/* Handles the indentation of the alert features */
+.alert-success{color: <%= getColorAttribute("Success") %>}
+.alert-error{color: <%= getColorAttribute("Error") %>}
+.alert-firstnameerror{color: <%= getColorAttribute("Error") %>}
+.alert-lastnameerror{color: <%= getColorAttribute("Error") %>}
+.alert-loginerror{color: <%= getColorAttribute("Error") %>}
+.alert-vnameerror{color: <%= getColorAttribute("Error") %>}
+#errorheader{text-align: left;font-weight: bold;padding: 5px 5px 5px 15px;font-size: 12px; margin: -7px;margin-bottom: 0px;background-color: <%= getColorAttribute("Explanheaderbackgc") %>;color: <%= getColorAttribute("Explanheadercolor") %>;} ul li {font-size: 12px;list-style: square;}
+#errorexplan {width: 450px;border: 2px solid <%= getColorAttribute("Explanationborder") %>;padding: 7px;padding-bottom: 0;margin-bottom: 20px;background-color: <%= getColorAttribute("Explanationbackgc") %>;}
+.field_with_errors{padding: 2px;background-color: <%= getColorAttribute("Errorfieldcolor") %>;display: inherit; text-align: center;}
+/* End of alert features */
+
+/* Activepet sidebar */
+.activepet{text-align: right; color:<%= getColorAttribute("Profile") %>; padding: 0% 8%}
+.activepet a{color:<%= getColorAttribute("Profile") %>}
+.activepet a:visited{<%= getColorAttribute("Profilevisited") %>}
+.activepet a:hover{color: <%= getColorAttribute("Profilehovercolor") %>; background: <%= getColorAttribute("Profilehoverbackgc") %>}
+/*Background needs its own color in the created menu*/
+.sidenav{width: 130px;position: absolute;z-index: 1;top: 455px;right: 25px; /*background:*/ overflow-x: hidden;padding: 8px 0px;}
+#maincontent{margin-right: 155px; padding: 0px 10px;}
+/* End of Activepet */
+
+/* Handles the page content features */
+#subheader{font-weight: bold;text-align: center;font-size: 120%; color: <%= getColorAttribute("Header") %>; font-family: 'Chalkduster', 'Apple Chancery', 'Comic Sans MS', 'fantasy'}
+.button{color: <%= getColorAttribute("Defaultbuttoncolor") %>; background: <%= getColorAttribute("Defaultbuttonbackgc") %>}
+.editbutton{color: <%= getColorAttribute("Editbuttoncolor") %>; background: <%= getColorAttribute("Editbuttonbackgc") %>}
+.destroybutton{color: <%= getColorAttribute("Destroybuttoncolor") %>; background: <%= getColorAttribute("Destroybuttonbackgc") %>}
+.submitbutton{color: <%= getColorAttribute("Submitbuttoncolor") %>; background: <%= getColorAttribute("Submitbuttonbackgc") %>}
+.explantext{color: <%= getColorAttribute("Explantextcolor") %>;}
+.formlinks {text-align: center;}
+.formlinks a{color: <%= getColorAttribute("Navlink") %>}
+.formlinks a:hover{color: <%= getColorAttribute("Navlinkhovercolor") %>;background: <%= getColorAttribute("Navlinkhoverbackgc") %>}
+.container{display: inline-block;}
+.centerpagecontent{text-align: center;}
+.alignboxes{margin: auto; width: 50%}
+.textindent{padding: 0% 4%}
+.pageformat{text-align: center; color: <%= getColorAttribute("Text") %>}
+/* End of content features */
+
+/* Communication content features */
+#adbanner{width: 100%; height: 80px;}
+.forumcolor{background: <%= getColorAttribute("Navigation") %>;}
+.forumcolor a{color: <%= getColorAttribute("Navigationlink") %>}
+.forumcolor a:hover{color: <%= getColorAttribute("Navigationhoverforc") %>;background: <%= getColorAttribute("Navigationhoverbackgc") %>}
+/* End of Communication content */
+
+/* Responsive section for smaller screens */
+@media screen and (max-width: 640px)
+{
+  .profile a{font-size: 140%}
+  .navindent{font-size: 120%; font-weight: bold; background: <%= getColorAttribute("Navigation") %>; text-align: center;}
+  .navindent a{font-weight: bold; font-size: 120%; color: <%= getColorAttribute("Navigationlink") %>;}
+  .navindent a:hover{color: <%= getColorAttribute("Navigationhoverforc") %>;background: <%= getColorAttribute("Navigationhoverbackgc") %>}
+  #activity{padding: 3.5% 0%; color: <%= getColorAttribute("Onlinestatus") %>}
+  .navigation{display: inline-block; padding: 3.5% 0.3%; font-family: 'Courier New', 'monospace';}
+}
+
+@media screen and (min-width: 641px and max-width: 1024px)
+{
+  .profile a{font-size: 140%}
+  .navindent{font-size: 120%; font-weight: bold; background: <%= getColorAttribute("Navigation") %>; text-align: center;}
+  .navindent a{font-weight: bold; font-size: 120%; color: <%= getColorAttribute("Navigationlink") %>;}
+  .navindent a:hover{color: <%= getColorAttribute("Navigationhoverforc") %>;background: <%= getColorAttribute("Navigationhoverbackgc") %>}
+  #activity{padding: 3.5% 0%; color: <%= getColorAttribute("Onlinestatus") %>}
+  .navigation{display: inline-block; padding: 3.5% 0.3%; font-family: 'Courier New', 'monospace';}
+}
+/* End of responsive section */
+</style>

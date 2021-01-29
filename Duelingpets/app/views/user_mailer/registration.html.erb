@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+   </head>
+   <body>
+      <% if @type == "Review" %>
+         <h1>New registration from <%= @registration.vname %> is awaiting review.</h1>
+      <% elsif @type == "Bot" %>
+         <h1>New Bot <%= @registration.vname %> was discovered by the review team.</h1>
+      <% end %>
+      <p>
+         <% if @type == "Review" %>
+            Greetings keymasters we have a new person who wishes
+            to create an account on our website. Please be sure
+            to check all details of the user's information to
+            make certain that this user is not a bot. Here are
+            a few tools that will help out with this:
+            https://email-checker.net/, https://verify-email.org/,
+            and https://tools.verifyemailaddress.io/.
+         <% elsif @type == "Bot" %>
+            Greetings Admin we have discovered a bot that was
+            hiding among the other users during the review
+            process. We used the tools that you have gave us and
+            we checked the registration very throughly and it
+            seemed to fit the aspect of a bot. So we denied the
+            bot entry and we hope the information about this
+            particular bot reaches you.
+         <% end %>
+      </p>
+      <p>
+         <% if @type == "Review" %>
+            As members of the keymaster group you are the last
+            line of defence against bot attacks. I have built
+            in a capcha, a bot blacklist, the registration
+            process and an activation process to help you out.
+            Its why your role is quite important, you are the
+            manual control line that determines whether users
+            are allowed into the site or not. To access this
+            review section you will need to follow this url
+            <%= @url %>. Also I added a keymaster control
+            pannel to make things easier for you. If you have
+            any questions you can always ask me for help. I
+            wish you the best of luck.
+         <% elsif @type == "Bot" %>
+            Imaginaryfriend: <%= @registration.imaginaryfriend %>, Email:
+            <%= @registration.email %>, Vname:
+            <%= @registration.vname %>, Login_id:
+            <%= @registration.login_id %>, Country:
+            <%= @registration.country %>, Country timezone:
+            <%= @registration.country_timezone %>. We hope
+            the data that we collected can now be used to
+            prevent future bot attacks based on the
+            information that we sent.
+         <% end %>
+      </p>
+      <br>
+      <p>
+         <% if @type == "Review" %>
+            Bolt Greywing the Admin
+         <% elsif @type == "Bot" %>
+            The Keymasters Group
+         <% end %>
+      </p>
+   </body>
+</html>

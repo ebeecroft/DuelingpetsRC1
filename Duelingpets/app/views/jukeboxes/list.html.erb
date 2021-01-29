@@ -1,0 +1,32 @@
+<% provide(:h1, "Jukebox List") %>
+<div class="formlinks"><%= paginate @jukeboxes %></div>
+<br>
+<% @jukeboxes.each do |jukebox| %>
+   <div class="pageformat">
+      <p>Created: <%= distance_of_time_in_words_to_now jukebox.created_on %> ago on (<%= jukebox.created_on.strftime("%B-%d-%Y") %>)</p>
+      <p>Updated: <%= distance_of_time_in_words_to_now jukebox.updated_on %> ago on (<%= jukebox.updated_on.strftime("%B-%d-%Y") %>)</p>
+      <% if jukebox.ogg.to_s != "" || jukebox.mp3.to_s != "" %>
+         <br>
+         <p>Theme song: <%= audio_tag(getMusicOrVideo("Sound", jukebox), :controls => true) %></p>
+      <% end %>
+      <br>
+      <div class="container"><p class="formlinks">Name: <%= link_to jukebox.name, user_jukebox_path(jukebox.user, jukebox) %></p></div> <div class="container"><%= button_to 'Edit', edit_user_jukebox_path(jukebox.user, jukebox), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [jukebox.user, jukebox], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <p>Private jukebox: <%= jukebox.privatejukebox %></p>
+      <br>
+      <% if jukebox.user.userinfo.miniavatar.to_s != "" %>
+         <p><%= image_tag(jukebox.user.userinfo.miniavatar_url(:thumb)) %></p>
+      <% end %>
+      <p class="formlinks">Composer: <%= getUserPrivilege(jukebox.user) %><%= link_to jukebox.user.vname, user_path(jukebox.user) %></p>
+      <p>Group: <%= jukebox.bookgroup.name %></p>
+      <p>Viewer: <%= jukebox.gviewer.name %></p>
+      <p>Status: <%= getActivity(jukebox.user) %>
+         <% if getActivity(jukebox.user) != "Online" && getActivity(jukebox.user) != "Inoperable" %>
+            for <%= distance_of_time_in_words_to_now getTime(jukebox.user) %>
+         <% end %>
+      </p>
+      <br>
+      <p class="textindent"><%= textFormater("Multi", jukebox.description, "All").html_safe %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

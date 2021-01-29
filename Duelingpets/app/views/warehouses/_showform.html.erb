@@ -1,0 +1,16 @@
+<div class="container">
+   <div class="container"><p class="formlinks"><%= link_to getWareStats(getWareItems(slotindex, slot, "Shelf"), "Shelf", "Name"), user_item_path(getWareStats(getWareItems(slotindex, slot, "Self"), "Self", "Creator"), getWareStats(getWareItems(slotindex, slot, "Shelf"), "Shelf", "Name")) %></p></div> <div class="container"><%= form.radio_button :slotindex_id, slotindex %></div>
+   <% if getWareStats(getWareItems(slotindex, slot, "Shelf"), "Shelf", "Imagecheck") %>
+      <p><%= image_tag(getWareStats(getWareItems(slotindex, slot, "Shelf"), "Shelf", "Image")) %></p>
+   <% end %>
+   <p>Type: <%= getWareStats(getWareItems(slotindex, slot, "Shelf"), "Shelf", "Itemtype") %></p>
+   <p>Durability: <%= getWareStats(getWareItems(slotindex, slot, "Shelf"), "Shelf", "Durability") %></p>
+   <p>Rarity: <%= getWareStats(getWareItems(slotindex, slot, "Shelf"), "Shelf", "Rarity") %></p>
+   <p class="formlinks">Artist: <%= getUserPrivilege(getWareStats(getWareItems(slotindex, slot, "Shelf"), "Shelf", "User")) %><%= link_to getWareStats(getWareItems(slotindex, slot, "Shelf"), "Shelf", "Creator"), user_path(getWareStats(getWareItems(slotindex, slot, "Shelf"), "Shelf", "Creator")) %></p>
+   <p>Quantity: <%= getWarecost(getWareItems(slotindex, slot, "Shelf"), slotindex, slot, "Shelf", "Quantity") %></p>
+   <p>Emeralds: <%= getWarecost(getWareItems(slotindex, slot, "Shelf"), slotindex, slot, "Shelf", "Emerald") %></p>
+   <p>Points: <%= getWarecost(getWareItems(slotindex, slot, "Shelf"), slotindex, slot, "Shelf", "Point") %></p>
+   <br>
+   <p>Stats</p>
+   <%= getWaretype(getWareItems(slotindex, slot, "Shelf"), "Shelf", "None") %>
+</div>

@@ -1,0 +1,78 @@
+<% provide(:h1, @subplaylist.title) %>
+<p id="notice"><%= notice %></p>
+<div class="pageformat">
+   <% if current_user && (current_user.id == @subplaylist.mainplaylist.user_id || current_user.pouch.privilege == "Admin") %>
+      <div class="container"><%= button_to 'Edit', edit_mainplaylist_subplaylist_path(@subplaylist.mainplaylist, @subplaylist), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [@subplaylist.mainplaylist, @subplaylist], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+   <% end %>
+   <p>Created: <%= distance_of_time_in_words_to_now @subplaylist.created_on %> ago on (<%= @subplaylist.created_on.strftime("%B-%d-%Y") %>)</p>
+   <p>Updated: <%= distance_of_time_in_words_to_now @subplaylist.updated_on %> ago on (<%= @subplaylist.updated_on.strftime("%B-%d-%Y") %>)</p>
+   <br>
+   <% if @subplaylist.user.userinfo.miniavatar.to_s != "" %>
+      <p><%= image_tag(@subplaylist.user.userinfo.miniavatar_url(:thumb)) %></p>
+   <% end %>
+   <p class="formlinks">Director: <%= getUserPrivilege(@subplaylist.user) %><%= link_to @subplaylist.user.vname, user_path(@subplaylist.user) %></p>
+   <p>Mainplaylist: <%= @subplaylist.mainplaylist.title %></p>
+   <p>Collab mode: <%= @subplaylist.collab_mode %></p>
+   <p>Favorite folder: <%= @subplaylist.fave_folder %></p>
+   <p>Private subplaylist: <%= @subplaylist.privatesubplaylist %></p>
+   <p>Total movies: <%= @subplaylist.movies.count %></p>
+   <p>Status: <%= getActivity(@subplaylist.user) %>
+      <% if getActivity(@subplaylist.user) != "Online" && getActivity(@subplaylist.user) != "Inoperable" %>
+         for <%= distance_of_time_in_words_to_now getTime(@subplaylist.user) %>
+      <% end %>
+   </p>
+   <br>
+   <p class="textindent"><%= textFormater("Multi", @subplaylist.description, "All").html_safe %></p>
+   <br>
+   <div class="formlinks"><%= paginate @movies %></div>
+   <br>
+   <% @movies.each_with_index do |movie, index| %>
+      <% if(index % 3 == 2) %>
+         <div class="container">
+      <% else %>
+         <!--Container space-->
+         <div class="container">
+      <% end %>
+         <p class="formlinks"><%= link_to movie.title, subplaylist_movie_path(movie.subplaylist, movie) %></p>
+         <% if current_user && (current_user.id == movie.user_id || current_user.pouch.privilege == "Admin") %>
+            <div class="container"><%= button_to 'Edit', edit_subplaylist_movie_path(movie.subplaylist, movie), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [movie.subplaylist, movie], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+         <% end %>
+         <p>Created</p>
+         <p><%= distance_of_time_in_words_to_now movie.created_on %> ago on</p>
+         <p>(<%= movie.created_on.strftime("%B-%d-%Y") %>)</p>
+         <p>Updated</p>
+         <p><%= distance_of_time_in_words_to_now movie.updated_on %> ago on</p>
+         <p>(<%= movie.updated_on.strftime("%B-%d-%Y") %>)</p>
+         <% if movie.reviewed %>
+            <p>Reviewed</p>
+            <p><%= distance_of_time_in_words_to_now movie.reviewed_on %> ago on</p>
+            <p>(<%= movie.reviewed_on.strftime("%B-%d-%Y") %>)</p>
+         <% end %>
+         <% if movie.ogv.to_s != "" || movie.mp4.to_s != "" %>
+            <br>
+            <p><%= video_tag(getMusicOrVideo("Movie", movie), size: "200x200", :controls => true) %></p>
+         <% end %>
+         <br>
+         <% if movie.user.userinfo.miniavatar.to_s != "" %>
+            <p><%= image_tag(movie.user.userinfo.miniavatar_url(:thumb)) %></p>
+         <% end %>
+         <p class="formlinks">Director: <%= getUserPrivilege(movie.user) %><%= link_to movie.user.vname, user_path(movie.user) %></p>
+         <p>Status: <%= getActivity(movie.user) %>
+            <% if getActivity(movie.user) != "Online" && getActivity(movie.user) != "Inoperable" %>
+               for <%= distance_of_time_in_words_to_now getTime(movie.user) %>
+            <% end %>
+         </p>
+         <br>
+         <p class="textindent"><%= textFormater("Multi", movie.description, "All").html_safe %></p>
+      </div>
+      <% if index % 3 == 2 %>
+         <br>
+         <br>      
+      <% end %>
+   <% end %>
+   <% if(current_user) %>
+      <p><%= button_to "New Movie", new_subplaylist_movie_path(@subplaylist), method: :get, class: "button submitbutton" %></p>
+      <br>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to "Back", channel_mainplaylist_path(@subplaylist.mainplaylist.channel, @subplaylist.mainplaylist) %></p>

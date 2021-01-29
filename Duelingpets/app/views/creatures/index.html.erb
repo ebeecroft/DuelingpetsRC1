@@ -1,0 +1,64 @@
+<% if optional %>
+   <% provide(:h1, @user.vname +  "'s creatures") %>
+<% else %>
+   <% provide(:h1, "Creature List") %>
+<% end %>
+<div class="formlinks"><%= paginate @creatures %></div>
+<br>
+<div class="pageformat">
+   <% @creatures.each_with_index do |creature, index| %>
+      <% if(index % 3 == 2) %>
+         <div class="container">
+      <% else %>
+         <!--Container space-->
+         <div class="container">
+      <% end %>
+         <p class="formlinks"><%= link_to creature.name, user_creature_path(creature.user, creature) %></p>
+         <p>Created</p>
+         <p><%= distance_of_time_in_words_to_now creature.created_on %> ago on</p>
+         <p>(<%= creature.created_on.strftime("%B-%d-%Y") %>)</p>
+         <p>Updated</p>
+         <p><%= distance_of_time_in_words_to_now creature.updated_on %> ago on</p>
+         <p>(<%= creature.updated_on.strftime("%B-%d-%Y") %>)</p>
+         <% if !creature.reviewed_on.nil? %>
+            <p>Reviewed</p>
+            <p><%= distance_of_time_in_words_to_now creature.reviewed_on %> ago on</p>
+            <p>(<%= creature.reviewed_on.strftime("%B-%d-%Y") %>)</p>
+         <% end %>
+         <% if creature.image.to_s != "" %>
+            <br>
+            <p><%= image_tag(creature.image_url(:thumb)) %></p>
+         <% end %>
+         <% if !optional %>
+            <br>
+            <% if creature.user.userinfo.miniavatar.to_s != "" %>
+               <p><%= image_tag(creature.user.userinfo.miniavatar_url(:thumb)) %></p>
+            <% end %>
+            <p class="formlinks">Artist: <%= getUserPrivilege(creature.user) %><%= link_to creature.user.vname, user_path(creature.user) %></p>
+            <p>Type: <%= creature.creaturetype.name %></p>
+            <p>Element: <%= creature.element.name %></p>
+            <p>Status: <%= getActivity(creature.user) %>
+               <% if getActivity(creature.user) != "Online" && getActivity(creature.user) != "Inoperable" %>
+                  for <%= distance_of_time_in_words_to_now getTime(creature.user) %>
+               <% end %>
+            </p>
+            <br>
+         <% else %>
+            <br>
+            <p>Type: <%= creature.creaturetype.name %></p>
+            <p>Element: <%= creature.element.name %></p>
+            <br>
+         <% end %>
+         <p class="textindent"><%= textFormater("Multi", creature.description, "All").html_safe %></p>
+      </div>
+      <% if index % 3 == 2 %>
+         <br>
+         <br>      
+      <% end %>
+   <% end %>
+</div>
+<% if optional %>
+   <p class="formlinks"><%= link_to 'Back', user_path(@user) %></p>
+<% else %>
+   <p class="formlinks"><%= link_to 'Back', root_path %></p>
+<% end %>

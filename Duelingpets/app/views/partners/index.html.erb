@@ -1,0 +1,42 @@
+<% provide(:h1, @user.vname +  "'s partners") %>
+<div class="formlinks"><%= paginate @partners %></div>
+<br>
+<div class="pageformat">
+   <% @partners.each_with_index do |partner, index| %>
+      <% if(index % 3 == 2) %>
+         <div class="container">
+      <% else %>
+         <!--Container space-->
+         <div class="container">
+      <% end %>
+         <p class="formlinks"><%= link_to partner.name, user_partner_path(partner.user, partner) %></p>
+         <p>Adopted</p>
+         <p><%= distance_of_time_in_words_to_now partner.adopted_on %> ago on</p>
+         <p>(<%= partner.adopted_on.strftime("%B-%d-%Y") %>)</p>
+         <p>Updated</p><%= distance_of_time_in_words_to_now partner.updated_on %> ago on</p>
+         <p>(<%= partner.updated_on.strftime("%B-%d-%Y") %>)</p>
+         <% if partner.creature.image.to_s != "" %>
+            <br>
+            <p><%= image_tag(partner.creature.image_url(:thumb)) %></p>
+         <% end %>
+         <p>Creature: <%= partner.creature.name %></p>
+         <p>Hp: <%= partner.chp %>/<%= partner.hp %></p>
+         <p>Phylevel: <%= partner.plevel %></p>
+         <p>Magilevel: <%= partner.mlevel %></p>
+         <p>Phytokens: <%= partner.phytokens %></p>
+         <p>Magitokens: <%= partner.magitokens %></p>
+         <p>Rarity: <%= partner.creature.rarity %></p>
+         <p>Lives: <%= partner.lives %></p>
+         <p>Inbattle: <%= partner.inbattle %></p>
+         <p>Dead: <%= partner.dead %></p>
+         <p>Mainpet: <%= partner.activepet %></p>
+         <br>
+         <p class="textindent"><%= textFormater("Multi", partner.description, "All").html_safe %></p>
+      </div>
+      <% if index % 3 == 2 %>
+         <br>
+         <br>      
+      <% end %>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to 'Back', user_path(@user) %></p>

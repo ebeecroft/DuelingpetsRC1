@@ -1,0 +1,18 @@
+<% provide(:h1, "Transfer") %>
+<%= form_for(:hoard, url: warehouses_transferpost_path(:warehouse_id=>@warehouse.id), method: :post) do |form| %>
+   <div class="pageformat">
+      <%= form.label :points, "Points" %>
+      <%= form.number_field :amount %>
+   </div>
+   <br>
+   <div class="pageformat">
+      <%= form.label :emeralds, "Emeralds" %>
+      <%= form.number_field :emeralds %>
+   </div>
+   <br>
+   <div class="pageformat">
+      <p><%= form.submit "Transfer", class: "button submitbutton" %></p>
+   </div>
+<% end %>
+<br>
+<p class="formlinks"><%#= link_to 'Back', warehouse_path(@warehouse.id) %></p>
