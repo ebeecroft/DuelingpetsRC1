@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: PMboxes") %>
+<% provide(:description, "Allows users to store pms.") %>
+<% provide(:keywords, "virtualpet, digitalpets, pms") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "PMbox List") %>
-<% if @pmboxes.count >= 10 %>
-   <div class="formlinks"><%= paginate @pmboxes %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @pmboxes %></div>
+<br>
 <% @pmboxes.each do |pmbox| %>
    <div class="pageformat">
       <p>Capacity: <%= pmbox.pms.count %>/<%= pmbox.capacity %></p>

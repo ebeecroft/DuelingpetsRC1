@@ -1,6 +1,14 @@
 <% if @item.retireditem %>
+   <% provide(:title, "Duelingpets: Item #{@item.name} is Retired") %>
+   <% provide(:description, "This item is retired.") %>
+   <% provide(:keywords, "virtualpet, digitalpets, item") %>
+   <% provide(:robots, "index, follow") %>
    <% provide(:h1, @item.name + " [Retired]") %>
 <% else %>
+   <% provide(:title, "Duelingpets: Item #{@item.name}") %>
+   <% provide(:description, "This item is available for use.") %>
+   <% provide(:keywords, "virtualpet, digitalpets, item") %>
+   <% provide(:robots, "index, follow") %>
    <% provide(:h1, @item.name) %>
 <% end %>
 <p id="notice"><%= notice %></p>

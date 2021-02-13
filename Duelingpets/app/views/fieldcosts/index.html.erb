@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Fieldcosts") %>
+<% provide(:description, "Displays the current price of the website features for the central bank.") %>
+<% provide(:keywords, "virtualpet, digitalpets, price") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Fieldcost List") %>
-<% if @fieldcosts.count >= 10 %>
-   <div class="formlinks"><%= paginate @fieldcosts %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @fieldcosts %></div>
+<br>
 <% @fieldcosts.each do |fieldcost| %>
    <div class="pageformat">
       <p><div class="container"><%= fieldcost.name %></div> <div class="container"><%= button_to 'Edit', edit_dragonhoard_fieldcost_path(fieldcost.dragonhoard, fieldcost), method: :get, class: "button editbutton" %></div></p>

@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Ratecosts") %>
+<% provide(:description, "Allows the dragonhoard to specify the rates on website features.") %>
+<% provide(:keywords, "virtualpet, digitalpets, artwork") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Ratecost List") %>
-<% if @ratecosts.count >= 10 %>
-   <div class="formlinks"><%= paginate @ratecosts %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @ratecosts %></div>
+<br>
 <% @ratecosts.each do |ratecost| %>
    <div class="pageformat">
       <p><div class="container"><%= ratecost.name %></div> <div class="container"><%= button_to 'Edit', edit_dragonhoard_ratecost_path(ratecost.dragonhoard, ratecost), method: :get, class: "button editbutton" %></div></p>

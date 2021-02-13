@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Fights") %>
+<% provide(:description, "Displays the wins, losses and draws of different partners.") %>
+<% provide(:keywords, "virtualpet, digitalpets, partner") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Fight List") %>
-<% if @fights.count > 9 %>
-   <div class="formlinks"><%= paginate @fights %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @fights %></div>
+<br>
 <% @fights.each do |fight| %>
    <div class="pageformat">
       <p><%= fight.partner.name %></p>

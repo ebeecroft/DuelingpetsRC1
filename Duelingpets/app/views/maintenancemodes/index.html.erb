@@ -1,10 +1,14 @@
+<% provide(:title, "Duelingpets: Maintenancemodes") %>
+<% provide(:description, "Allows the admin to turn on or off certain page features.") %>
+<% provide(:keywords, "virtualpet, digitalpets, features") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Maintenancemode List") %>
 <div class="formlinks"><%= paginate @maintenancemodes %></div>
 <br>
 <% @maintenancemodes.each do |maintenancemode| %>
    <div class="pageformat"><div class="container">Created on: <%= distance_of_time_in_words_to_now maintenancemode.created_on %> ago on (<%= maintenancemode.created_on.strftime("%B-%d-%Y") %>)</div> <div class="container"><%= button_to 'Edit', edit_maintenancemode_path(maintenancemode), method: :get, class: "button editbutton" %></div></div>
    <div class="pageformat">
-      <p>Name: <%= maintenancemode.name %></p>
+      <p><%= maintenancemode.name %></p>
       <p>Maintenance on: <%= maintenancemode.maintenance_on %></p>
    </div>
    <br>

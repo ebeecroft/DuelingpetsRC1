@@ -1,3 +1,7 @@
+<% provide(:title, "Duelingpets: User #{@user.vname}") %>
+<% provide(:description, "#{@user.userinfo.info}") %>
+<% provide(:keywords, "virtualpet, digitalpets, profile") %>
+<% provide(:robots, "index, follow") %>
 <% provide(:h1, @user.vname + "'s profile") %>
 <p id="notice"><%= notice %></p>
 <% if current_user %>

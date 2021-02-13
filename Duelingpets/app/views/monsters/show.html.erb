@@ -1,4 +1,16 @@
-<% provide(:h1, @monster.name) %>
+<% if @monster.retiredmonster %>
+   <% provide(:title, "Duelingpets: Monster #{@monster.name} is Retired") %>
+   <% provide(:description, "This monster is retired.") %>
+   <% provide(:keywords, "virtualpet, digitalpets, monster") %>
+   <% provide(:robots, "index, follow") %>
+   <% provide(:h1, @monster.name + " [Retired]") %>
+<% else %>
+   <% provide(:title, "Duelingpets: Monster #{@monster.name}") %>
+   <% provide(:description, "This monster is available for use.") %>
+   <% provide(:keywords, "virtualpet, digitalpets, monster") %>
+   <% provide(:robots, "index, follow") %>
+   <% provide(:h1, @monster.name) %>
+<% end %>
 <p id="notice"><%= notice %></p>
 <div class="pageformat">
    <% if current_user && (current_user.id == @monster.user_id || current_user.pouch.privilege == "Admin") %>

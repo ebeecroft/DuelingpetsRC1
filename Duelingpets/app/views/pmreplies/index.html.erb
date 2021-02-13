@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: PMreplies") %>
+<% provide(:description, "PMreplies allows users to reply to pms.") %>
+<% provide(:keywords, "virtualpet, digitalpets, pms") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "PMreply List") %>
-<% if @pmreplies.count >= 10 %>
-   <div class="formlinks"><%= paginate @pmreplies %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @pmreplies %></div>
+<br>
 <% @pmreplies.each do |pmreply| %>
    <div class="pageformat">
       <div class="container"><p class="formlinks">Reply: <%= link_to pmreply.pm.title, pmbox_pm_path(pmreply.pm.pmbox, pmreply.pm) %></p></div> <div class="container"><%= button_to 'Edit', edit_pm_pmreply_path(pmreply.pm, pmreply), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [pmreply.pm, pmreply], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>

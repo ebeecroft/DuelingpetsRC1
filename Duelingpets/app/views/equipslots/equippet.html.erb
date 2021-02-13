@@ -1,3 +1,7 @@
+<% provide(:title, "Duelingpets: Equip pet") %>
+<% provide(:description, "Allows a user to view their pet's equipped items.") %>
+<% provide(:keywords, "virtualpet, digitalpets, equip") %>
+<% provide(:robots, "index, follow") %>
 <% provide(:h1, "Equip pet/player") %>
 <div class="pageformat">
    <p class="formlinks"><%= link_to @item.name, user_item_path(@item.user, @item) %></p>

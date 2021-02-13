@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Creaturetypes") %>
+<% provide(:description, "Allows users to set the creaturetype.") %>
+<% provide(:keywords, "virtualpet, digitalpets, creaturetype") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Creaturetype List") %>
-<% if @creaturetypes.count >= 10 %>
-   <div class="formlinks"><%= paginate @creaturetypes %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @creaturetypes %></div>
+<br>
 <% @creaturetypes.each do |creaturetype| %>
    <div class="pageformat">
       <p>Created: <%= distance_of_time_in_words_to_now creaturetype.created_on %> ago on (<%= creaturetype.created_on.strftime("%B-%d-%Y") %>)</p>

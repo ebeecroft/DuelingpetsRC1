@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: PM Outbox") %>
+<% provide(:description, "Shows the outgoing pms from the user.") %>
+<% provide(:keywords, "virtualpet, digitalpets, pms") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "PM Outbox") %>
-<% if @pms.count >= 10 %>
-   <div class="formlinks"><%= paginate @pms %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @pms %></div>
+<br>
 <% @pms.each do |pm| %>
    <div class="pageformat">
       <div class="container"><p class="formlinks">Title: <%= link_to pm.title, pmbox_pm_path(pm.pmbox, pm) %></p></div> <div class="container"><%= button_to 'Edit', edit_pmbox_pm_path(pm.pmbox, pm), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [pm.pmbox, pm], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>

@@ -1,3 +1,7 @@
+<% provide(:title, "Duelingpets: #{@equip.partner.name}'s Equipment") %>
+<% provide(:description, "Shows the items that are applied to pet #{@equip.partner.name}.") %>
+<% provide(:keywords, "virtualpet, digitalpets, equip, pet, item") %>
+<% provide(:robots, "index, follow") %>
 <% provide(:h1, @equip.partner.name + "'s Equipment") %>
 <p id="notice"><%= notice %></p>
 <div class="pageformat">

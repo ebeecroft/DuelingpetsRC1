@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Pouches") %>
+<% provide(:description, "Pouches stores the users points and emeralds.") %>
+<% provide(:keywords, "virtualpet, digitalpets, pouches") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Pouch List") %>
-<% if @pouches.count >= 10 %>
-   <div class="formlinks"><%= paginate @pouches %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @pouches %></div>
+<br>
 <% @pouches.each do |pouch| %>
    <!---Add a possible avatar up here--->
    <div class="pageformat">

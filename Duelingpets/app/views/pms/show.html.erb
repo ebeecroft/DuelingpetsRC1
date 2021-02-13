@@ -1,3 +1,7 @@
+<% provide(:title, "Duelingpets: PM #{@pm.title}") %>
+<% provide(:description, "The pm the user is currently viewing.") %>
+<% provide(:keywords, "virtualpet, digitalpets, pm") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, @pm.title) %>
 <p id="notice"><%= notice %></p>
 <div class="pageformat">
@@ -34,10 +38,8 @@
    <br>
    <p class="textindent"><%= textFormater("Multi", @pm.message, "All").html_safe %></p>
    <br>
-   <% if @pm.pmreplies.count >= 10 %>
-      <div class="formlinks"><%= paginate @pm.pmreplies %></div>
-      <br>
-   <% end %>
+   <div class="formlinks"><%= paginate @pm.pmreplies %></div>
+   <br>
    <% @pm.pmreplies.each do |pmreply| %>
       <div class="container"><%= button_to 'Edit', edit_pm_pmreply_path(pmreply.pm, pmreply), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [pmreply.pm, pmreply], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
       <p>Created: <%= distance_of_time_in_words_to_now pmreply.created_on %> ago on (<%= pmreply.created_on.strftime("%B-%d-%Y") %>)</p>

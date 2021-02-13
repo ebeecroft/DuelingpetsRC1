@@ -1,3 +1,7 @@
+<% provide(:title, "Duelingpets: Help") %>
+<% provide(:description, "Provides users with useful information on how to build certain features.") %>
+<% provide(:keywords, "virtualpet, digitalpets, information, help") %>
+<% provide(:robots, "index, follow") %>
 <% provide(:h1, "What do you need help with?") %>
 <div class="formlinks"><%= paginate @faqs %></div>
 <br>
@@ -20,7 +24,7 @@
    <br>
 <% end %>
 <div class="pageformat">
-   <% if current_user && currrent_user.pouch.privilege == "Admin" %>
+   <% if current_user && current_user.pouch.privilege == "Admin" %>
       <p><%= button_to "New Faq", new_faq_path, method: :get, class: "button submitbutton" %></p>
       <br>
    <% end %>

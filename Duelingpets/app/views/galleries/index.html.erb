@@ -1,6 +1,14 @@
 <% if optional %>
+   <% provide(:title, "Duelingpets: #{@user.vname}'s Galleries") %>
+   <% provide(:description, "Come and check out the newest galleries from the artist #{@user.vname}.") %>
+   <% provide(:keywords, "virtualpet, digitalpets, galleries, artist") %>
+   <% provide(:robots, "index, follow") %>
    <% provide(:h1, @user.vname +  "'s galleries") %>
 <% else %>
+   <% provide(:title, "Duelingpets: Gallery") %>
+   <% provide(:description, "Come check out the latest newest galleries from our talented artists.") %>
+   <% provide(:keywords, "virtualpet, digitalpets, galleries, artist") %>
+   <% provide(:robots, "index, follow") %>
    <% provide(:h1, "Gallery List") %>
 <% end %>
 <div class="formlinks"><%= paginate @galleries %></div>

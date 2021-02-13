@@ -1,3 +1,7 @@
+<% provide(:title, "Duelingpets: Mainsheet #{@mainsheet.title}") %>
+<% provide(:description, "Check out #{@mainsheet.user}'s amazing music.") %>
+<% provide(:keywords, "virtualpet, digitalpets, music") %>
+<% provide(:robots, "index, follow") %>
 <% provide(:h1, @mainsheet.title) %>
 <p id="notice"><%= notice %></p>
 <div class="pageformat">
@@ -21,10 +25,8 @@
    <br>
    <p class="textindent"><%= textFormater("Multi", @mainsheet.description, "All").html_safe %></p>
    <br>
-   <% if @subsheets.count >= 10 %>
-      <div class="formlinks"><%= paginate @subsheets %></div>
-      <br>
-   <% end %>
+   <div class="formlinks"><%= paginate @subsheets %></div>
+   <br>
    <% @subsheets.each do |subsheet| %>
       <p class="formlinks"><%= link_to subsheet.title, mainsheet_subsheet_path(subsheet.mainsheet, subsheet) %></p>
       <% if current_user && (current_user.id == subsheet.mainsheet.user_id || current_user.pouch.privilege == "Admin") %>

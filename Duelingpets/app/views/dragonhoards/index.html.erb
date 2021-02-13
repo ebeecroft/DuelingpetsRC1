@@ -1,3 +1,7 @@
+<% provide(:title, "Duelingpets: Dragonhoards") %>
+<% provide(:description, "The central bank of the website.") %>
+<% provide(:keywords, "virtualpet, digitalpets, bank") %>
+<% provide(:robots, "index, follow") %>
 <% provide(:h1, "Dragonhoard List") %>
 <% if current_user %>
    <p class="centerpagecontent"><%= playMusicLoop("Hoard", nil) %></p>
@@ -50,10 +54,8 @@
       <% end %>
       <br>
       <p>Fieldcosts</p>
-      <% if @fieldcosts.count >= 9 %>
-         <div class="formlinks"><%= paginate @fieldcosts %></div>
-         <br>
-      <% end %>
+      <div class="formlinks"><%= paginate @fieldcosts %></div>
+      <br>
       <% @fieldcosts.each do |fieldcost| %>
          <p>Name: <%= fieldcost.name %></p>
          <% if current_user && current_user.pouch.privilege == "Glitchy" %>
@@ -73,10 +75,8 @@
          <br>
       <% end %>
       <p>Ratecosts</p>
-      <% if @ratecosts.count >= 9 %>
-         <div class="formlinks"><%= paginate @ratecosts %></div>
-         <br>
-      <% end %>
+      <div class="formlinks"><%= paginate @ratecosts %></div>
+      <br>
       <% @ratecosts.each do |ratecost| %>
          <p>Name: <%= ratecost.name %></p>
          <% if current_user && current_user.pouch.privilege == "Glitchy" %>

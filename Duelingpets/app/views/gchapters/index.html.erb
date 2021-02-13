@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Gchapters") %>
+<% provide(:description, "Provides generic chapters that users can use for their stories.") %>
+<% provide(:keywords, "virtualpet, digitalpets, chapter") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Gchapter List") %>
-<% if @gchapters.count >= 10 %>
-   <div class="formlinks"><%= paginate @gchapters %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @gchapters %></div>
+<br>
 <% @gchapters.each do |gchapter| %>
    <div class="pageformat">
       <p>Created: <%= distance_of_time_in_words_to_now gchapter.created_on %> ago on (<%= gchapter.created_on.strftime("%B-%d-%Y") %>)</p>

@@ -1,6 +1,14 @@
 <% if optional %>
+   <% provide(:title, "Duelingpets: #{@user.vname}'s Tags") %>
+   <% provide(:description, "Come and check out the newest tags from the creator #{@user.vname}.") %>
+   <% provide(:keywords, "virtualpet, digitalpets, tags, creator") %>
+   <% provide(:robots, "index, follow") %>
    <% provide(:h1, @user.vname +  "'s tags") %>
 <% else %>
+   <% provide(:title, "Duelingpets: Tag") %>
+   <% provide(:description, "Come check out the latest newest tags from our talented users.") %>
+   <% provide(:keywords, "virtualpet, digitalpets, tags") %>
+   <% provide(:robots, "index, follow") %>
    <% provide(:h1, "Tag List") %>
 <% end %>
 <div class="formlinks"><%= paginate @tags %></div>

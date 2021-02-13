@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Referrals") %>
+<% provide(:description, "Allows users to refer new members to the website.") %>
+<% provide(:keywords, "virtualpet, digitalpets, referrals") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Referral List") %>
-<% if @referrals.count >= 10 %>
-   <div class="formlinks"><%= paginate @referrals %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @referrals %></div>
+<br>
 <% @referrals.each do |referral| %>
    <div class="pageformat">
       <p><%= button_to 'Edit', edit_user_referral_path(referral.user, referral), method: :get, class: "button editbutton" %></p>

@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Pouchslots") %>
+<% provide(:description, "Provides stats on the current upgrades for the players accounts.") %>
+<% provide(:keywords, "virtualpet, digitalpets, pouches") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Pouchslot List") %>
-<% if @pouchslots.count >= 10 %>
-   <div class="formlinks"><%= paginate @pouchslots %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @pouchslots %></div>
+<br>
 <% @pouchslots.each do |pouchslot| %>
    <div class="pageformat">
       <p><%= button_to 'Edit', edit_pouch_pouchtype_path(pouchtype.pouch, pouchtype), method: :get, class: "button editbutton" %></p>

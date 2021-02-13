@@ -1,11 +1,12 @@
+<% provide(:title, "Duelingpets: PM Inbox") %>
+<% provide(:description, "Allows users to view their new pms.") %>
+<% provide(:keywords, "virtualpet, digitalpets, pms") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "PM Inbox") %>
-<% if @pms.count >= 10 %>
-   <div class="formlinks"><%= paginate @pms %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @pms %></div>
+<br>
 <% @pms.each do |pm| %>
    <div class="pageformat">
-      <!--Add pmreplies count to this--->
       <div class="container"><p class="formlinks">Title: <%= link_to unreadPMs(pm), pmbox_pm_path(pm.pmbox, pm) %></p></div> <div class="container"><%= button_to 'Edit', edit_pmbox_pm_path(pm.pmbox, pm), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [pm.pmbox, pm], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
       <p>Created: <%= distance_of_time_in_words_to_now pm.created_on %> ago on (<%= pm.created_on.strftime("%B-%d-%Y") %>)</p>
       <p>Updated: <%= distance_of_time_in_words_to_now pm.updated_on %> ago on(<%= pm.updated_on.strftime("%B-%d-%Y") %>)</p>

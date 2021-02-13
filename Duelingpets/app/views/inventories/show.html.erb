@@ -1,3 +1,7 @@
+<% provide(:title, "Duelingpets: #{@inventory.user.vname}'s Inventory") %>
+<% provide(:description, "Displays the items stored in the player's inventory.") %>
+<% provide(:keywords, "virtualpet, digitalpets, inventory, items") %>
+<% provide(:robots, "index, follow") %>
 <% provide(:h1, @inventory.user.vname + "'s Inventory") %>
 <p id="notice"><%= notice %></p>
 <div class="pageformat">

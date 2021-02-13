@@ -1,3 +1,7 @@
+<% provide(:title, "Duelingpets: Gallery #{@gallery.name}") %>
+<% provide(:description, "Check out #{@gallery.user}'s amazing gallery.") %>
+<% provide(:keywords, "virtualpet, digitalpets, gallery") %>
+<% provide(:robots, "index, follow") %>
 <% provide(:h1, @gallery.name) %>
 <p id="notice"><%= notice %></p>
 <% if current_user %>

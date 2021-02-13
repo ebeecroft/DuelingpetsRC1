@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Economies") %>
+<% provide(:description, "Keeps track of the health of the virtual pet economy.") %>
+<% provide(:keywords, "virtualpet, digitalpets, economy") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Economy List") %>
-<% if @economies.count > 10 %>
-   <div class="formlinks"><%= paginate @economies %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @economies %></div>
+<br>
 <% @economies.each do |economy| %>
    <div class="pageformat">
       <p>Name: <%= economy.name %></p>

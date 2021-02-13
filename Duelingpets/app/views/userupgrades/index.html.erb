@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Userupgrades") %>
+<% provide(:description, "Allows users to upgrade their account.") %>
+<% provide(:keywords, "virtualpet, digitalpets, upgrade") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Userupgrade List") %>
-<% if @userupgrades.count > 10 %>
-   <div class="formlinks"><%= paginate @userupgrades %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @userupgrades %></div>
+<br>
 <% @userupgrades.each do |userupgrade| %>
    <div class="pageformat">
       <div class="container"><%= userupgrade.name %></div> <div class="container"><%= button_to 'Edit', edit_userupgrade_path(userupgrade), method: :get, class: "button editbutton" %></div>

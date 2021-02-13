@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Gameinfos") %>
+<% provide(:description, "Gameinfo provides users with the ability to set their difficulty level and a variety of other stats.") %>
+<% provide(:keywords, "virtualpet, digitalpets, gameinfo") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Gameinfo List") %>
-<% if @gameinfos.count > 10 %>
-   <div class="formlinks"><%= paginate @gameinfos %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @gameinfos %></div>
+<br>
 <% @gameinfos.each do |gameinfo| %>
    <div class="pageformat">
       <p><%= button_to 'Edit Gameinfo', edit_gameinfo_path(gameinfo), method: :get %></p>

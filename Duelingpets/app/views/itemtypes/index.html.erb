@@ -1,12 +1,14 @@
+<% provide(:title, "Duelingpets: Itemtypes") %>
+<% provide(:description, "Determines the type of item that a user is looking at.") %>
+<% provide(:keywords, "virtualpet, digitalpets, item, itemtype") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Itemtype List") %>
-<% if @itemtypes.count >= 10 %>
-   <div class="formlinks"><%= paginate @itemtypes %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @itemtypes %></div>
+<br>
 <% @itemtypes.each do |itemtype| %>
    <div class="pageformat">
       <p>Created: <%= distance_of_time_in_words_to_now itemtype.created_on %> ago on (<%= itemtype.created_on.strftime("%B-%d-%Y") %>)</p>
-      <div class="container"><p class="formlinks">Name: <%= link_to itemtype.name, itemtypes_path %></p></div> <div class="container"><%= button_to 'Edit', edit_itemtype_path(itemtype), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [itemtype], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
+      <div class="container"><p class="formlinks"><%= link_to itemtype.name, itemtypes_path %></p></div> <div class="container"><%= button_to 'Edit', edit_itemtype_path(itemtype), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [itemtype], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div>
       <p>Basecost: <%= itemtype.basecost %></p>
       <p>Dreyterriumcost: <%= itemtype.dreyterriumcost %></p>
       <p>Demoitem: <%= itemtype.demoitem %></p>

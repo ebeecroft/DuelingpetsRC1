@@ -70,7 +70,7 @@ module BookworldsHelper
          bookworldFound = Bookworld.find_by_name(getBookworldParams("Id"))
          if(bookworldFound)
             removeTransactions
-            if((current_user && ((bookworldFound.user_id == current_user.id) || (current_user.pouch.privilege == "Admin"))))
+            #if((current_user && ((bookworldFound.user_id == current_user.id) || (current_user.pouch.privilege == "Admin"))))
                #visitTimer(type, blogFound)
                #cleanupOldVisits
                @bookworld = bookworldFound
@@ -93,9 +93,9 @@ module BookworldsHelper
                      redirect_to root_path
                   end
                end
-            else
-               redirect_to root_path
-            end
+            #else
+            #   redirect_to root_path
+            #end
          else
             render "webcontrols/missingpage"
          end

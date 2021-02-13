@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Webcontrols") %>
+<% provide(:description, "Allows the Admin to manage the website.") %>
+<% provide(:keywords, "virtualpet, digitalpets, webcontrol") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Webcontrol List") %>
-<% if @webcontrols.count > 10 %>
-   <div class="formlinks"><%= paginate @webcontrols %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @webcontrols %></div>
+<br>
 <% @webcontrols.each do |webcontrol| %>
    <div class="pageformat"><div class="container">Created on: <%= distance_of_time_in_words_to_now webcontrol.created_on %> ago on (<%= webcontrol.created_on.strftime("%B-%d-%Y") %>)</div> <div class="container"><%= button_to 'Edit', edit_webcontrol_path(webcontrol), method: :get, class: "button editbutton" %></div></div>
    <div class="pageformat">

@@ -1,3 +1,7 @@
+<% provide(:title, "Duelingpets: Blog #{@blog.title}") %>
+<% provide(:description, "Check out #{@blog.user}'s newest blogs.") %>
+<% provide(:keywords, "virtualpet, digitalpets, blogs") %>
+<% provide(:robots, "index, follow") %>
 <% provide(:h1, @blog.title) %>
 <p id="notice"><%= notice %></p>
 <% if @blog.blogtype.name == "Adblog" && @blog.adbanner.to_s != "" %>

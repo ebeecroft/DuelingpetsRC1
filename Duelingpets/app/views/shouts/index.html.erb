@@ -1,9 +1,13 @@
+<% provide(:title, "Duelingpets: Shouts") %>
+<% provide(:description, "Shouts allows users to post messages on a users profile.") %>
+<% provide(:keywords, "virtualpet, digitalpets, shout") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Shout List") %>
 <div class="formlinks"><%= paginate @shouts %></div>
 <br>
 <% @shouts.each do |shout| %>
    <div class="pageformat">
-      <div class="container"><%= button_to 'Edit', edit_blog_blogreply_path(blogreply.blog, blogreply), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [shout.shoutbox, shout], method: :delete, data: { confirm: 'Are you sure?' }, class: "button editbutton" %></div>
+      <div class="container"><%= button_to 'Edit', edit_shoutbox_shout_path(shout.shoutbox, shout), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [shout.shoutbox, shout], method: :delete, data: { confirm: 'Are you sure?' }, class: "button editbutton" %></div>
       <p>Created: <%= distance_of_time_in_words_to_now shout.created_on %> ago on (<%= shout.created_on.strftime("%B-%d-%Y") %>)</p>
       <% if !shout.reviewed_on.nil? %>
          <p>Reviewed on: <%= distance_of_time_in_words_to_now shout.reviewed_on %> ago on(<%= shout.reviewed_on.strftime("%B-%d-%Y") %>)</p>

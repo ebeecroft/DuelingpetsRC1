@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Donors") %>
+<% provide(:description, "Displays the donors that donated to a donationbox.") %>
+<% provide(:keywords, "virtualpet, digitalpets, donors") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Donor List") %>
-<% if @donors.count >= 10 %>
-   <div class="formlinks"><%= paginate @donors %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @donors %></div>
+<br>
 <% @donors.each do |donor| %>
    <div class="pageformat">
       <p>Created: <%= distance_of_time_in_words_to_now donor.created_on %> ago on (<%= donor.created_on.strftime("%B-%d-%Y") %>)</p>

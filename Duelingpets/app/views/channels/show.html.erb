@@ -1,3 +1,7 @@
+<% provide(:title, "Duelingpets: Channel #{@channel.name}") %>
+<% provide(:description, "Check out #{@channel.user}'s amazing channels.") %>
+<% provide(:keywords, "virtualpet, digitalpets, channel") %>
+<% provide(:robots, "index, follow") %>
 <% provide(:h1, @channel.name) %>
 <p id="notice"><%= notice %></p>
 <% if current_user %>

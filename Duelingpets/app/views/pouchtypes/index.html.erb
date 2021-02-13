@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Pouchtypes") %>
+<% provide(:description, "Sets specific upgrades for each pouchslot.") %>
+<% provide(:keywords, "virtualpet, digitalpets, upgrades") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Pouchtype List") %>
-<% if @pouchtypes.count >= 10 %>
-   <div class="formlinks"><%= paginate @pouchtypes %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @pouchtypes %></div>
+<br>
 <% @pouchtypes.each do |pouchtype| %>
    <div class="pageformat">
       <p>Created: <%= distance_of_time_in_words_to_now pouchtype.created_on %> ago on (<%= pouchtype.created_on.strftime("%B-%d-%Y") %>)</p>

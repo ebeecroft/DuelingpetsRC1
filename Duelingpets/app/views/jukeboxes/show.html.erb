@@ -1,3 +1,7 @@
+<% provide(:title, "Duelingpets: Jukebox #{@jukebox.name}") %>
+<% provide(:description, "Check out #{@jukebox.user}'s amazing music.") %>
+<% provide(:keywords, "virtualpet, digitalpets, music") %>
+<% provide(:robots, "index, follow") %>
 <% provide(:h1, @jukebox.name) %>
 <p id="notice"><%= notice %></p>
 <% if current_user %>
@@ -49,10 +53,8 @@
    <br>
    <p class="textindent"><%= textFormater("Multi", @jukebox.description, "All").html_safe %></p>
    <br>
-   <% if @mainsheets.count >= 10 %>
-      <div class="formlinks"><%= paginate @mainsheets %></div>
-      <br>
-   <% end %>
+   <div class="formlinks"><%= paginate @mainsheets %></div>
+   <br>
    <% @mainsheets.each do |mainsheet| %>
       <p class="formlinks"><%= link_to mainsheet.title, jukebox_mainsheet_path(mainsheet.jukebox, mainsheet) %></p>
       <% if current_user && (current_user.id == mainsheet.jukebox.user_id || current_user.pouch.privilege == "Admin") %>

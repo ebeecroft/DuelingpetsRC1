@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Blacklisted-Domains") %>
+<% provide(:description, "Used to prevent bots from registering for an account.") %>
+<% provide(:keywords, "virtualpet, digitalpets, bot, prevent") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Blacklisteddomain List") %>
-<% if @blacklisteddomains.count > 10 %>
-   <div class="formlinks"><%= paginate @blacklisteddomains %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @blacklisteddomains %></div>
+<br>
 <% @blacklisteddomains.each do |blacklisteddomain| %>
    <div class="pageformat"><div class="container">Domain: <%= blacklisteddomain.name %></div> <div class="container"><%= button_to 'Edit', edit_blacklisteddomain_path(blacklisteddomain), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [blacklisteddomain], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div></div>
    <div class="pageformat">

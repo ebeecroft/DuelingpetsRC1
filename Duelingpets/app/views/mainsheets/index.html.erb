@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Mainsheets") %>
+<% provide(:description, "Allows users to add top folders to organize jukebox content.") %>
+<% provide(:keywords, "virtualpet, digitalpets, folder, jukebox") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Mainsheet List") %>
-<% if @mainsheets.count >= 10 %>
-   <div class="formlinks"><%= paginate @mainsheets %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @mainsheets %></div>
+<br>
 <% @mainsheets.each do |mainsheet| %>
    <div class="pageformat">
       <p>Created: <%= distance_of_time_in_words_to_now mainsheet.created_on %> ago on (<%= mainsheet.created_on.strftime("%B-%d-%Y") %>)</p>

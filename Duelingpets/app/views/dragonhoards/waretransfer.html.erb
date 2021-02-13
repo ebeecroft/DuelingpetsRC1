@@ -1,3 +1,7 @@
+<% provide(:title, "Duelingpets: Transfer") %>
+<% provide(:description, "Allows the dragonhoard to transfer points and emeralds to the warehouse.") %>
+<% provide(:keywords, "virtualpet, digitalpets, warehouse, dragonhoard") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Transfer") %>
 <%= form_for(:warehouse, url: dragonhoards_warepost_path, method: :post) do |form| %>
    <p class="pageformat"><%= form.collection_select(:warehouse_id, @slots, :id, :name) %></p>

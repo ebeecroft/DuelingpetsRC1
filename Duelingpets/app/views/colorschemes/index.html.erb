@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Colorschemes") %>
+<% provide(:description, "Come check out the latest newest colorschemes from our talented designers.") %>
+<% provide(:keywords, "virtualpet, digitalpets, colorschemes, designer") %>
+<% provide(:robots, "index, follow") %>
 <% provide(:h1, displayColorOwner) %>
-<% if @colorschemes.count > 10 %>
-   <div class="formlinks"><%= paginate @colorschemes %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @colorschemes %></div>
+<br>
 <% @colorschemes.each do |colorscheme| %>
    <% if colorscheme.activated || (current_user && ((current_user.id == colorscheme.user_id) || (current_user.pouch.privilege == "Admin"))) %>
       <div class="pageformat">

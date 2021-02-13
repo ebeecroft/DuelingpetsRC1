@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Userinfos") %>
+<% provide(:description, "Allows users to change the profile picture and a variety of other account features.") %>
+<% provide(:keywords, "virtualpet, digitalpets, profile") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Userinfo List") %>
-<% if @userinfos.count >= 10 %>
-   <div class="formlinks"><%= paginate @userinfos %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @userinfos %></div>
+<br>
 <% @userinfos.each do |userinfo| %>
    <div class="pageformat">
       <p><%= button_to 'Edit', edit_userinfo_path(userinfo), method: :get, class: "button editbutton" %></p>

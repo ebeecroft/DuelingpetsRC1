@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Suspendedtimelimits") %>
+<% provide(:description, "Allows the duelingpets staff to ban users from the website for a few days.") %>
+<% provide(:keywords, "virtualpet, digitalpets, management") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Suspendedtimelimit List") %>
-<% if @suspendedtimelimits.count >= 10 %>
-   <div class="formlinks"><%= paginate @suspendedtimelimits %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @suspendedtimelimits %></div>
+<br>
 <% @suspendedtimelimits.each do |suspendedtimelimit| %>
    <div class="pageformat">
       <% if current_user && current_user.pouch.privilege == "Admin" %>

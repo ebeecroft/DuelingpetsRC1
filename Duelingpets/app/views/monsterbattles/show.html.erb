@@ -1,3 +1,7 @@
+<% provide(:title, "Duelingpets: #{@monsterbattle.fight.partner.name}'s monbattle") %>
+<% provide(:description, "Displays the ongoing battle between the pet and monster.") %>
+<% provide(:keywords, "virtualpet, digitalpets, battle") %>
+<% provide(:robots, "index, follow") %>
 <% provide(:h1, @monsterbattle.fight.partner.name + "'s monbattle") %>
 <p id="notice"><%= notice %></p>
 <div class="pageformat">

@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Dreyores") %>
+<% provide(:description, "Dreyore allows users to create items and creatures.") %>
+<% provide(:keywords, "virtualpet, digitalpets, dreyore, items, creatures") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Dreyore List") %>
-<% if @dreyores.count >= 10 %>
-   <div class="formlinks"><%= paginate @dreyores %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @dreyores %></div>
+<br>
 <% @dreyores.each do |dreyore| %>
    <div class="pageformat">
       <p><div class="container"><%= dreyore.name %></div> <div class="container"><%= button_to 'Edit', edit_dragonhoard_dreyore_path(dreyore.dragonhoard, dreyore), method: :get, class: "button editbutton" %></div></p>

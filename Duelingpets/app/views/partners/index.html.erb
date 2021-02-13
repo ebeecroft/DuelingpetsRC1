@@ -1,3 +1,7 @@
+<% provide(:title, "Duelingpets: #{@user.vname}'s Partners") %>
+<% provide(:description, "Shows the pets that the user owns.") %>
+<% provide(:keywords, "virtualpet, digitalpets, pets") %>
+<% provide(:robots, "index, follow") %>
 <% provide(:h1, @user.vname +  "'s partners") %>
 <div class="formlinks"><%= paginate @partners %></div>
 <br>

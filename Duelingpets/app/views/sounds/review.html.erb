@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Sound Review") %>
+<% provide(:description, "Lets check out our talented users sounds.") %>
+<% provide(:keywords, "virtualpet, digitalpets, sounds") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Sound Review") %>
-<% if @sounds.count >= 10 %>
-   <div class="formlinks"><%= paginate @sounds %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @sounds %></div>
+<br>
 <% @sounds.each do |sound| %>
    <div class="pageformat">
       <div class="container"><%= button_to 'Approve', sounds_review1_path(:sound_id=>sound.id), method: :post, class: "button editbutton" %></div> <div class="container"><%= button_to 'Deny', sounds_review2_path(:sound_id=>sound.id), method: :post, class: "button destroybutton" %></div>

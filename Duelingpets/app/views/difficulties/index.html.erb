@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Difficulties") %>
+<% provide(:description, "Difficulty settings that can be set for specific users.") %>
+<% provide(:keywords, "virtualpet, digitalpets, difficulty") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Difficulty List") %>
-<% if @difficulties.count > 10 %>
-   <div class="formlinks"><%= paginate @difficulties %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @difficulties %></div>
+<br>
 <% @difficulties.each do |difficulty| %>
    <div class="pageformat"><div class="container">Difficulty: <%= difficulty.name %></div> <div class="container"><%= button_to 'Edit', edit_difficulty_path(difficulty), method: :get, class: "button editbutton" %></div> <div class="container"><%= button_to 'Destroy', [difficulty], method: :delete, class: "button destroybutton", data: { confirm: 'Are you sure?' } %></div></div>
    <div class="pageformat">

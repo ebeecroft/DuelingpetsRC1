@@ -1,8 +1,10 @@
+<% provide(:title, "Duelingpets: Chapter Review") %>
+<% provide(:description, "Lets check out our talented users stories.") %>
+<% provide(:keywords, "virtualpet, digitalpets, stories") %>
+<% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Chapter Review") %>
-<% if @chapters.count >= 10 %>
-   <div class="formlinks"><%= paginate @chapters %></div>
-   <br>
-<% end %>
+<div class="formlinks"><%= paginate @chapters %></div>
+<br>
 <% @chapters.each do |chapter| %>
    <div class="pageformat">
       <div class="container"><%= button_to 'Approve', chapters_review1_path(:chapter_id=>chapter.id), method: :post, class: "button editbutton" %></div> <div class="container"><%= button_to 'Deny', chapters_review2_path(:chapter_id=>chapter.id), method: :post, class: "button destroybutton" %></div>

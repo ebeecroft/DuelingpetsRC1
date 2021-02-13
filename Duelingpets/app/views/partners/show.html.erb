@@ -1,6 +1,14 @@
 <% if @partner.activepet %>
+   <% provide(:title, "Duelingpets: Mainpet #{@partner.name}") %>
+   <% provide(:description, "#{@partner.user.vname}'s mainpet.") %>
+   <% provide(:keywords, "virtualpet, digitalpets, pet") %>
+   <% provide(:robots, "index, follow") %>
    <% provide(:h1, @partner.name + "[Mainpet]") %>
 <% else %>
+   <% provide(:title, "Duelingpets: Partner #{@partner.name}") %>
+   <% provide(:description, "#{@partner.user.vname}'s partner.") %>
+   <% provide(:keywords, "virtualpet, digitalpets, partner") %>
+   <% provide(:robots, "index, follow") %>
    <% provide(:h1, @partner.name) %>
 <% end %>
 <p id="notice"><%= notice %></p>
