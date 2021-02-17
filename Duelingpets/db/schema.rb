@@ -1035,8 +1035,8 @@ ActiveRecord::Schema.define(version: 2021_01_20_030850) do
     t.boolean "gone", default: false
     t.integer "amount", default: 0
     t.integer "emeraldamount", default: 0
-    t.integer "dreyterriumamount", default: 0
-    t.boolean "firstdreyterrium", default: false
+    t.integer "dreyoreamount", default: 0
+    t.boolean "firstdreyore", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

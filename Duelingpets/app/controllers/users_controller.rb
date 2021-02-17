@@ -44,4 +44,16 @@ class UsersController < ApplicationController
    def disablepmbox
       mode "disablepmbox"
    end
+
+   def upgrade
+      mode "upgrade"
+   end
+
+   def upgradeinfo
+      mode "upgradeinfo"
+   end
+
+   def upgradepost
+      mode "upgradepost"
+   end
 end

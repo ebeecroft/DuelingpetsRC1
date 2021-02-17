@@ -2,10 +2,10 @@
    <br>
    <% if current_user.pouch.privilege == "Admin" || current_user.id == @user.id %>
       <h2 class="subheader1">Funds</h2>
-      <p>Pouch: <%= @user.pouch.amount %>/<%= getUpgrades("Pouch", "Limit", @user.pouch, 1) %> points</p>
-      <p><div class="container">Dreyore: <%= @user.pouch.dreyterriumamount %>/<%= getUpgrades("Dreyore", "Limit", @user.pouch, 5) %></div> <div class="container"><%= button_to 'Extract', users_extractore_path(:id=>@user.id), method: :post, class: "button submitbutton" %></div></p>
+      <p>Pouch: <%= getCurLimit("Pouch", @user) %> points</p>
+      <p><div class="container">Dreyore: <%= getCurLimit("Dreyore", @user) %></div> <div class="container"><%= button_to 'Extract', users_extractore_path(:id=>@user.id), method: :post, class: "button submitbutton" %></div></p>
       <% if getUpgrades("Emerald", "Limit", @user.pouch, 2) > 0 %>
-         <p>Emeralds: <%= @user.pouch.emeraldamount %>/<%= getUpgrades("Emerald", "Limit", @user.pouch, 2) %></p>
+         <p>Emeralds: <%= getCurLimit("Emerald", @user) %></p>
       <% end %>
       <br>
       <p>Feature Requests</p>
@@ -14,6 +14,11 @@
          <div class="container"><%= button_to "New Suggestion", new_user_suggestion_path(@user), method: :get, class: "button submitbutton" %></div>
          <br>
       <% end %>
+      <br>
+      <p>Upgrades</p>
+      <div class="container"><%= button_to 'Shop', users_upgrade_path, method: :get, class: "button submitbutton" %></div>
+      <div class="container"><%= button_to 'Info', users_upgradeinfo_path, method: :get, class: "button submitbutton" %></div>
+      <br>
       <br>
    <% end %>
    <h2 class="subheader1">Userboxes</h2>
@@ -200,7 +205,7 @@
          <div class="container"><%= button_to "New Gallery", new_user_gallery_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
       <br>
-      <p>Gallery limit: <%= @user.galleries.count %>/<%= getUpgrades("Gallery", "Limit", @user.pouch, 9) %></p>
+      <p>Gallery limit: <%= getCurLimit("Gallery", @user) %></p>
    <% else %>
       <p><%= @user.vname %> has not created any galleries yet.</p>
       <% if current_user && current_user.id == @user.id && getUpgrades("Gallery", "Limit", @user.pouch, 9) > 0 %>
@@ -215,7 +220,7 @@
          <div class="container"><%= button_to "New Channel", new_user_channel_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
       <br>
-      <p>Channel limit: <%= @user.channels.count %>/<%= getUpgrades("Channel", "Limit", @user.pouch, 8) %></p>
+      <p>Channel limit: <%= getCurLimit("Channel", @user) %></p>
    <% else %>
       <br>
       <p><%= @user.vname %> has not created any channels yet.</p>
@@ -231,7 +236,7 @@
          <div class="container"><%= button_to "New Jukebox", new_user_jukebox_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
       <br>
-      <p>Jukebox limit: <%= @user.jukeboxes.count %>/<%= getUpgrades("Jukebox", "Limit", @user.pouch, 6) %></p>
+      <p>Jukebox limit: <%= getCurLimit("Jukebox", @user) %></p>
    <% else %>
       <br>
       <p><%= @user.vname %> has not created any jukeboxes yet.</p>
@@ -247,7 +252,7 @@
          <div class="container"><%= button_to "New Bookworld", new_user_bookworld_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
       <br>
-      <p>Book limit: <%= @user.books.count %>/<%= getUpgrades("Book", "Limit", @user.pouch, 7) %></p>
+      <p>Book limit: <%= getCurLimit("Book", @user) %></p>
    <% else %>
       <br>
       <p><%= @user.vname %> has not created any bookworlds yet.</p>
@@ -263,7 +268,7 @@
          <div class="container"><%= button_to "New OC", new_user_oc_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
       <br>
-      <p>OC limit: <%= @user.ocs.count %>/<%= getUpgrades("OC", "Limit", @user.pouch, 4) %></p>
+      <p>OC limit: <%= getCurLimit("OCup", @user) %></p>
    <% else %>
       <br>
       <p><%= @user.vname %> has not created any ocs yet.</p>
@@ -282,7 +287,7 @@
       <br>
       <p>Blogs: <%= getUserContent(@user, "Blog") %></p>
       <p>Ads: <%= getUserContent(@user, "Adblog") %></p>
-      <p>Blog limit: <%= @user.blogs.count %>/<%= getUpgrades("Blog", "Limit", @user.pouch, 3) %></p>
+      <p>Blog limit: <%= getCurLimit("Blog", @user) %></p>
    <% else %>
       <br>
       <p><%= @user.vname %> has not created any blogs yet.</p>

@@ -17,6 +17,88 @@ module UsersHelper
          return value
       end
 
+      def getCurLimit(type, user)
+         upgrade = Userupgrade.find_by_name(type)
+         if(type == "Pouch")
+            max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free1 + user.pouch.pouchslot.member1))
+            level = (user.pouch.amount.to_s + "/" + max.to_s)
+         elsif(type == "Emerald")
+            max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free2 + user.pouch.pouchslot.member2))
+            level = (user.pouch.emeraldamount.to_s + "/" + max.to_s)
+         elsif(type == "Dreyore")
+            max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free3 + user.pouch.pouchslot.member3))
+            level = (user.pouch.dreyoreamount.to_s + "/" + max.to_s)
+         elsif(type == "OCup")
+            max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free5 + user.pouch.pouchslot.member5))
+            level = (user.ocs.count.to_s + "/" + max.to_s)
+         elsif(type == "Blog")
+            max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free6 + user.pouch.pouchslot.member6))
+            level = (user.blogs.count.to_s + "/" + max.to_s)
+         elsif(type == "Gallery")
+            max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free7 + user.pouch.pouchslot.member7))
+            level = (user.galleries.count.to_s + "/" + max.to_s)
+         elsif(type == "Book")
+            max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free8 + user.pouch.pouchslot.member8))
+            level = (user.books.count.to_s + "/" + max.to_s)
+         elsif(type == "Jukebox")
+            max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free9 + user.pouch.pouchslot.member9))
+            level = (user.jukeboxes.count.to_s + "/" + max.to_s)
+         elsif(type == "Channel")
+            max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free10 + user.pouch.pouchslot.member10))
+            level = (user.channels.count.to_s + "/" + max.to_s)
+         end
+         return level
+      end
+
+      def getLimit(type)
+         upgrade = Userupgrade.find_by_name(type)
+         if(type == "Pouch")
+            level = ((current_user.pouch.pouchslot.free1 + current_user.pouch.pouchslot.member1).to_s + "/" + (upgrade.freecap + upgrade.membercap).to_s)
+         elsif(type == "Emerald")
+            level = ((current_user.pouch.pouchslot.free2 + current_user.pouch.pouchslot.member2).to_s + "/" + (upgrade.freecap + upgrade.membercap).to_s)
+         elsif(type == "Dreyore")
+            level = ((current_user.pouch.pouchslot.free3 + current_user.pouch.pouchslot.member3).to_s + "/" + (upgrade.freecap + upgrade.membercap).to_s)
+         elsif(type == "OCup")
+            level = ((current_user.pouch.pouchslot.free5 + current_user.pouch.pouchslot.member5).to_s + "/" + (upgrade.freecap + upgrade.membercap).to_s)
+         elsif(type == "Blog")
+            level = ((current_user.pouch.pouchslot.free6 + current_user.pouch.pouchslot.member6).to_s + "/" + (upgrade.freecap + upgrade.membercap).to_s)
+         elsif(type == "Gallery")
+            level = ((current_user.pouch.pouchslot.free7 + current_user.pouch.pouchslot.member7).to_s + "/" + (upgrade.freecap + upgrade.membercap).to_s)
+         elsif(type == "Book")
+            level = ((current_user.pouch.pouchslot.free8 + current_user.pouch.pouchslot.member8).to_s + "/" + (upgrade.freecap + upgrade.membercap).to_s)
+         elsif(type == "Jukebox")
+            level = ((current_user.pouch.pouchslot.free9 + current_user.pouch.pouchslot.member9).to_s + "/" + (upgrade.freecap + upgrade.membercap).to_s)
+         elsif(type == "Channel")
+            level = ((current_user.pouch.pouchslot.free10 + current_user.pouch.pouchslot.member10).to_s + "/" + (upgrade.freecap + upgrade.membercap).to_s)
+         end
+         return level
+      end
+
+      def getPrice(type)
+         upgrade = Userupgrade.find_by_name(type)
+         if(type == "Pouch")
+            level = current_user.pouch.pouchslot.free1 + current_user.pouch.pouchslot.member1
+         elsif(type == "Emerald")
+            level = current_user.pouch.pouchslot.free2 + current_user.pouch.pouchslot.member2
+         elsif(type == "Dreyore")
+            level = current_user.pouch.pouchslot.free3 + current_user.pouch.pouchslot.member3
+         elsif(type == "OCup")
+            level = current_user.pouch.pouchslot.free5 + current_user.pouch.pouchslot.member5
+         elsif(type == "Blog")
+            level = current_user.pouch.pouchslot.free6 + current_user.pouch.pouchslot.member6
+         elsif(type == "Gallery")
+            level = current_user.pouch.pouchslot.free7 + current_user.pouch.pouchslot.member7
+         elsif(type == "Book")
+            level = current_user.pouch.pouchslot.free8 + current_user.pouch.pouchslot.member8
+         elsif(type == "Jukebox")
+            level = current_user.pouch.pouchslot.free9 + current_user.pouch.pouchslot.member9
+         elsif(type == "Channel")
+            level = current_user.pouch.pouchslot.free10 + current_user.pouch.pouchslot.member10
+         end
+         cost = upgrade.price * (level + 1)
+         return cost
+      end
+
       def getReferrals(user)
          allReferrals = Referral.order("created_on desc")
          value = allReferrals.select{|referral| referral.referred_by_id == user.id}
@@ -332,6 +414,125 @@ module UsersHelper
                   pagetype = params[:pageType]
                   pagecontent = params[:pageContent]
                   getPagereturn(pagetype, pagecontent)
+               end
+            elsif(type == "upgrade" || type == "upgradeinfo" || type == "upgradepost")
+               logged_in = current_user
+               if(logged_in)
+                  @user = logged_in
+                  if(type == "upgradepost")
+                     upgradetype = params[:upgrade][:upgradetype]
+                     upgradechoice = params[:upgrade][:choice]
+                     upgrade = ""
+                     level = 0
+                     cap = 0
+                     memlevel = 0
+                     if(upgradechoice.to_i == 1) #Free
+                        if(upgradetype.to_i == 1) #Pouch
+                           level = @user.pouch.pouchslot.free1 += 1
+                           upgrade = "Pouch"
+                        elsif(upgradetype.to_i == 2) #Emeralds
+                           level = @user.pouch.pouchslot.free2 += 1
+                           upgrade = "Emerald"
+                        #Scildons between these two
+                        elsif(upgradetype.to_i == 3) #Dreyore
+                           level = @user.pouch.pouchslot.free3 += 1
+                           upgrade = "Dreyore"
+                        elsif(upgradetype.to_i == 4) #OC
+                           level = @user.pouch.pouchslot.free5 += 1
+                           upgrade = "OCup"
+                        elsif(upgradetype.to_i == 5) #Blog
+                           level = @user.pouch.pouchslot.free6 += 1
+                           upgrade = "Blog"
+                        elsif(upgradetype.to_i == 6) #Gallery
+                           level = @user.pouch.pouchslot.free7 += 1
+                           upgrade = "Gallery"
+                        elsif(upgradetype.to_i == 7) #Book
+                           level = @user.pouch.pouchslot.free8 += 1
+                           upgrade = "Book"
+                        elsif(upgradetype.to_i == 8) #Jukebox
+                           level = @user.pouch.pouchslot.free9 += 1
+                           upgrade = "Jukebox"
+                        elsif(upgradetype.to_i == 9) #Channel
+                           level = @user.pouch.pouchslot.free10 += 1
+                           upgrade = "Channel"
+                        end
+                     else #Member
+                        if(upgradetype.to_i == 1) #Pouch
+                           memlevel = @user.pouch.pouchslot.member1 += 1
+                           freelevel = @user.pouch.pouchslot.free1
+                           level = memlevel + freelevel
+                           upgrade = "Pouch"
+                        elsif(upgradetype.to_i == 2) #Emeralds
+                           memlevel = @user.pouch.pouchslot.member2 += 1
+                           freelevel = @user.pouch.pouchslot.free2
+                           level = memlevel + freelevel
+                           upgrade = "Emerald"
+                        #Scildons between these two
+                        elsif(upgradetype.to_i == 3) #Dreyore
+                           memlevel = @user.pouch.pouchslot.member3 += 1
+                           freelevel = @user.pouch.pouchslot.free3
+                           level = memlevel + freelevel
+                           upgrade = "Dreyore"
+                        elsif(upgradetype.to_i == 4) #OC
+                           memlevel = @user.pouch.pouchslot.member5 += 1
+                           freelevel = @user.pouch.pouchslot.free5
+                           level = memlevel + freelevel
+                           upgrade = "OCup"
+                        elsif(upgradetype.to_i == 5) #Blog
+                           memlevel = @user.pouch.pouchslot.member6 += 1
+                           freelevel = @user.pouch.pouchslot.free6
+                           level = memlevel + freelevel
+                           upgrade = "Blog"
+                        elsif(upgradetype.to_i == 6) #Gallery
+                           memlevel = @user.pouch.pouchslot.member7 += 1
+                           freelevel = @user.pouch.pouchslot.free7
+                           level = memlevel + freelevel
+                           upgrade = "Gallery"
+                        elsif(upgradetype.to_i == 7) #Book
+                           memlevel = @user.pouch.pouchslot.member8 += 1
+                           freelevel = @user.pouch.pouchslot.free8
+                           level = memlevel + freelevel
+                           upgrade = "Book"
+                        elsif(upgradetype.to_i == 8) #Jukebox
+                           memlevel = @user.pouch.pouchslot.member9 += 1
+                           freelevel = @user.pouch.pouchslot.free9
+                           level = memlevel + freelevel
+                           upgrade = "Jukebox"
+                        elsif(upgradetype.to_i == 9) #Channel
+                           memlevel = @user.pouch.pouchslot.member10 += 1
+                           freelevel = @user.pouch.pouchslot.free10
+                           level = memlevel + freelevel
+                           upgrade = "Channel"
+                        end
+                     end
+                     cupgrade = Userupgrade.find_by_name(upgrade)
+                     if((upgradechoice.to_i == 1 && level < cupgrade.freecap) || (upgradechoice.to_i == 2 && memlevel < cupgrade.membercap))
+                        cost = cupgrade.price * level
+                        if(@user.pouch.amount - cost >= 0)
+                           #Remember to come back to add economy transactions
+                           @user.pouch.amount -= cost
+                           @pouch = @user.pouch
+                           @pouch.save
+                           #Maybe add a way for the dragonhoard to retrieve these points
+                           @pouchslot = @user.pouch.pouchslot
+                           @pouchslot.save
+                           if(upgradechoice.to_i == 1)
+                              flash[:success] = "#{upgrade} is now at free level #{level}"
+                           else
+                              flash[:success] = "#{upgrade} is now at member level #{memlevel}"
+                           end
+                           redirect_to user_path(@user)
+                        else
+                           flash[:error] = "You don't have enough points to purchase this!"
+                           redirect_to root_path
+                        end
+                     else
+                        flash[:error] = "You are currently at the max for that upgrade!"
+                        redirect_to root_path
+                     end
+                  end
+               else
+                  redirect_to root_path
                end
             end
          end

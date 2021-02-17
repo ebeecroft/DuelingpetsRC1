@@ -129,7 +129,7 @@ module StartHelper
             amount = current_user.ocs.count
          elsif(type == "Dreyore")
             capacity = getUpgrades("Dreyore", "Limit", current_user.pouch, 5)
-            amount = current_user.pouch.dreyterriumamount
+            amount = current_user.pouch.dreyoreamount
          elsif(type == "Jukebox")
             capacity = getUpgrades("Jukebox", "Limit", current_user.pouch, 6)
             amount = current_user.jukeboxes.count

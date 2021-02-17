@@ -157,10 +157,10 @@ module RegistrationsHelper
 
          #Remove some Dreyterrium to give to the user
          dreyore = Dreyore.find_by_name("Newbie")
-         dreyore.cur -= 10
+         dreyore.cur -= 20
          @dreyore = dreyore
          @dreyore.save
-         newPouch.dreyterriumamount = 10
+         newPouch.dreyoreamount = 20
 
          #Save the pouch
          timeout = 1.day.from_now.utc

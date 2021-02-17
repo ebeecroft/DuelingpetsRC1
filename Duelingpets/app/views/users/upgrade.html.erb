@@ -1,0 +1,28 @@
+<% provide(:title, "Duelingpets: Upgrade Shop") %>
+<% provide(:description, "A place for users to upgrade their account features.") %>
+<% provide(:keywords, "virtualpet, digitalpets, upgrade") %>
+<% provide(:robots, "noindex, nofollow") %>
+<% provide(:h1, "Upgrade Shop") %>
+<div class="pageformat">
+   <p>Greetings I am Fentaro the Koalabat and I see you are interested in my wares. I have upgrades for both members and free users provided of course you have the um funds to back it up. Not everything in my shop is just points, some will require emeralds in order to unlock those upgrades. So feel free to look around, I will just wait here till you are done browsing.</p>
+   <!--These numbers should only exist as long as there is upgrades left--->
+   <!--Remember to use at max to represent no more sales-->
+   <br>
+   <%= form_for(:upgrade, url: users_upgradepost_path, method: :post) do |form| %>
+      <p>Free <%= form.radio_button :choice, 1, :checked => true %> or Member <%= form.radio_button :choice, 2 %></p>
+      <br>
+      <p>Pouch price: <%= getPrice("Pouch") %><%= form.radio_button :upgradetype, 1, checked: true %></p>
+      <p>Emerald price: <%= getPrice("Emerald") %><%= form.radio_button :upgradetype, 2 %></p>
+      <p>Dreyore price: <%= getPrice("Dreyore") %><%= form.radio_button :upgradetype, 3 %></p>
+      <p>OC price: <%= getPrice("OCup") %><%= form.radio_button :upgradetype, 4 %></p>
+      <p>Blog price: <%= getPrice("Blog") %><%= form.radio_button :upgradetype, 5 %></p>
+      <p>Gallery price: <%= getPrice("Gallery") %><%= form.radio_button :upgradetype, 6 %></p>
+      <p>Book price: <%= getPrice("Book") %><%= form.radio_button :upgradetype, 7 %></p>
+      <p>Jukebox price: <%= getPrice("Jukebox") %><%= form.radio_button :upgradetype, 8 %></p>
+      <p>Channel price: <%= getPrice("Channel") %><%= form.radio_button :upgradetype, 9 %></p>
+      <br>
+      <p><%= form.submit "Buy", class: "button submitbutton" %></p>
+      <br>
+   <% end %>
+</div>
+<p class="formlinks"><%= link_to 'Back', user_path(@user) %></p>
