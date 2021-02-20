@@ -1,0 +1,43 @@
+<% provide(:title, "Duelingpets: Visitors") %>
+<% provide(:description, "Displays information on the amount of visitors.") %>
+<% provide(:keywords, "virtualpet, digitalpets, stats") %>
+<% provide(:robots, "index, follow") %>
+<% provide(:h1, "Visitors") %>
+<div class="pageformat">
+   <p><%= button_to 'Switch to Stats', stats_path, method: :get, class: "button submitbutton" %></p>
+   <br>
+   <p>Radiostation Visits</p>
+   <p>last 20 mins: <%= getVisitStats("Radio", "Twenty") %>, last 40 mins: <%= getVisitStats("Radio", "Fourty") %>, last hour: <%= getVisitStats("Radio", "Sixty") %>, last 2 hours: <%= getVisitStats("Radio", "Twohours") %>, last 3 hours: <%= getVisitStats("Radio", "Threehours") %></p>
+   <br>
+   <p>Sound Visits</p>
+   <p>last 20 mins: <%= getVisitStats("Sound", "Twenty") %>, last 40 mins: <%= getVisitStats("Sound", "Fourty") %>, last hour: <%= getVisitStats("Sound", "Sixty") %>, last 2 hours: <%= getVisitStats("Sound", "Twohours") %>, last 3 hours: <%= getVisitStats("Sound", "Threehours") %></p>
+   <br>
+   <p>Gallery Visits</p>
+   <p>last 20 mins: <%= getVisitStats("Gallery", "Twenty") %>, last 40 mins: <%= getVisitStats("Gallery", "Fourty") %>, last hour: <%= getVisitStats("Gallery", "Sixty") %>, last 2 hours: <%= getVisitStats("Gallery", "Twohours") %>, last 3 hours: <%= getVisitStats("Gallery", "Threehours") %></p>
+   <br>
+   <p>Art Visits</p>
+   <p>last 20 mins: <%= getVisitStats("Art", "Twenty") %>, last 40 mins: <%= getVisitStats("Art", "Fourty") %>, last hour: <%= getVisitStats("Art", "Sixty") %>, last 2 hours: <%= getVisitStats("Art", "Twohours") %>, last 3 hours: <%= getVisitStats("Art", "Threehours") %></p>
+   <br>
+   <p>Channel Visits</p>
+   <p>last 20 mins: <%= getVisitStats("Channel", "Twenty") %>, last 40 mins: <%= getVisitStats("Channel", "Fourty") %>, last hour: <%= getVisitStats("Channel", "Sixty") %>, last 2 hours: <%= getVisitStats("Channel", "Twohours") %>, last 3 hours: <%= getVisitStats("Channel", "Threehours") %></p>
+   <br>
+   <p>Movie Visits</p>
+   <p>last 20 mins: <%= getVisitStats("Movie", "Twenty") %>, last 40 mins: <%= getVisitStats("Movie", "Fourty") %>, last hour: <%= getVisitStats("Movie", "Sixty") %>, last 2 hours: <%= getVisitStats("Movie", "Twohours") %>, last 3 hours: <%= getVisitStats("Movie", "Threehours") %></p>
+   <br>
+   <p>Blog Visits</p>
+   <p>last 20 mins: <%= getVisitStats("Blog", "Twenty") %>, last 40 mins: <%= getVisitStats("Blog", "Fourty") %>, last hour: <%= getVisitStats("Blog", "Sixty") %>, last 2 hours: <%= getVisitStats("Blog", "Twohours") %>, last 3 hours: <%= getVisitStats("Blog", "Threehours") %></p>
+   <br>
+   <p>OC Visits</p>
+   <p>last 20 mins: <%= getVisitStats("OC", "Twenty") %>, last 40 mins: <%= getVisitStats("OC", "Fourty") %>, last hour: <%= getVisitStats("OC", "Sixty") %>, last 2 hours: <%= getVisitStats("OC", "Twohours") %>, last 3 hours: <%= getVisitStats("OC", "Threehours") %></p>
+   <br>
+   <p>Creature Visits</p>
+   <p>last 20 mins: <%= getVisitStats("Creature", "Twenty") %>, last 40 mins: <%= getVisitStats("Creature", "Fourty") %>, last hour: <%= getVisitStats("Creature", "Sixty") %>, last 2 hours: <%= getVisitStats("Creature", "Twohours") %>, last 3 hours: <%= getVisitStats("Creature", "Threehours") %></p>
+   <br>
+   <p>Item Visits</p>
+   <p>last 20 mins: <%= getVisitStats("Item", "Twenty") %>, last 40 mins: <%= getVisitStats("Item", "Fourty") %>, last hour: <%= getVisitStats("Item", "Sixty") %>, last 2 hours: <%= getVisitStats("Item", "Twohours") %>, last 3 hours: <%= getVisitStats("Item", "Threehours") %></p>
+   <br>
+   <p>User Visits</p>
+   <p>last 20 mins: <%= getVisitStats("User", "Twenty") %>, last 40 mins: <%= getVisitStats("User", "Fourty") %>, last hour: <%= getVisitStats("User", "Sixty") %>, last 2 hours: <%= getVisitStats("User", "Twohours") %>, last 3 hours: <%= getVisitStats("User", "Threehours") %></p>
+</div>
+<br>
+<p class="formlinks"><%= link_to "Back", root_path %></p>

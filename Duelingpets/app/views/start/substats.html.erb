@@ -1,0 +1,37 @@
+<% provide(:title, "Duelingpets: Substats") %>
+<% provide(:description, "Displays information on additional content.") %>
+<% provide(:keywords, "virtualpet, digitalpets, stats") %>
+<% provide(:robots, "index, follow") %>
+<% provide(:h1, "Substats") %>
+<div class="pageformat">
+   <p><%= button_to 'Switch to Stats', stats_path, method: :get, class: "button submitbutton" %></p>
+   <br>
+   <p>Users</p>
+   <p>day: <%= getStatsTimeframe("User", "Day") %>, week: <%= getStatsTimeframe("User", "Week") %>, month: <%= getStatsTimeframe("User", "Month") %>, year: <%= getStatsTimeframe("User", "Year") %>, dreiJahre: <%= getStatsTimeframe("User", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("User", "BaconOfTomato") %></p>
+   <br>
+   <p>Registrations</p>
+   <p>Total: <%= getStatsTimeframe("Register", "All") %></p>
+   <br>
+   <p>Groups</p>
+   <p>Rabbits: <%= getBookGroups("Rabbit") %>, Bluelands: <%= getBookGroups("Blueland") %>, Dragons: <%= getBookGroups("Dragon") %>, Silverwings: <%= getBookGroups("Silverwing") %>, Harahpins: <%= getBookGroups("Harahpin") %>, Rings: <%= getBookGroups("Rings") %></p>
+   <br>
+   <p>Referrals</p>
+   <p>day: <%= getStatsTimeframe("Referral", "Day") %>, week: <%= getStatsTimeframe("Referral", "Week") %>, month: <%= getStatsTimeframe("Referral", "Month") %>, year: <%= getStatsTimeframe("Referral", "Year") %>, dreiJahre: <%= getStatsTimeframe("Referral", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Referral", "BaconOfTomato") %></p>
+   <br>
+   <p>Friends</p>
+   <p>day: <%= getStatsTimeframe("Friend", "Day") %>, week: <%= getStatsTimeframe("Friend", "Week") %>, month: <%= getStatsTimeframe("Friend", "Month") %>, year: <%= getStatsTimeframe("Friend", "Year") %>, dreiJahre: <%= getStatsTimeframe("Friend", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Friend", "BaconOfTomato") %></p>
+   <br>
+   <p>Forum Mods</p>
+   <p>day: <%= getStatsTimeframe("Forummod", "Day") %>, week: <%= getStatsTimeframe("Forummod", "Week") %>, month: <%= getStatsTimeframe("Forummod", "Month") %>, year: <%= getStatsTimeframe("Forummod", "Year") %>, dreiJahre: <%= getStatsTimeframe("Forummod", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Forummod", "BaconOfTomato") %></p>
+   <br>
+   <p>Container Mods</p>
+   <p>day: <%= getStatsTimeframe("Containermod", "Day") %>, week: <%= getStatsTimeframe("Containermod", "Week") %>, month: <%= getStatsTimeframe("Containermod", "Month") %>, year: <%= getStatsTimeframe("Containermod", "Year") %>, dreiJahre: <%= getStatsTimeframe("Containermod", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Containermod", "BaconOfTomato") %></p>
+   <br>
+   <p>Maintopic Mods</p>
+   <p>day: <%= getStatsTimeframe("Maintopicmod", "Day") %>, week: <%= getStatsTimeframe("Maintopicmod", "Week") %>, month: <%= getStatsTimeframe("Maintopicmod", "Month") %>, year: <%= getStatsTimeframe("Maintopicmod", "Year") %>, dreiJahre: <%= getStatsTimeframe("Maintopicmod", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Maintopicmod", "BaconOfTomato") %></p>
+   <br>
+   <p>Forum Members</p>
+   <p>day: <%= getStatsTimeframe("Forummember", "Day") %>, week: <%= getStatsTimeframe("Forummember", "Week") %>, month: <%= getStatsTimeframe("Forummember", "Month") %>, year: <%= getStatsTimeframe("Forummember", "Year") %>, dreiJahre: <%= getStatsTimeframe("Forummember", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Forummember", "BaconOfTomato") %></p>
+</div>
+<br>
+<p class="formlinks"><%= link_to "Back", root_path %></p>

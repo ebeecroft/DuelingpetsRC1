@@ -1,0 +1,56 @@
+<% provide(:title, "Duelingpets: Communications") %>
+<% provide(:description, "Displays information on the amount of user communications.") %>
+<% provide(:keywords, "virtualpet, digitalpets, stats") %>
+<% provide(:robots, "index, follow") %>
+<% provide(:h1, "Communications") %>
+<div class="pageformat">
+   <p><%= button_to 'Switch to Stats', stats_path, method: :get, class: "button submitbutton" %></p>
+   <br>
+   <p>Forums</p>
+   <p>day: <%= getStatsTimeframe("Forum", "Day") %>, week: <%= getStatsTimeframe("Forum", "Week") %>, month: <%= getStatsTimeframe("Forum", "Month") %>, year: <%= getStatsTimeframe("Forum", "Year") %>, dreiJahre: <%= getStatsTimeframe("Forum", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Forum", "BaconOfTomato") %></p>
+   <br>
+   <p>Containers</p>
+   <p>day: <%= getStatsTimeframe("Container", "Day") %>, week: <%= getStatsTimeframe("Container", "Week") %>, month: <%= getStatsTimeframe("Container", "Month") %>, year: <%= getStatsTimeframe("Container", "Year") %>, dreiJahre: <%= getStatsTimeframe("Container", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Container", "BaconOfTomato") %></p>
+   <br>
+   <p>Maintopics</p>
+   <p>day: <%= getStatsTimeframe("Maintopic", "Day") %>, week: <%= getStatsTimeframe("Maintopic", "Week") %>, month: <%= getStatsTimeframe("Maintopic", "Month") %>, year: <%= getStatsTimeframe("Maintopic", "Year") %>, dreiJahre: <%= getStatsTimeframe("Maintopic", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Maintopic", "BaconOfTomato") %></p>
+   <br>
+   <p>Subtopics</p>
+   <p>day: <%= getStatsTimeframe("Subtopic", "Day") %>, week: <%= getStatsTimeframe("Subtopic", "Week") %>, month: <%= getStatsTimeframe("Subtopic", "Month") %>, year: <%= getStatsTimeframe("Subtopic", "Year") %>, dreiJahre: <%= getStatsTimeframe("Subtopic", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Subtopic", "BaconOfTomato") %></p>
+   <br>
+   <p>Narratives</p>
+   <p>day: <%= getStatsTimeframe("Narrative", "Day") %>, week: <%= getStatsTimeframe("Narrative", "Week") %>, month: <%= getStatsTimeframe("Narrative", "Month") %>, year: <%= getStatsTimeframe("Narrative", "Year") %>, dreiJahre: <%= getStatsTimeframe("Narrative", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Narrative", "BaconOfTomato") %></p>
+   <br>
+   <p>Replies</p>
+   <p>day: <%= getStatsTimeframe("Reply", "Day") %>, week: <%= getStatsTimeframe("Reply", "Week") %>, month: <%= getStatsTimeframe("Reply", "Month") %>, year: <%= getStatsTimeframe("Reply", "Year") %>, dreiJahre: <%= getStatsTimeframe("Reply", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Reply", "BaconOfTomato") %></p>
+   <br>
+   <p>Sound Critiques</p>
+   <p>day: <%= getStatsTimeframe("Soundcritique", "Day") %>, week: <%= getStatsTimeframe("Soundcritique", "Week") %>, month: <%= getStatsTimeframe("Soundcritique", "Month") %>, year: <%= getStatsTimeframe("Soundcritique", "Year") %>, dreiJahre: <%= getStatsTimeframe("Soundcritique", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Soundcritique", "BaconOfTomato") %></p>
+   <br>
+   <p>Sound Comments</p>
+   <p>day: <%= getStatsTimeframe("Soundcomment", "Day") %>, week: <%= getStatsTimeframe("Soundcomment", "Week") %>, month: <%= getStatsTimeframe("Soundcomment", "Month") %>, year: <%= getStatsTimeframe("Soundcomment", "Year") %>, dreiJahre: <%= getStatsTimeframe("Soundcomment", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Soundcomment", "BaconOfTomato") %></p>
+   <br>
+   <p>Art Critiques</p>
+   <p>day: <%= getStatsTimeframe("Artcritique", "Day") %>, week: <%= getStatsTimeframe("Artcritique", "Week") %>, month: <%= getStatsTimeframe("Artcritique", "Month") %>, year: <%= getStatsTimeframe("Artcritique", "Year") %>, dreiJahre: <%= getStatsTimeframe("Artcritique", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Artcritique", "BaconOfTomato") %></p>
+   <br>
+   <p>Art Comments</p>
+   <p>day: <%= getStatsTimeframe("Artcomment", "Day") %>, week: <%= getStatsTimeframe("Artcomment", "Week") %>, month: <%= getStatsTimeframe("Artcomment", "Month") %>, year: <%= getStatsTimeframe("Artcomment", "Year") %>, dreiJahre: <%= getStatsTimeframe("Artcomment", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Artcomment", "BaconOfTomato") %></p>
+   <br>
+   <p>Movie Critiques</p>
+   <p>day: <%= getStatsTimeframe("Moviecritique", "Day") %>, week: <%= getStatsTimeframe("Moviecritique", "Week") %>, month: <%= getStatsTimeframe("Moviecritique", "Month") %>, year: <%= getStatsTimeframe("Moviecritique", "Year") %>, dreiJahre: <%= getStatsTimeframe("Moviecritique", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Moviecritique", "BaconOfTomato") %></p>
+   <br>
+   <p>Movie Comments</p>
+   <p>day: <%= getStatsTimeframe("Moviecomment", "Day") %>, week: <%= getStatsTimeframe("Moviecomment", "Week") %>, month: <%= getStatsTimeframe("Moviecomment", "Month") %>, year: <%= getStatsTimeframe("Moviecomment", "Year") %>, dreiJahre: <%= getStatsTimeframe("Moviecomment", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Moviecomment", "BaconOfTomato") %></p>
+   <br>
+   <p>PMs</p>
+   <p>day: <%= getStatsTimeframe("PM", "Day") %>, week: <%= getStatsTimeframe("PM", "Week") %>, month: <%= getStatsTimeframe("PM", "Month") %>, year: <%= getStatsTimeframe("PM", "Year") %>, dreiJahre: <%= getStatsTimeframe("PM", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("PM", "BaconOfTomato") %></p>
+   <br>
+   <p>PMreplies</p>
+   <p>day: <%= getStatsTimeframe("PMreply", "Day") %>, week: <%= getStatsTimeframe("PMreply", "Week") %>, month: <%= getStatsTimeframe("PMreply", "Month") %>, year: <%= getStatsTimeframe("PMreply", "Year") %>, dreiJahre: <%= getStatsTimeframe("PMreply", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("PMreply", "BaconOfTomato") %></p>
+   <br>
+   <p>Shouts</p>
+   <p>day: <%= getStatsTimeframe("Shout", "Day") %>, week: <%= getStatsTimeframe("Shout", "Week") %>, month: <%= getStatsTimeframe("Shout", "Month") %>, year: <%= getStatsTimeframe("Shout", "Year") %>, dreiJahre: <%= getStatsTimeframe("Shout", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Shout", "BaconOfTomato") %></p>
+   <p>Content to review: <%= getReviewContent("Shout") %></p>
+</div>
+<br>
+<p class="formlinks"><%= link_to "Back", root_path %></p>

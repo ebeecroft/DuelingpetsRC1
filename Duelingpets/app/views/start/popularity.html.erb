@@ -1,0 +1,43 @@
+<% provide(:title, "Duelingpets: Popularity") %>
+<% provide(:description, "Displays information on how popular certain content is.") %>
+<% provide(:keywords, "virtualpet, digitalpets, stats") %>
+<% provide(:robots, "index, follow") %>
+<% provide(:h1, "Popularity") %>
+<div class="pageformat">
+   <p><%= button_to 'Switch to Stats', stats_path, method: :get, class: "button submitbutton" %></p>
+   <br>
+   <p>Favorite Sounds</p>
+   <p>day: <%= getStatsTimeframe("Favoritesound", "Day") %>, week: <%= getStatsTimeframe("Favoritesound", "Week") %>, month: <%= getStatsTimeframe("Favoritesound", "Month") %>, year: <%= getStatsTimeframe("Favoritesound", "Year") %>, dreiJahre: <%= getStatsTimeframe("Favoritesound", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Favoritesound", "BaconOfTomato") %></p>
+   <br>
+   <p>Sound Stars</p>
+   <p>day: <%= getStatsTimeframe("Soundstar", "Day") %>, week: <%= getStatsTimeframe("Soundstar", "Week") %>, month: <%= getStatsTimeframe("Soundstar", "Month") %>, year: <%= getStatsTimeframe("Soundstar", "Year") %>, dreiJahre: <%= getStatsTimeframe("Soundstar", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Soundstar", "BaconOfTomato") %></p>
+   <br>
+   <p>Favorite Arts</p>
+   <p>day: <%= getStatsTimeframe("Favoriteart", "Day") %>, week: <%= getStatsTimeframe("Favoriteart", "Week") %>, month: <%= getStatsTimeframe("Favoriteart", "Month") %>, year: <%= getStatsTimeframe("Favoriteart", "Year") %>, dreiJahre: <%= getStatsTimeframe("Favoriteart", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Favoriteart", "BaconOfTomato") %></p>
+   <br>
+   <p>Art Stars</p>
+   <p>day: <%= getStatsTimeframe("Artstar", "Day") %>, week: <%= getStatsTimeframe("Artstar", "Week") %>, month: <%= getStatsTimeframe("Artstar", "Month") %>, year: <%= getStatsTimeframe("Artstar", "Year") %>, dreiJahre: <%= getStatsTimeframe("Artstar", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Artstar", "BaconOfTomato") %></p>
+   <br>
+   <p>Favorite Movies</p>
+   <p>day: <%= getStatsTimeframe("Favoritemovie", "Day") %>, week: <%= getStatsTimeframe("Favoritemovie", "Week") %>, month: <%= getStatsTimeframe("Favoritemovie", "Month") %>, year: <%= getStatsTimeframe("Favoritemovie", "Year") %>, dreiJahre: <%= getStatsTimeframe("Favoritemovie", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Favoritemovie", "BaconOfTomato") %></p>
+   <br>
+   <p>Movie Stars</p>
+   <p>day: <%= getStatsTimeframe("Moviestar", "Day") %>, week: <%= getStatsTimeframe("Moviestar", "Week") %>, month: <%= getStatsTimeframe("Moviestar", "Month") %>, year: <%= getStatsTimeframe("Moviestar", "Year") %>, dreiJahre: <%= getStatsTimeframe("Moviestar", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Moviestar", "BaconOfTomato") %></p>
+   <br>
+   <p>Blog Stars</p>
+   <p>day: <%= getStatsTimeframe("Blogstar", "Day") %>, week: <%= getStatsTimeframe("Blogstar", "Week") %>, month: <%= getStatsTimeframe("Blogstar", "Month") %>, year: <%= getStatsTimeframe("Blogstar", "Year") %>, dreiJahre: <%= getStatsTimeframe("Blogstar", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Blogstar", "BaconOfTomato") %></p>
+   <br>
+   <p>Watchers</p>
+   <p>day: <%= getStatsTimeframe("Watcher", "Day") %>, week: <%= getStatsTimeframe("Watcher", "Week") %>, month: <%= getStatsTimeframe("Watcher", "Month") %>, year: <%= getStatsTimeframe("Watcher", "Year") %>, dreiJahre: <%= getStatsTimeframe("Watcher", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Watcher", "BaconOfTomato") %></p>
+   <br>
+   <p>Container Subscribers</p>
+   <p>day: <%= getStatsTimeframe("Containersub", "Day") %>, week: <%= getStatsTimeframe("Containersub", "Week") %>, month: <%= getStatsTimeframe("Containersub", "Month") %>, year: <%= getStatsTimeframe("Containersub", "Year") %>, dreiJahre: <%= getStatsTimeframe("Containersub", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Containersub", "BaconOfTomato") %></p>
+   <br>
+   <p>Maintopic Subscribers</p>
+   <p>day: <%= getStatsTimeframe("Maintopicsub", "Day") %>, week: <%= getStatsTimeframe("Maintopicsub", "Week") %>, month: <%= getStatsTimeframe("Maintopicsub", "Month") %>, year: <%= getStatsTimeframe("Maintopicsub", "Year") %>, dreiJahre: <%= getStatsTimeframe("Maintopicsub", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Maintopicsub", "BaconOfTomato") %></p>
+   <br>
+   <p>Subtopic Subscribers</p>
+   <p>day: <%= getStatsTimeframe("Subtopicsub", "Day") %>, week: <%= getStatsTimeframe("Subtopicsub", "Week") %>, month: <%= getStatsTimeframe("Subtopicsub", "Month") %>, year: <%= getStatsTimeframe("Subtopicsub", "Year") %>, dreiJahre: <%= getStatsTimeframe("Subtopicsub", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Subtopicsub", "BaconOfTomato") %></p>
+</div>
+<br>
+<p class="formlinks"><%= link_to "Back", root_path %></p>
