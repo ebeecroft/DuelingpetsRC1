@@ -4,7 +4,7 @@
       <h2 class="subheader1">Funds</h2>
       <p>Pouch: <%= getCurLimit("Pouch", @user) %> points</p>
       <p><div class="container">Dreyore: <%= getCurLimit("Dreyore", @user) %></div> <div class="container"><%= button_to 'Extract', users_extractore_path(:id=>@user.id), method: :post, class: "button submitbutton" %></div></p>
-      <% if getUpgrades("Emerald", "Limit", @user.pouch, 2) > 0 %>
+      <% if levelcheck("Emerald", @user) > 0 %>
          <p>Emeralds: <%= getCurLimit("Emerald", @user) %></p>
       <% end %>
       <br>
@@ -201,14 +201,14 @@
 <% if getUserContent(@user, "Galleries") != 0 || getUserContent(@user, "Channels") != 0 || getUserContent(@user, "Jukeboxes") != 0 || getUserContent(@user, "Bookworlds") != 0 || getUserContent(@user, "OCs") != 0 || getUserContent(@user, "Blog") != 0 || getUserContent(@user, "Adblog") != 0 || getUserContent(@user, "Activatedcolors") != 0 || getUserContent(@user, "Inactivecolors") != 0 %>
    <% if getUserContent(@user, "Galleries") != 0 %>
       <div class="container"><%= button_to "My Galleries", user_galleries_path(@user), method: :get, class: "button submitbutton" %></div>
-      <% if current_user && current_user.id == @user.id && getUpgrades("Gallery", "Limit", @user.pouch, 9) > 0 %>
+      <% if current_user && current_user.id == @user.id && levelcheck("Gallery", @user) > 0 %>
          <div class="container"><%= button_to "New Gallery", new_user_gallery_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
       <br>
       <p>Gallery limit: <%= getCurLimit("Gallery", @user) %></p>
    <% else %>
       <p><%= @user.vname %> has not created any galleries yet.</p>
-      <% if current_user && current_user.id == @user.id && getUpgrades("Gallery", "Limit", @user.pouch, 9) > 0 %>
+      <% if current_user && current_user.id == @user.id && levelcheck("Gallery", @user) > 0 %>
          <br>
          <p><%= button_to "New Gallery", new_user_gallery_path(@user), method: :get, class: "button submitbutton" %></p>
       <% end %>
@@ -216,7 +216,7 @@
    <% if getUserContent(@user, "Channels") != 0 %>
       <br>
       <div class="container"><%= button_to "My Channels", user_channels_path(@user), method: :get, class: "button submitbutton" %></div>
-      <% if current_user && current_user.id == @user.id && getUpgrades("Channel", "Limit", @user.pouch, 8) > 0 %>
+      <% if current_user && current_user.id == @user.id && levelcheck("Channel", @user) > 0 %>
          <div class="container"><%= button_to "New Channel", new_user_channel_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
       <br>
@@ -224,7 +224,7 @@
    <% else %>
       <br>
       <p><%= @user.vname %> has not created any channels yet.</p>
-      <% if current_user && current_user.id == @user.id && getUpgrades("Channel", "Limit", @user.pouch, 8) > 0 %>
+      <% if current_user && current_user.id == @user.id && levelcheck("Channel", @user) > 0 %>
          <br>
          <p><%= button_to "New Channel", new_user_channel_path(@user), method: :get, class: "button submitbutton" %></p>
       <% end %>
@@ -232,7 +232,7 @@
    <% if getUserContent(@user, "Jukeboxes") != 0 %>
       <br>
       <div class="container"><%= button_to "My Jukeboxes", user_jukeboxes_path(@user), method: :get, class: "button submitbutton" %></div>
-      <% if current_user && current_user.id == @user.id && getUpgrades("Jukebox", "Limit", @user.pouch, 6) > 0 %>
+      <% if current_user && current_user.id == @user.id && levelcheck("Jukebox", @user) > 0 %>
          <div class="container"><%= button_to "New Jukebox", new_user_jukebox_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
       <br>
@@ -240,7 +240,7 @@
    <% else %>
       <br>
       <p><%= @user.vname %> has not created any jukeboxes yet.</p>
-      <% if current_user && current_user.id == @user.id && getUpgrades("Jukebox", "Limit", @user.pouch, 6) > 0 %>
+      <% if current_user && current_user.id == @user.id && levelcheck("Jukebox", @user) > 0 %>
          <br>
          <p><%= button_to "New Jukebox", new_user_jukebox_path(@user), method: :get, class: "button submitbutton" %></p>
       <% end %>
@@ -248,7 +248,7 @@
    <% if getUserContent(@user, "Bookworlds") != 0 %>
       <br>
       <div class="container"><%= button_to "My Bookworlds", user_bookworlds_path(@user), method: :get, class: "button submitbutton" %></div>
-      <% if current_user && current_user.id == @user.id && getUpgrades("Book", "Limit", @user.pouch, 7) > 0 %>
+      <% if current_user && current_user.id == @user.id %>
          <div class="container"><%= button_to "New Bookworld", new_user_bookworld_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
       <br>
@@ -256,7 +256,7 @@
    <% else %>
       <br>
       <p><%= @user.vname %> has not created any bookworlds yet.</p>
-      <% if current_user && current_user.id == @user.id && getUpgrades("Book", "Limit", @user.pouch, 7) > 0 %>
+      <% if current_user && current_user.id == @user.id %>
          <br>
          <p><%= button_to "New Bookworld", new_user_bookworld_path(@user), method: :get, class: "button submitbutton" %></p>
       <% end %>
@@ -264,7 +264,7 @@
    <% if getUserContent(@user, "OCs") != 0 %>
       <br>
       <div class="container"><%= button_to "My OCs", user_ocs_path(@user), method: :get, class: "button submitbutton" %></div>
-      <% if current_user && current_user.id == @user.id && getUpgrades("OC", "Limit", @user.pouch, 5) > 0 %>
+      <% if current_user && current_user.id == @user.id && levelcheck("OCup", @user) > 0 %>
          <div class="container"><%= button_to "New OC", new_user_oc_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
       <br>
@@ -272,7 +272,7 @@
    <% else %>
       <br>
       <p><%= @user.vname %> has not created any ocs yet.</p>
-      <% if current_user && current_user.id == @user.id && getUpgrades("OC", "Limit", @user.pouch, 5) > 0 %>
+      <% if current_user && current_user.id == @user.id %>
          <br>
          <p><%= button_to "New OC", new_user_oc_path(@user), method: :get, class: "button submitbutton" %></p>
          <p>Earn points by creating ocs!</p>
@@ -281,7 +281,7 @@
    <% if getUserContent(@user, "Blog") != 0 || getUserContent(@user, "Adblog") != 0 %>
       <br>
       <div class="container"><%= button_to "My Blog", user_blogs_path(@user), method: :get, class: "button submitbutton" %></div>
-      <% if current_user && current_user.id == @user.id && getUpgrades("Blog", "Limit", @user.pouch, 3) > 0 %>
+      <% if current_user && current_user.id == @user.id && levelcheck("Blog", @user) > 0 %>
          <div class="container"><%= button_to "New Blog", new_user_blog_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
       <br>
@@ -291,7 +291,7 @@
    <% else %>
       <br>
       <p><%= @user.vname %> has not created any blogs yet.</p>
-      <% if current_user && current_user.id == @user.id && getUpgrades("Blog", "Limit", @user.pouch, 3) > 0 %>
+      <% if current_user && current_user.id == @user.id && levelcheck("Blog", @user) > 0 %>
          <br>
          <p><%= button_to "New Blog", new_user_blog_path(@user), method: :get, class: "button submitbutton" %></p>
       <% end %>
@@ -318,12 +318,20 @@
    <p><%= @user.vname %> does not have any content yet.</p>
    <% if current_user && current_user.id == @user.id %>
       <br>
-      <div class="container"><%= button_to "New Gallery", new_user_gallery_path(@user), method: :get, class: "button submitbutton" %></div>
-      <div class="container"><%= button_to "New Channel", new_user_channel_path(@user), method: :get, class: "button submitbutton" %></div>
-      <div class="container"><%= button_to "New Jukebox", new_user_jukebox_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% if levelcheck("Gallery", @user) > 0 %>
+         <div class="container"><%= button_to "New Gallery", new_user_gallery_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% end %>
+      <% if levelcheck("Channel", @user) > 0 %>
+         <div class="container"><%= button_to "New Channel", new_user_channel_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% end %>
+      <% if levelcheck("Jukebox", @user) > 0 %>
+         <div class="container"><%= button_to "New Jukebox", new_user_jukebox_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% end %>
       <div class="container"><%= button_to "New Bookworld", new_user_bookworld_path(@user), method: :get, class: "button submitbutton" %></div>
       <div class="container"><%= button_to "New OC", new_user_oc_path(@user), method: :get, class: "button submitbutton" %></div>
-      <div class="container"><%= button_to "New Blog", new_user_blog_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% if levelcheck("Blog", @user) > 0 %>
+         <div class="container"><%= button_to "New Blog", new_user_blog_path(@user), method: :get, class: "button submitbutton" %></div>
+      <% end %>
       <div class="container"><%= button_to "New Colorscheme", new_user_colorscheme_path(@user), method: :get, class: "button submitbutton" %></div>
       <br>
    <% end %>

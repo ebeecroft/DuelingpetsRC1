@@ -112,86 +112,91 @@ module StartHelper
       def alertMessages(type, valueType)
          alert = 0
          capacity = 0
-         amount = 0
+         limit = 0
 
          #Determines the message to display
          if(type == "Pouch")
-            capacity = getUpgrades("Pouch", "Limit", current_user.pouch, 1)
-            amount = current_user.pouch.amount
+            upgrade = Userupgrade.find_by_name(type)
+            limit = (upgrade.base + upgrade.baseinc * (current_user.pouch.pouchslot.free1 + current_user.pouch.pouchslot.member1))
+            capacity = limit - current_user.pouch.amount
          elsif(type == "Emerald")
-            capacity = getUpgrades("Emerald", "Limit", current_user.pouch, 2)
-            amount = current_user.pouch.emeraldamount
-         elsif(type == "Blog")
-            capacity = getUpgrades("Blog", "Limit", current_user.pouch, 3)
-            amount = current_user.blogs.count
-         elsif(type == "OC")
-            capacity = getUpgrades("OC", "Limit", current_user.pouch, 4)
-            amount = current_user.ocs.count
+            upgrade = Userupgrade.find_by_name(type)
+            limit = (upgrade.base + upgrade.baseinc * (current_user.pouch.pouchslot.free2 + current_user.pouch.pouchslot.member2))
+            capacity = limit - current_user.pouch.emeraldamount
          elsif(type == "Dreyore")
-            capacity = getUpgrades("Dreyore", "Limit", current_user.pouch, 5)
-            amount = current_user.pouch.dreyoreamount
-         elsif(type == "Jukebox")
-            capacity = getUpgrades("Jukebox", "Limit", current_user.pouch, 6)
-            amount = current_user.jukeboxes.count
-         elsif(type == "Book")
-            capacity = getUpgrades("Book", "Limit", current_user.pouch, 7)
-            amount = current_user.books.count
-         elsif(type == "Channel")
-            capacity = getUpgrades("Channel", "Limit", current_user.pouch, 8)
-            amount = current_user.channels.count
+            upgrade = Userupgrade.find_by_name(type)
+            limit = (upgrade.base + upgrade.baseinc * (current_user.pouch.pouchslot.free3 + current_user.pouch.pouchslot.member3))
+            capacity = limit - current_user.pouch.dreyoreamount
+         elsif(type == "OCup")
+            upgrade = Userupgrade.find_by_name(type)
+            limit = (upgrade.base + upgrade.baseinc * (current_user.pouch.pouchslot.free5 + current_user.pouch.pouchslot.member5))
+            capacity = limit - current_user.ocs.count
+         elsif(type == "Blog")
+            upgrade = Userupgrade.find_by_name(type)
+            limit = (upgrade.base + upgrade.baseinc * (current_user.pouch.pouchslot.free6 + current_user.pouch.pouchslot.member6))
+            capacity = limit - current_user.blogs.count
          elsif(type == "Gallery")
-            capacity = getUpgrades("Gallery", "Limit", current_user.pouch, 9)
-            amount = current_user.galleries.count
-            #End of traditional content
+            upgrade = Userupgrade.find_by_name(type)
+            limit = (upgrade.base + upgrade.baseinc * (current_user.pouch.pouchslot.free7 + current_user.pouch.pouchslot.member7))
+            capacity = limit - current_user.galleries.count
+         elsif(type == "Book")
+            upgrade = Userupgrade.find_by_name(type)
+            limit = (upgrade.base + upgrade.baseinc * (current_user.pouch.pouchslot.free8 + current_user.pouch.pouchslot.member8))
+            capacity = limit - current_user.books.count
+         elsif(type == "Jukebox")
+            upgrade = Userupgrade.find_by_name(type)
+            limit = (upgrade.base + upgrade.baseinc * (current_user.pouch.pouchslot.free9 + current_user.pouch.pouchslot.member9))
+            capacity = limit - current_user.jukeboxes.count
+         elsif(type == "Channel")
+            upgrade = Userupgrade.find_by_name(type)
+            limit = (upgrade.base + upgrade.baseinc * (current_user.pouch.pouchslot.free10 + current_user.pouch.pouchslot.member10))
+            capacity = limit - current_user.channels.count
          elsif(type == "Shoutbox")
-            capacity = current_user.shoutbox.capacity
             allShouts = Shout.all
             shouts = allShouts.select{|shout| shout.shoutbox_id == current_user.shoutbox.id}
-            amount = shouts.count
+            limit = current_user.shoutbox.capacity
+            capacity = current_user.shoutbox.capacity - shouts.count
          elsif(type == "PMbox")
-            capacity = current_user.pmbox.capacity
             allPMs = Pm.all
             pms = allPMs.select{|pm| pm.pmbox_id == current_user.pmbox.id}
-            amount = pms.count
+            limit = current_user.pmbox.capacity
+            capacity = limit - pms.count
          elsif(type == "Donationbox")
-            capacity = current_user.donationbox.capacity
-            amount = current_user.donationbox.progress
+            limit = current_user.donationbox.capacity
+            capacity = limit - current_user.donationbox.progress
          elsif(type == "Partner")
-            capacity = current_user.inventory.petcapacity
-            amount = current_user.partners.count
+            limit = current_user.inventory.petcapacity
+            capacity = limit - current_user.partners.count
          elsif(type == "Item")
-            capacity = current_user.inventory.capacity
-            amount = current_user.inventory.inventoryslots.count
+            limit = current_user.inventory.capacity
+            capacity = limit - current_user.inventory.inventoryslots.count
          end
 
-         #Decides on whether to pass back a string or a number
-         if(valueType == "Name")
-            if(capacity != 0 && capacity - amount >= 0)
-               if(amount == capacity)
-                  alert = "Full capacity"
-               elsif(capacity - amount <= 4 && amount > 0)
+         if(capacity > 0)
+            if(capacity < 5)
+               if(valueType == "Number")
+                  alert = 1
+               else
                   alert = "Limited capacity"
-               elsif((capacity >= 20 && amount > 0) && ((capacity - amount) <= (capacity * 0.25)))
+               end
+            elsif(capacity <= (limit * 0.25))
+               if(valueType == "Number")
+                  alert = 2
+               else
                   alert = "Quarter capacity"
                end
-            elsif(capacity == 0)
-               alert = "N/A"
+            end
+         elsif(capacity == 0 && limit > 0)
+            if(valueType == "Number")
+               alert = 3
             else
-               alert = "Overflow, please delete some!"
-            end   
-         else
-            if(capacity != 0 && capacity - amount >= 0)
-               if(amount == capacity)
-                  alert = 1
-               elsif(capacity - amount <= 4 && amount > 0)
-                  alert = 2
-               elsif((capacity >= 20 && amount > 0) && ((capacity - amount) <= (capacity * 0.25)))
-                  alert = 3
-               end
-            elsif(capacity == 0)
-               alert = 0
+               alert = "Full capacity"
+            end
+         elsif(capacity < 0)
+            if(valueType == "Number")
+               alert = 4
             else
-               alert = -1
+               alert = "Please delete some #{type} you have too many!"
             end
          end
          return alert

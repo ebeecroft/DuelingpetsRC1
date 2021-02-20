@@ -17,6 +17,25 @@ module UsersHelper
          return value
       end
 
+      def levelcheck(type, user)
+         if(type == "Emerald")
+            level = user.pouch.pouchslot.free2
+         elsif(type == "OCup")
+            level = user.pouch.pouchslot.free3 - user.ocs.count
+         elsif(type == "Blog")
+            level = user.pouch.pouchslot.free6 - user.blogs.count
+         elsif(type == "Gallery")
+            level = user.pouch.pouchslot.free7 - user.galleries.count
+         elsif(type == "Book") #?
+            level = user.pouch.pouchslot.free8
+         elsif(type == "Jukebox")
+            level = user.pouch.pouchslot.free9 - user.jukeboxes.count
+         elsif(type == "Channel")
+            level = user.pouch.pouchslot.free10 - user.channels.count
+         end
+         return level
+      end
+
       def getCurLimit(type, user)
          upgrade = Userupgrade.find_by_name(type)
          if(type == "Pouch")
