@@ -6,6 +6,9 @@
 <div class="pageformat">
    <p><%= button_to 'Switch to Stats', stats_path, method: :get, class: "button submitbutton" %></p>
    <br>
+   <p><%= image_tag(displayGreeter("Communication").art_url(:thumb)) %></p>
+   <p class="textindent"><%= textFormater("Multi", displayGreeter("Communication").message, "All").html_safe %></p>
+   <br>
    <p>Forums</p>
    <p>day: <%= getStatsTimeframe("Forum", "Day") %>, week: <%= getStatsTimeframe("Forum", "Week") %>, month: <%= getStatsTimeframe("Forum", "Month") %>, year: <%= getStatsTimeframe("Forum", "Year") %>, dreiJahre: <%= getStatsTimeframe("Forum", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Forum", "BaconOfTomato") %></p>
    <br>

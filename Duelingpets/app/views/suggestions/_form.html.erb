@@ -1,3 +1,8 @@
+<div class="pageformat">
+   <p><%= image_tag(displayGreeter("Suggestion").art_url(:thumb)) %></p>
+   <p class="textindent"><%= textFormater("Multi", displayGreeter("Suggestion").message, "All").html_safe %></p>
+</div>
+<br>
 <%= form_with(model: [@user, @suggestion], local: true) do |form| %>
   <% if @suggestion.errors.any? %>
      <div class="alignboxes">

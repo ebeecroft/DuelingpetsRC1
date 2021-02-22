@@ -6,6 +6,9 @@
 <div class="pageformat">
    <p><%= button_to 'Switch to Stats', stats_path, method: :get, class: "button submitbutton" %></p>
    <br>
+   <p><%= image_tag(displayGreeter("Visitors").art_url(:thumb)) %></p>
+   <p class="textindent"><%= textFormater("Multi", displayGreeter("Visitors").message, "All").html_safe %></p>
+   <br>
    <p>Radiostation Visits</p>
    <p>last 20 mins: <%= getVisitStats("Radio", "Twenty") %>, last 40 mins: <%= getVisitStats("Radio", "Fourty") %>, last hour: <%= getVisitStats("Radio", "Sixty") %>, last 2 hours: <%= getVisitStats("Radio", "Twohours") %>, last 3 hours: <%= getVisitStats("Radio", "Threehours") %></p>
    <br>

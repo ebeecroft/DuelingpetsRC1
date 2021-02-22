@@ -4,6 +4,9 @@
 <% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Upgrade Info") %>
 <div class="pageformat">
+   <p><%= image_tag(displayGreeter("Upinfo").art_url(:thumb)) %></p>
+   <p class="textindent"><%= textFormater("Multi", displayGreeter("Upinfo").message, "All").html_safe %></p>
+   <br>
    <p>Pouch level: <%= getLimit("Pouch") %></p>
    <p>Emerald level: <%= getLimit("Emerald") %></p>
    <p>Dreyore level: <%= getLimit("Dreyore") %></p>

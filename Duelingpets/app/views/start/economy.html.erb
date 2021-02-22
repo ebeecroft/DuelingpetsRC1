@@ -6,6 +6,9 @@
 <div class="pageformat">
    <p><%= button_to 'Switch to Stats', stats_path, method: :get, class: "button submitbutton" %></p>
    <br>
+   <p><%= image_tag(displayGreeter("Economy").art_url(:thumb)) %></p>
+   <p class="textindent"><%= textFormater("Multi", displayGreeter("Economy").message, "All").html_safe %></p>
+   <br>
    <p>Source points: <%= getEconomyChanges("Source") %></p>
    <p>Tax points: <%= getEconomyChanges("Tax") %></p>
    <p>Sink points: <%= getEconomyChanges("Sink") %></p>

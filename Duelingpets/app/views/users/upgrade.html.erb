@@ -4,9 +4,10 @@
 <% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Upgrade Shop") %>
 <div class="pageformat">
-   <p>Greetings I am Fentaro the Koalabat and I see you are interested in my wares. I have upgrades for both members and free users provided of course you have the um funds to back it up. Not everything in my shop is just points, some will require emeralds in order to unlock those upgrades. So feel free to look around, I will just wait here till you are done browsing.</p>
    <!--These numbers should only exist as long as there is upgrades left--->
    <!--Remember to use at max to represent no more sales-->
+   <p><%= image_tag(displayGreeter("Upgrade").art_url(:thumb)) %></p>
+   <p class="textindent"><%= textFormater("Multi", displayGreeter("Upgrade").message, "All").html_safe %></p>
    <br>
    <%= form_for(:upgrade, url: users_upgradepost_path, method: :post) do |form| %>
       <p>Free <%= form.radio_button :choice, 1, :checked => true %> or Member <%= form.radio_button :choice, 2 %></p>

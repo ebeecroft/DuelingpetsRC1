@@ -11,6 +11,9 @@
    <div class="container"><%= button_to 'Switch to Substats', substats_path, method: :get, class: "button submitbutton" %></div>
    <br>
    <br>
+   <p><%= image_tag(displayGreeter("Stats").art_url(:thumb)) %></p>
+   <p class="textindent"><%= textFormater("Multi", displayGreeter("Stats").message, "All").html_safe %></p>
+   <br>
    <p>Monsters</p>
    <p>day: <%= getStatsTimeframe("Monster", "Day") %>, week: <%= getStatsTimeframe("Monster", "Week") %>, month: <%= getStatsTimeframe("Monster", "Month") %>, year: <%= getStatsTimeframe("Monster", "Year") %>, dreiJahre: <%= getStatsTimeframe("Monster", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Monster", "BaconOfTomato") %></p>
    <p>Content to review: <%= getReviewContent("Monster") %></p>

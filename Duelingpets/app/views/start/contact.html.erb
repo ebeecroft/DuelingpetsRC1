@@ -4,9 +4,13 @@
 <% provide(:robots, "index, follow") %>
 <% provide(:h1, "Contact") %>
 <div class="pageformat">
+   <p><%= image_tag(displayGreeter("Contact").art_url(:thumb)) %></p>
+   <p class="textindent"><%= textFormater("Multi", displayGreeter("Contact").message, "All").html_safe %></p>
+   <br>
    <%= form_for(:session, url: verify_path) do |f| %>
       <p><%= f.label :color, "What is your favorite color?" %></p>
       <p><%= f.text_field :color %></p>
+      <br>
       <p><%= f.submit "Submit", class: "button submitbutton" %></p>
    <% end %>
 </div>

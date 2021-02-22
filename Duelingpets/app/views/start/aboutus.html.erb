@@ -4,6 +4,6 @@
 <% provide(:robots, "index, follow") %>
 <% provide(:h1, "About Us") %>
 <div class="pageformat">
-   <p><%= image_tag(@artpage.art_url(:thumb)) %></p>
-   <p class="textindent"><%= textFormater("Multi", @artpage.message, "All").html_safe %></p>
+   <p><%= image_tag(displayGreeter("Aboutus").art_url(:thumb)) %></p>
+   <p class="textindent"><%= textFormater("Multi", displayGreeter("Aboutus").message, "All").html_safe %></p>
 </div>

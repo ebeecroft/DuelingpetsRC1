@@ -6,6 +6,9 @@
 <div class="pageformat">
    <p><%= button_to 'Switch to Stats', stats_path, method: :get, class: "button submitbutton" %></p>
    <br>
+   <p><%= image_tag(displayGreeter("Popularity").art_url(:thumb)) %></p>
+   <p class="textindent"><%= textFormater("Multi", displayGreeter("Popularity").message, "All").html_safe %></p>
+   <br>
    <p>Favorite Sounds</p>
    <p>day: <%= getStatsTimeframe("Favoritesound", "Day") %>, week: <%= getStatsTimeframe("Favoritesound", "Week") %>, month: <%= getStatsTimeframe("Favoritesound", "Month") %>, year: <%= getStatsTimeframe("Favoritesound", "Year") %>, dreiJahre: <%= getStatsTimeframe("Favoritesound", "Threeyears") %>, bacon of tomato: <%= getStatsTimeframe("Favoritesound", "BaconOfTomato") %></p>
    <br>

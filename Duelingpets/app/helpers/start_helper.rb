@@ -400,7 +400,7 @@ module StartHelper
                end
             elsif(type == "contact" || type == "verify" || type == "verify2")
                removeTransactions
-               displayGreeter("Aboutus") #Change later
+               displayGreeter("Contact") #Change later
                if(type == "verify")
                   color_value = getStartParams("Color")
                   if(color_value)
