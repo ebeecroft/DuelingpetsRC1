@@ -1,0 +1,39 @@
+<%= form_with(model: [@element, @elementchart], local: true) do |form| %>
+  <% if @elementchart.errors.any? %>
+     <div class="alignboxes">
+        <div id="errorexplan">
+           <h2 id="errorheader"><%= pluralize(@elementchart.errors.count, "error") %> prohibited this elementchart from being saved:</h2>
+           <ul>
+              <% @elementchart.errors.full_messages.each do |message| %>
+                 <li class="explantext"><%= message %></li>
+              <% end %>
+           </ul>
+        </div>
+     </div>
+  <% end %>
+  <div class="pageformat">
+    <%= form.label :sstrength_id, "Strong against" %>
+    <%= form.collection_select(:sstrength_id, @elements, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :estrength_id, "Effective against" %>
+    <%= form.collection_select(:estrength_id, @elements, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :sweak_id, "Weakness" %>
+    <%= form.collection_select(:sweak_id, @elements, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :eweak_id, "Minor weakness" %>
+    <%= form.collection_select(:eweak_id, @elements, :id, :name) %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.submit class: "button submitbutton" %>
+  </div>
+  <br>
+  <p class="formlinks"><%= link_to 'Back', user_element_path(@elementchart.element.user, @elementchart.element) %></p>
+<% end %>

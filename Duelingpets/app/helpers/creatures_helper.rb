@@ -19,44 +19,57 @@ module CreaturesHelper
          return value
       end
 
-      def validatePetStats(level)
-         minhp = 16
-         minatk = 2
-         mindef = 2
-         minagi = 2
-         minstr = 4
-         minhunger = 10
-         minthirst = 10
-         minfun = 8
+      def getCreatureStats(creature, type)
+         value = 0
+         if(type == "Level")
+            value = creature.level
+         elsif(type == "HP")
+            value = (creature.creaturetype.basehp + (creature.hp * 4))
+         elsif(type == "Atk")
+            value = (creature.creaturetype.baseatk + creature.atk)
+         elsif(type == "Def")
+            value = (creature.creaturetype.basedef + creature.def)
+         elsif(type == "Agi")
+            value = (creature.creaturetype.baseagi + creature.agility)
+         elsif(type == "Str")
+            value = (creature.creaturetype.basestr + creature.strength)
+         elsif(type == "MP")
+            value = creature.mp
+         elsif(type == "Matk")
+            value = creature.matk
+         elsif(type == "Mdef")
+            value = creature.mdef
+         elsif(type == "Magi")
+            value = creature.magi
+         elsif(type == "Mstr")
+            value = creature.mstr
+         elsif(type == "Hunger")
+            value = (creature.creaturetype.basehunger + creature.hunger)
+         elsif(type == "Thirst")
+            value = (creature.creaturetype.basethirst + creature.thirst)
+         elsif(type == "Fun")
+            value = (creature.creaturetype.basefun + creature.fun)
+         elsif(type == "Lives")
+            value = creature.lives
+         elsif(type == "Rarity")
+            value = creature.rarity
+         end
+         return value
+      end
 
+      def validatePetStats(level)
          #Determines the error message
          if(level == -1)
-            message = "HP is below min value of #{minhp}!"
-         elsif(level == -2)
-            message = "ATK is below min value of #{minatk}!"
-         elsif(level == -3)
-            message = "DEF is below min value of #{mindef}!"
-         elsif(level == -4)
-            message = "AGI is below min value of #{minagi}!"
-         elsif(level == -5)
-            message = "STR is below min value of #{minstr}!"
-         elsif(level == -6)
             message = "MP can't be 0 if magic fields are not 0!"
-         elsif(level == -7)
+         elsif(level == -2)
             message = "MP can't be set to 4 or more if magic fields are set to 0!"
-         elsif(level == -8)
+         elsif(level == -3)
             message = "MP can't be set to a value between 0 and 4!"
-         elsif(level == -9)
-            message = "Hunger is below min value of #{minhunger}!"
-         elsif(level == -10)
-            message = "Thirst is below min value of #{minthirst}!"
-         elsif(level == -11)
-            message = "Fun is below min value of #{minfun}!"
-         elsif(level == -12)
+         elsif(level == -4)
             message = "Creature's total skill points is not divisible by 14!"
-         elsif(level == -13)
+         elsif(level == -5)
             message = "Rarity can't be 0!"
-         elsif(level == -14)
+         elsif(level == -6)
             message = "Creature skill values can't be empty!"
          end
          flash[:error] = message
@@ -73,10 +86,9 @@ module CreaturesHelper
             @creature.cost = petCost
             @creature.level = petLevel
          else
-            @creature.level = -14
+            @creature.level = -6
          end
       end
-
 
       def indexCommons
          if(optional)

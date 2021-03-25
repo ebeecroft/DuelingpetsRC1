@@ -27,6 +27,9 @@ class Monster < ApplicationRecord
    validates :mdef, presence: true, format: { with: VALID_VALUE_REGEX}
    validates :magi, presence: true, format: { with: VALID_VALUE_REGEX}
    validates :exp, presence: true, format: { with: VALID_VALUE_REGEX}
+   validates :nightmare, presence: true, format: { with: VALID_VALUE_REGEX}
+   validates :shinycraze, presence: true, format: { with: VALID_VALUE_REGEX}
+   validates :party, presence: true, format: { with: VALID_VALUE_REGEX}
    validates :rarity, presence: true, format: { with: VALID_VALUE_REGEX}
 
    #Overides the default parameters to use name in place of the id code

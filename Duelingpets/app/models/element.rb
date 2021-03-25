@@ -1,6 +1,8 @@
 class Element < ApplicationRecord
    #Elements related
    belongs_to :user, optional: true
+   has_one :elementchart, :foreign_key => "element_id", :dependent => :destroy
+
    #has_many :creatures, :foreign_key => "element_id", :dependent => :destroy
    #has_many :monsters, :foreign_key => "element_id", :dependent => :destroy
 

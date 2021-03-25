@@ -12,7 +12,7 @@ module MonstersHelper
          elsif(type == "Monster")
             #Add Knowledge here later
             value = params.require(:monster).permit(:name, :description, :hp, :atk, :def, :agility, 
-            :mp, :matk, :mdef, :magi, :exp, :mischief, :rarity, :image,
+            :mp, :matk, :mdef, :magi, :exp, :nightmare, :shinycraze, :party, :mischief, :rarity, :image,
             :remote_image_url, :image_cache, :ogg, :remote_ogg_url, :ogg_cache, :mp3,
             :remote_mp3_url, :mp3_cache, :monstertype_id, :element_id)
          elsif(type == "Page")
@@ -60,7 +60,7 @@ module MonstersHelper
       def getMonsterCalc(monster)
          if(!monster.hp.nil? && !monster.atk.nil? && !monster.def.nil? && !monster.agility.nil? && !monster.mp.nil? && !monster.matk.nil? && !monster.mdef.nil? && !monster.magi.nil? && !monster.exp.nil? && !monster.rarity.nil? && !monster.monstertype.basecost.nil?)
             #Application that calculates level, loot and cost
-            results = `public/Resources/Code/monstercalc/calc #{monster.hp} #{monster.atk} #{monster.def} #{monster.agility} #{monster.mp} #{monster.matk} #{monster.mdef} #{monster.magi} #{monster.exp} #{monster.rarity} #{monster.monstertype.basecost}`
+            results = `public/Resources/Code/monstercalc/calc #{monster.hp} #{monster.atk} #{monster.def} #{monster.agility} #{monster.mp} #{monster.matk} #{monster.mdef} #{monster.magi} #{monster.exp} #{monster.nightmare} #{monster.shinycraze} #{monster.party} #{monster.rarity} #{monster.monstertype.basecost}`
             monsterAttributes = results.split(",")
             monsterCost, monsterLevel, monsterLoot = monsterAttributes.map{|str| str.to_i}
             @monster = monster
@@ -298,7 +298,8 @@ module MonstersHelper
                            basecost = monsterFound.monstertype.basecost
                            monstercost = Fieldcost.find_by_name("Monster")
                            mcost = (monsterFound.cost * 0.10).round
-                           price = (basecost + monstercost.amount + mcost)
+                           price = 20
+                           #price = (basecost + monstercost.amount + mcost)
                            pouch = Pouch.find_by_user_id(monsterFound.user_id)
                            #Add dreyterrium cost later
                            if(pouch.amount - price >= 0)

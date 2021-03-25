@@ -85,6 +85,21 @@
   </div>
   <br>
   <div class="pageformat">
+    <%= form.label :nightmare, "Nightmare(min is 10)" %>
+    <%= form.number_field :nightmare %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :shinycraze, "Shinycraze(min is 10)" %>
+    <%= form.number_field :shinycraze %>
+  </div>
+  <br>
+  <div class="pageformat">
+    <%= form.label :party, "Party(min is 10)" %>
+    <%= form.number_field :party %>
+  </div>
+  <br>
+  <div class="pageformat">
     <%= form.label :monstertype_id, "Select Monstertype" %>
     <%= form.collection_select(:monstertype_id, @monstertypes, :id, :name) %>
   </div>

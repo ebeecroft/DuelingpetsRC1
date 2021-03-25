@@ -37,7 +37,7 @@ class CreateMonsterbattles < ActiveRecord::Migration[5.2]
       t.integer :monster_loot
       t.integer :monster_damage, default: 0
       t.integer :monstertype_id
-      t.integer :round, default: 1
+      t.integer :round, default: 0
       t.integer :tokens_earned, default: 0
       t.integer :exp_earned, default: 0
       t.integer :dreyore_earned, default: 0

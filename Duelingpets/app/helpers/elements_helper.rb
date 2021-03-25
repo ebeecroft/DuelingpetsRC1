@@ -19,6 +19,21 @@ module ElementsHelper
          return value
       end
 
+      def getChartData(element, type)
+         chart = Elementchart.find_by_element_id(element)
+         element = ""
+         if(type == "Mainweak")
+            element = Element.find_by_id(chart.sweak_id)
+         elsif(type == "Mildweak")
+            element = Element.find_by_id(chart.eweak_id)
+         elsif(type == "Strong")
+            element = Element.find_by_id(chart.sstrength_id)
+         elsif(type == "Mild")
+            element = Element.find_by_id(chart.estrength_id)
+         end
+         return element.name
+      end
+
       def indexCommons
          if(optional)
             userFound = User.find_by_vname(optional)
@@ -145,7 +160,15 @@ module ElementsHelper
                         @user = userFound
                         if(type == "create")
                            if(@element.save)
-                              #url = "http://www.duelingpets.net/elements/review"
+                              newChart = Elementchart.new(params[:elementchart])
+                              newChart.element_id = @element.id
+                              newChart.sstrength_id = 1
+                              newChart.estrength_id = 1
+                              newChart.sweak_id = 1
+                              newChart.eweak_id = 1
+                              @chart = newChart
+                              @chart.save
+                              url = "http://www.duelingpets.net/elements/review"
                               ContentMailer.content_review(@element, "Element", url).deliver_now
                               flash[:success] = "#{@element.name} was successfully created."
                               redirect_to user_element_path(@user, @element)
@@ -232,8 +255,8 @@ module ElementsHelper
                            #pouch = Pouch.find_by_user_id(creatureFound.user_id)
                            #Add dreyterrium cost later
                            #if(pouch.amount - price >= 0)
-                              @creature = creatureFound
-                              @creature.save
+                              @element = elementFound
+                              @element.save
                               #pouch.amount -= price
                               #@pouch = pouch
                               #@pouch.save

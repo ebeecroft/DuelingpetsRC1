@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_20_030850) do
+ActiveRecord::Schema.define(version: 2021_03_21_034706) do
 
   create_table "artpages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
@@ -345,6 +345,14 @@ ActiveRecord::Schema.define(version: 2021_01_20_030850) do
   create_table "creaturetypes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.datetime "created_on"
+    t.integer "basehp"
+    t.integer "baseatk"
+    t.integer "basedef"
+    t.integer "baseagi"
+    t.integer "basestr"
+    t.integer "basehunger"
+    t.integer "basethirst"
+    t.integer "basefun"
     t.integer "basecost"
     t.integer "dreyterriumcost"
     t.datetime "created_at", null: false
@@ -430,6 +438,18 @@ ActiveRecord::Schema.define(version: 2021_01_20_030850) do
     t.integer "amount"
     t.datetime "created_on"
     t.integer "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "elementcharts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "sstrength_id"
+    t.integer "estrength_id"
+    t.integer "sweak_id"
+    t.integer "eweak_id"
+    t.integer "element_id"
+    t.datetime "created_on"
+    t.datetime "updated_on"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -777,7 +797,7 @@ ActiveRecord::Schema.define(version: 2021_01_20_030850) do
     t.integer "monster_loot"
     t.integer "monster_damage", default: 0
     t.integer "monstertype_id"
-    t.integer "round", default: 1
+    t.integer "round", default: 0
     t.integer "tokens_earned", default: 0
     t.integer "exp_earned", default: 0
     t.integer "dreyore_earned", default: 0
@@ -810,6 +830,9 @@ ActiveRecord::Schema.define(version: 2021_01_20_030850) do
     t.integer "exp", default: 0
     t.integer "loot", default: 0
     t.string "mischief"
+    t.integer "nightmare", default: 0
+    t.integer "shinycraze", default: 0
+    t.integer "party", default: 0
     t.integer "rarity", default: 1
     t.boolean "retiredmonster", default: false
     t.integer "cost", default: 0

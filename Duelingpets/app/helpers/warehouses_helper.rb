@@ -220,10 +220,11 @@ module WarehousesHelper
                   if(buyable)
                      if(type == "buypet")
                         pet = Creature.find_by_id(getWareItems(wareIndex, ware, "Den"))
+                        petCount = logged_in.partners.count
                         partner = storePartner(logged_in, pet)
                         @partner = partner
                         if(@partner.save)
-                           if(logged_in.partners.count > 0)
+                           if(petCount > 0)
                               logged_in.pouch.amount -= cost
                               logged_in.pouch.emeraldamount -= emeralds
                               @pouch = logged_in.pouch

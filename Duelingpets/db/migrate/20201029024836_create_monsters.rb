@@ -18,6 +18,9 @@ class CreateMonsters < ActiveRecord::Migration[5.2]
       t.integer :exp, default: 0
       t.integer :loot, default: 0
       t.string :mischief
+      t.integer :nightmare, default: 0
+      t.integer :shinycraze, default: 0
+      t.integer :party, default: 0
       t.integer :rarity, default: 1
       t.boolean :retiredmonster, default: false
       t.integer :cost, default: 0

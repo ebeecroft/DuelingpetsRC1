@@ -49,6 +49,9 @@
             <p>Mdef: <%= monster.mdef %></p>
             <p>Magi: <%= monster.magi %></p>
             <p>Exp: <%= monster.exp %></p>
+            <p>Nightmare: <%= monster.nightmare %></p>
+            <p>Shinycraze: <%= monster.shinycraze %></p>
+            <p>Party: <%= monster.party %></p>
             <p>Loot: <%= monster.loot %></p>
             <p>Mischief: <%= monster.mischief %></p>
             <p>Rarity: <%= monster.rarity %></p>
@@ -70,8 +73,10 @@
             <br>      
          <% end %>
       <% end %>
+      <br>
+      <br>
       <% if(@monsters.count > 0) %>
-         <div class="pageformat"><%= form.submit "Battle", class: "button submitbutton" %></div>
+         <p><%= form.submit "Battle", class: "button submitbutton" %></p>
          <br>
       <% end %>
       <p class="formlinks"><%= link_to 'Back', root_path %></p>

@@ -8,6 +8,14 @@ class Creaturetype < ApplicationRecord
 
    #Validates the itemtype information upon submission
    validates :name, presence: true, format: {with: VALID_NAME_REGEX}, uniqueness: { case_sensitive: false}
+   validates :basehp, presence: true, format: { with: VALID_VALUE_REGEX}
+   validates :baseatk, presence: true, format: { with: VALID_VALUE_REGEX}
+   validates :basedef, presence: true, format: { with: VALID_VALUE_REGEX}
+   validates :baseagi, presence: true, format: { with: VALID_VALUE_REGEX}
+   validates :basestr, presence: true, format: { with: VALID_VALUE_REGEX}
+   validates :basehunger, presence: true, format: { with: VALID_VALUE_REGEX}
+   validates :basethirst, presence: true, format: { with: VALID_VALUE_REGEX}
+   validates :basefun, presence: true, format: { with: VALID_VALUE_REGEX}
    validates :basecost, presence: true, format: { with: VALID_VALUE_REGEX}
    validates :dreyterriumcost, presence: true, format: { with: VALID_VALUE_REGEX}
 

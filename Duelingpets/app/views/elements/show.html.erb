@@ -29,6 +29,17 @@
          for <%= distance_of_time_in_words_to_now getTime(@element.user) %>
       <% end %>
    </p>
+   <% if @element.name != "None" %>
+      <br>
+      <% if current_user && (current_user.id == @element.user_id  || current_user.pouch.privilege == "Admin") %>
+         <p><%= button_to 'Edit Chart', edit_element_elementchart_path(@element, @element.elementchart), method: :get, class: "button editbutton" %></p>
+      <% end %>
+      <p>Chart</p>
+      <p>Strong Against: <%= getChartData(@element, "Strong") %></p>
+      <p>Effective Against: <%= getChartData(@element, "Mild") %></p>
+      <p>Main Weakness: <%= getChartData(@element, "Mainweak") %></p>
+      <p>Mild Weakness: <%= getChartData(@element, "Mildweak") %></p>
+   <% end %>
 </div>
 <br>
 <p class="formlinks"><%= link_to "User Elements", user_elements_path(@element.user) %> |

@@ -187,15 +187,14 @@ module EquipslotsHelper
          return durability
       end
 
-      def updateInventory(slotindex, inventoryslot, type)
-         #Assigns the local variable values
+      def invUp(slotindex, inventoryslot, type)
          quantity = getQuantity(slotindex, inventoryslot)
          durability = getDurability(slotindex, inventoryslot, "Current")
          startdur = getDurability(slotindex, inventoryslot, "Starter")
          itemid = nil
 
          #Decrements the item values stored in the inventory
-         if(durability > 1 && type == "Feedpet")
+         if(durability > 1 && (type == "Feed" || type == "Drink"))
             durability -= 1
          elsif(quantity > 1)
             durability = startdur
@@ -207,6 +206,7 @@ module EquipslotsHelper
             itemEmpty = true
          end
 
+         #Determines which inventory item to update
          if(slotindex == "1")
             #Store the updated values
             inventoryslot.qty1 = quantity
@@ -404,6 +404,7 @@ module EquipslotsHelper
          hp = getItemName(slotindex, inventoryslot, "HP")
          petfood = pet.chunger + hunger
          petstat = pet.hunger
+         giveFood = true
 
          if(itemid == "Thirst")
             petfood = pet.cthirst + thirst
@@ -421,6 +422,7 @@ module EquipslotsHelper
                      pet.cfun = 0
                   end
                else
+                  giveFood = false
                   flash[:error] = "Your pet is not hungry enough!"
                end
             else
@@ -432,6 +434,7 @@ module EquipslotsHelper
                      pet.cfun = 0
                   end
                else
+                  giveFood = false
                   flash[:error] = "Your pet is not thirsty enough!"
                end
             end
@@ -460,6 +463,7 @@ module EquipslotsHelper
                   pet.cthirst += thirst
                end
             else
+               giveFood = false
                if(!pet.dead)
                   pet.dead = true
                   pet.chunger = 0
@@ -469,6 +473,7 @@ module EquipslotsHelper
                end
             end
          end
+         return giveFood
       end
 
       def isEquipSlotEmpty(inventoryslot)
@@ -592,7 +597,7 @@ module EquipslotsHelper
                   action = Itemaction.find_by_id(params[:equipslot][:itemaction_id])
                   invslot = Inventoryslot.find_by_id(params[:equipslot][:inventoryslot_id])
                   slotindex = params[:equipslot][:slotindex_id]
-                  if(logged_in.id == invslot.inventory.user_id && is_num(slotindex))
+                  if(logged_in.id == invslot.inventory.user_id)
                      if(slotindex.to_i > 0 && slotindex.to_i < 15)
                         myarray = [slotindex, invslot]
                         if(action.name == "Discard")
@@ -621,7 +626,7 @@ module EquipslotsHelper
                         @invslot = slot
                         @item = itemnum
                         allActions = Itemaction.all
-                        actions = allActions.select{|action| (getItemName(slotindex, slot, "Equip") && action.name == "Equip") || (getItemName(slotindex, slot, "Itemtype") == "Food" && action.name == "Feedpet")}
+                        actions = allActions.select{|action| (getItemName(slotindex, slot, "Equip") && action.name == "Equip") || (getItemName(slotindex, slot, "Itemtype") == "Food" && action.name == "Feed")}
                         @actiongroup = actions
                         allPartners = Partner.all
                         mypartners = allPartners.select{|partner| partner.user_id == logged_in.id}
@@ -642,22 +647,27 @@ module EquipslotsHelper
                partner = Partner.find_by_id(params[:equipslot][:partner_id])
                action = Itemaction.find_by_id(params[:equipslot][:itemaction_id])
                validItem = (slotindex && slot && partner && action)
+               givePetFood = false
                if(logged_in && validItem)
                   if(slot.inventory.user_id == logged_in.id && partner.user_id == logged_in.id)
-                     if(action.name == "Feedpet") #Change this later to feed
+                     if(action.name == "Feed")
                         if(getItemName(slotindex, slot, "Itemtype") == "Food")
-                           feedpet(slotindex, slot, partner)
+                           givePetFood = feedpet(slotindex, slot, partner)
                         elsif(getItemName(slotindex, slot, "Itemtype") == "Drink")
-                           feedpet(slotindex, slot, partner)
+                           givePetFood = feedpet(slotindex, slot, partner)
                         else
                            raise "Invalid item selection!"
                         end
-                        updateInventory(slotindex, slot, action.name)
-                        @partner = partner
-                        @partner.save
-                        @slot = slot
-                        @slot.save
-                        flash[:success] = "Pet was successfully fed!"
+                        if(givePetFood)
+                           #raise "My acition.name is: #{action.name}"
+                           #updateInventory(slotindex, slot, action.name)
+                           invUp(slotindex, slot, action.name)
+                           @partner = partner
+                           @partner.save
+                           @slot = slot
+                           @slot.save
+                           flash[:success] = "Pet was successfully fed!"
+                        end
                         redirect_to user_path(partner.user)
                      else
                         allEquipslots = partner.equip.equipslots.all

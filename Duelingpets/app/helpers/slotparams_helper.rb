@@ -59,6 +59,10 @@ module SlotparamsHelper
             name = item.hunger
          elsif(type == "Thirst")
             name = item.thirst
+         elsif(type == "Fun")
+            name = item.fun
+         elsif(type == "HP")
+            name = item.hp
          elsif(type == "Id")
             name = item.id
          end

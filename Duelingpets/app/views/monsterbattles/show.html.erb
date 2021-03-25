@@ -5,6 +5,7 @@
 <% provide(:h1, @monsterbattle.fight.partner.name + "'s monbattle") %>
 <p id="notice"><%= notice %></p>
 <div class="pageformat">
+   <p class="centerpagecontent"><%= playMusicLoop("Monsterbattle", @monsterbattle) %></p>
    <% if current_user.userinfo.mute_on %>
       <p class="centerpagecontent"><%= button_to 'Unmute music', muteAudio_path(:pageType => "Monsterbattle", :pageContent => [@monsterbattle.fight, @monsterbattle]), method: :post, class: "button submitbutton" %></p>
       <br>
@@ -21,8 +22,10 @@
          <p>Ended: <%= distance_of_time_in_words_to_now @monsterbattle.ended_on %> ago on (<%= @monsterbattle.ended_on.strftime("%B-%d-%Y") %>)</p>
       <% end %>
       <br>
-      <p>Battleground stats</p>
-      <p>Round: <%= @monsterbattle.round %></p>
+      <p>Fern's Battleground</p>
+      <% if @monsterbattle.round > 0 %>
+         <p>Round: <%= @monsterbattle.round %></p>
+      <% end %>
       <% if @monsterbattle.battleover && @monsterbattle.battleresult != "Loss" %>
          <p>Tokens: <%= @monsterbattle.tokens_earned %></p>
          <p>Exp: <%= @monsterbattle.exp_earned %></p>
@@ -31,7 +34,7 @@
       <% end %>
       <p>Battle: <%= @monsterbattle.battleresult %></p>
       <% if @monsterbattle.battleover %>
-         <p><%#= @monsterbattle.message %></p>
+         <p><%#= @monsterbattle.message %></p><!-- Add a message here-->
       <% end %>
       <br>
       <div class="container">
@@ -101,6 +104,9 @@
          <br>
          <p>Battle traits</p>
          <p>Loot: <%= @monsterbattle.monster_loot %></p>
+         <p>Nightmare: <%= @monsterbattle.monster.nightmare %></p>
+         <p>Shinycraze: <%= @monsterbattle.monster.shinycraze %></p>
+         <p>Party: <%= @monsterbattle.monster.party %></p>
          <p>Mischief: <%= @monsterbattle.monster_mischief %></p>
          <% if @monsterbattle.battleresult != "Not-Started" %>
             <p>Damage: <%= @monsterbattle.monster_damage %></p>

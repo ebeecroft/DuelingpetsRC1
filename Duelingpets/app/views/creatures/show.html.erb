@@ -26,22 +26,22 @@
       <p>Character's voice: <%= audio_tag(getMusicOrVideo("Sound", @creature), :controls => true) %></p>
    <% end %>
    <br>
-   <p>Level: <%= @creature.level %></p>
-   <p>Hp: <%= @creature.hp %></p>
-   <p>Atk: <%= @creature.atk %></p>
-   <p>Def: <%= @creature.def %></p>
-   <p>Agi: <%= @creature.agility %></p>
-   <p>Strength: <%= @creature.strength %></p>
-   <p>MP: <%= @creature.mp %></p>
-   <p>Matk: <%= @creature.matk %></p>
-   <p>Mdef: <%= @creature.mdef %></p>
-   <p>Magi: <%= @creature.magi %></p>
-   <p>Mstr: <%= @creature.mstr %></p>
-   <p>Hunger: <%= @creature.hunger %></p>
-   <p>Thirst: <%= @creature.thirst %></p>
-   <p>Fun: <%= @creature.fun %></p>
-   <p>Lives: <%= @creature.lives %></p>
-   <p>Rarity: <%= @creature.rarity %></p>
+   <p>Level: <%= getCreatureStats(@creature, "Level") %></p>
+   <p>Hp: <%= getCreatureStats(@creature, "HP") %></p>
+   <p>Atk: <%= getCreatureStats(@creature, "Atk") %></p>
+   <p>Def: <%= getCreatureStats(@creature, "Def") %></p>
+   <p>Agi: <%= getCreatureStats(@creature, "Agi") %></p>
+   <p>Strength: <%= getCreatureStats(@creature, "Str") %></p>
+   <p>MP: <%= getCreatureStats(@creature, "MP") %></p>
+   <p>Matk: <%= getCreatureStats(@creature, "Matk") %></p>
+   <p>Mdef: <%= getCreatureStats(@creature, "Mdef") %></p>
+   <p>Magi: <%= getCreatureStats(@creature, "Magi") %></p>
+   <p>Mstr: <%= getCreatureStats(@creature, "Mstr") %></p>
+   <p>Hunger: <%= getCreatureStats(@creature, "Hunger") %></p>
+   <p>Thirst: <%= getCreatureStats(@creature, "Thirst") %></p>
+   <p>Fun: <%= getCreatureStats(@creature, "Fun") %></p>
+   <p>Lives: <%= getCreatureStats(@creature, "Lives") %></p>
+   <p>Rarity: <%= getCreatureStats(@creature, "Rarity") %></p>
    <p>Unlimited lives: <%= @creature.unlimitedlives %></p>
    <p>Retired pet: <%= @creature.retiredpet %></p>
    <p>Starter: <%= @creature.starter %></p>

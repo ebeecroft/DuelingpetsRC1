@@ -9,6 +9,14 @@
    <div class="pageformat">
       <p>Created: <%= distance_of_time_in_words_to_now creaturetype.created_on %> ago on (<%= creaturetype.created_on.strftime("%B-%d-%Y") %>)</p>
       <div class="container"><p class="formlinks">Name: <%= link_to creaturetype.name, creaturetypes_path %></p></div> <div class="container"><%= button_to 'Edit', edit_creaturetype_path(creaturetype), method: :get, class: "button editbutton" %></div>
+      <p>Basehp: <%= creaturetype.basehp %></p>
+      <p>Baseatk: <%= creaturetype.baseatk %></p>
+      <p>Basedef: <%= creaturetype.basedef %></p>
+      <p>Baseagi: <%= creaturetype.baseagi %></p>
+      <p>Basestr: <%= creaturetype.basestr %></p>
+      <p>Basehunger: <%= creaturetype.basehunger %></p>
+      <p>Basethirst: <%= creaturetype.basethirst %></p>
+      <p>Basefun: <%= creaturetype.basefun %></p>
       <p>Basecost: <%= creaturetype.basecost %></p>
       <p>Dreyterriumcost: <%= creaturetype.dreyterriumcost %></p>
    </div>

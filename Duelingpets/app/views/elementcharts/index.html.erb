@@ -1,0 +1,21 @@
+<% provide(:title, "Duelingpets: Elementcharts") %>
+<% provide(:description, "Charts for the various battle elements.") %>
+<% provide(:keywords, "virtualpet, digitalpets, battle, elements") %>
+<% provide(:robots, "noindex, nofollow") %>
+<% provide(:h1, "Elementchart List") %>
+<div class="formlinks"><%= paginate @elementcharts %></div>
+<br>
+<% @elementcharts.each do |elementchart| %>
+   <div class="pageformat">
+      <p><%= button_to 'Edit', edit_element_elementchart_path(elementchart.element, elementchart), method: :get, class: "button editbutton" %></p>
+      <p>Element: <%= elementchart.element.name %></p>
+      <br>
+      <p>Chart</p>
+      <p>Strong against: <%= getChartData(elementchart.element, "Strong") %></p>
+      <p>Effective against: <%= getChartData(elementchart.element, "Mild") %></p>
+      <p>Main weakness: <%= getChartData(elementchart.element, "Mainweak") %></p>
+      <p>Mild weakness: <%= getChartData(elementchart.element, "Mildweak") %></p>
+   </div>
+   <br>
+<% end %>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

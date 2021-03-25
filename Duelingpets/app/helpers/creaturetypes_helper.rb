@@ -6,7 +6,8 @@ module CreaturetypesHelper
          if(type == "User")
             value = params[:id]
          elsif(type == "Creaturetype")
-            value = params.require(:creaturetype).permit(:name, :basecost, :dreyterriumcost)
+            value = params.require(:creaturetype).permit(:name, :basehp, :baseatk, :basedef, :baseagi, :basestr,
+            :basehunger, :basethirst, :basefun, :basecost, :dreyterriumcost)
          elsif(type == "Page")
             value = params[:page]
          else

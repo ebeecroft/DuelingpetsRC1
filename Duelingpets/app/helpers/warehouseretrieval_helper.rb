@@ -1,6 +1,44 @@
 module WarehouseretrievalHelper
 
    private
+      def getCreatureStats(creature, type)
+         value = 0
+         if(type == "Level")
+            value = creature.level
+         elsif(type == "HP")
+            value = (creature.creaturetype.basehp + (creature.hp * 4))
+         elsif(type == "Atk")
+            value = (creature.creaturetype.baseatk + creature.atk)
+         elsif(type == "Def")
+            value = (creature.creaturetype.basedef + creature.def)
+         elsif(type == "Agi")
+            value = (creature.creaturetype.baseagi + creature.agility)
+         elsif(type == "Str")
+            value = (creature.creaturetype.basestr + creature.strength)
+         elsif(type == "MP")
+            value = creature.mp
+         elsif(type == "Matk")
+            value = creature.matk
+         elsif(type == "Mdef")
+            value = creature.mdef
+         elsif(type == "Magi")
+            value = creature.magi
+         elsif(type == "Mstr")
+            value = creature.mstr
+         elsif(type == "Hunger")
+            value = (creature.creaturetype.basehunger + creature.hunger)
+         elsif(type == "Thirst")
+            value = (creature.creaturetype.basethirst + creature.thirst)
+         elsif(type == "Fun")
+            value = (creature.creaturetype.basefun + creature.fun)
+         elsif(type == "Lives")
+            value = creature.lives
+         elsif(type == "Rarity")
+            value = creature.rarity
+         end
+         return value
+      end
+
       def checkWarehouse(ware, type)
          if(type == "Den")
             #Sets up variables for the den slots
@@ -563,7 +601,7 @@ module WarehouseretrievalHelper
          end
          return value
       end
-      
+
       def getWaretype(wareid, waretype, type)
          value = 0
          if(waretype == "Den")
@@ -573,23 +611,23 @@ module WarehouseretrievalHelper
             if(type == "Magical" || type == "Stamina")
                if(type == "Magical")
                   msg1 = content_tag(:p, "Magical Stats")
-                  msg2 = content_tag(:p, "MP: #{piobject.mp}")
-                  msg3 = content_tag(:p, "Matk: #{piobject.matk} | Mdef: #{piobject.mdef}")
-                  msg4 = content_tag(:p, "Magi: #{piobject.magi} | Mstr: #{piobject.mstr}")
+                  msg2 = content_tag(:p, "MP: #{getCreatureStats(piobject, "MP")}")
+                  msg3 = content_tag(:p, "Matk: #{getCreatureStats(piobject, "Matk")} | Mdef: #{getCreatureStats(piobject, "Mdef")}")
+                  msg4 = content_tag(:p, "Magi: #{getCreatureStats(piobject, "Magi")} | Mstr: #{getCreatureStats(piobject, "Mstr")}")
                   value = (msg1 + msg2 + msg3 + msg4)
                else
                   msg1 = content_tag(:p, "Stamina Stats")
-                  msg2 = content_tag(:p, "Fun: #{piobject.fun}")
-                  msg3 = content_tag(:p, "Hunger: #{piobject.hunger}")
-                  msg4 = content_tag(:p, "Thirst: #{piobject.thirst}")
+                  msg2 = content_tag(:p, "Fun: #{getCreatureStats(piobject, "Fun")}")
+                  msg3 = content_tag(:p, "Hunger: #{getCreatureStats(piobject, "Hunger")}")
+                  msg4 = content_tag(:p, "Thirst: #{getCreatureStats(piobject, "Thirst")}")
                   value = (msg1 + msg2 + msg3 + msg4)
                end
             elsif(type == "Physical")
                msg1 = content_tag(:p, "Physical Stats")
-               msg2 = content_tag(:p, "Level: #{piobject.level}")
-               msg3 = content_tag(:p, "HP: #{piobject.hp}")
-               msg4 = content_tag(:p, "Atk: #{piobject.atk} | Def: #{piobject.def}")
-               msg5 = content_tag(:p, "Agi: #{piobject.agility} | Strength: #{piobject.strength}")
+               msg2 = content_tag(:p, "Level: #{getCreatureStats(piobject, "Level")}")
+               msg3 = content_tag(:p, "HP: #{getCreatureStats(piobject, "HP")}")
+               msg4 = content_tag(:p, "Atk: #{getCreatureStats(piobject, "Atk")} | Def: #{getCreatureStats(piobject, "Def")}")
+               msg5 = content_tag(:p, "Agi: #{getCreatureStats(piobject, "Agi")} | Strength: #{getCreatureStats(piobject, "Str")}")
                value = (msg1 + msg2 + msg3 + msg4 + msg5)
             end
          else
@@ -624,33 +662,33 @@ module WarehouseretrievalHelper
          end
          return value
       end
-      
+
       def storePartner(logged_in, creature)
          #Creating the partner entry
          newPartner = logged_in.partners.new(getWarehouseParams("Partner"))
          newPartner.adopted_on = currentTime
          newPartner.updated_on = currentTime
          newPartner.plevel = (creature.level - 1)
-         newPartner.chp = creature.hp
-         newPartner.hp = creature.hp
-         newPartner.atk = creature.atk
-         newPartner.def = creature.def
-         newPartner.agility = creature.agility
-         newPartner.strength = creature.strength
+         newPartner.chp = getCreatureStats(creature, "HP")
+         newPartner.hp = getCreatureStats(creature, "HP")
+         newPartner.atk = getCreatureStats(creature, "Atk")
+         newPartner.def = getCreatureStats(creature, "Def")
+         newPartner.agility = getCreatureStats(creature, "Agi")
+         newPartner.strength = getCreatureStats(creature, "Str")
          newPartner.mlevel = (creature.level - 1)
-         newPartner.cmp = creature.mp
-         newPartner.mp = creature.mp
-         newPartner.matk = creature.matk
-         newPartner.mdef = creature.mdef
-         newPartner.magi = creature.magi
-         newPartner.mstr = creature.mstr
-         newPartner.chunger = creature.hunger
-         newPartner.hunger = creature.hunger
-         newPartner.cthirst = creature.thirst
-         newPartner.thirst = creature.thirst
-         newPartner.cfun = creature.fun
-         newPartner.fun = creature.fun
-         newPartner.lives = creature.lives
+         newPartner.cmp = getCreatureStats(creature, "MP")
+         newPartner.mp = getCreatureStats(creature, "MP")
+         newPartner.matk = getCreatureStats(creature, "Matk")
+         newPartner.mdef = getCreatureStats(creature, "Mdef")
+         newPartner.magi = getCreatureStats(creature, "Magi")
+         newPartner.mstr = getCreatureStats(creature, "Mstr")
+         newPartner.chunger = getCreatureStats(creature, "Hunger")
+         newPartner.hunger = getCreatureStats(creature, "Hunger")
+         newPartner.cthirst = getCreatureStats(creature, "Thirst")
+         newPartner.thirst = getCreatureStats(creature, "Thirst")
+         newPartner.cfun = getCreatureStats(creature, "Fun")
+         newPartner.fun = getCreatureStats(creature, "Fun")
+         newPartner.lives = getCreatureStats(creature, "Lives")
          newPartner.creature_id = creature.id
          if(logged_in.partners.count == 0)
             newPartner.activepet = true
@@ -661,7 +699,7 @@ module WarehouseretrievalHelper
          newPartner.cost = creature.cost
          return newPartner
       end
-      
+
       def storeitem(invslot, itemid)
          #Sets up the variables
          item = Item.find_by_id(itemid)

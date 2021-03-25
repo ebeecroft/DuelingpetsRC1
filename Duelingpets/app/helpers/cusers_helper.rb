@@ -39,6 +39,10 @@ module CusersHelper
                elsif(type == "Warehouse")
                   warehouse = Warehouse.find_by_id(1)
                   sound = (audio_tag(getMusicOrVideo("Sound", warehouse), :loop => true, :autoplay => true))
+               elsif(type == "Monsterbattle")
+                  if(user.monster.ogg.to_s != "" || user.monster.mp3.to_s != "")
+                     sound = (audio_tag(getMusicOrVideo("Sound", user.monster), :loop => true, :autoplay => true))
+                  end
                elsif(type == "Jukebox")
                   if(user.music_on)
                      sound = (audio_tag(getMusicOrVideo("Sound", user), :loop => true, :autoplay => true))
@@ -79,6 +83,9 @@ module CusersHelper
                elsif(type == "Warehouse")
                   warehouse = Warehouse.find_by_id(1)
                   sound = (audio_tag(getMusicOrVideo("Sound", warehouse), :loop => true, :autoplay => true))
+               elsif(type == "Monsterbattle")
+                  #raise "Monsterbattle monster #{user.ogg}"
+                  sound = (audio_tag(getMusicOrVideo("Home", user.monster), :loop => true, :autoplay => true))
                elsif(type == "Jukebox")
                   if(user.music_on)
                      sound = (audio_tag(getMusicOrVideo("Sound", user), :loop => true, :autoplay => true))
