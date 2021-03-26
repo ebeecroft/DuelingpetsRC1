@@ -1,0 +1,26 @@
+<% provide(:title, "Duelingpets: Sitemap") %>
+<% provide(:description, "Gives users a map of the various features of the Duelingpets website.") %>
+<% provide(:keywords, "virtualpet, digitalpets, sitemap") %>
+<% provide(:robots, "index, follow") %>
+<% provide(:h1, "Sitemap") %>
+<div class="pageformat">
+   <p>Home</p>
+   <p>Features</p>
+   <p class="formlinks"><%= link_to 'OCs', ocs_path %></p>
+   <p class="formlinks"><%= link_to 'Creatures', creatures_path %></p>
+   <p class="formlinks"><%= link_to 'Items', items_path %></p>
+   <p class="formlinks"><%= link_to 'Monsters', monsters_path %></p>
+   <p class="formlinks"><%= link_to 'Elements', elements_path %></p>
+   <br>
+   <p>Sub Features</p>
+   <p class="formlinks"><%= link_to 'News', blogs_path %></p>
+   <p class="formlinks"><%= link_to 'Colorschemes', colorschemes_path %></p>
+   <p class="formlinks"><%= link_to 'Tags', tags_path %></p>
+   <p class="formlinks"><%= link_to 'Hoard', dragonhoards_path %></p>
+   <p class="formlinks"><%= link_to 'Jukeboxes', jukeboxes_path %></p>
+   <p class="formlinks"><%= link_to 'Channels', channels_path %></p>
+   <p class="formlinks"><%= link_to 'Galleries', galleries_path %></p>
+   <p class="formlinks"><%= link_to 'Bookworlds', bookworlds_path %></p>
+</div>
+<br>
+<p class="formlinks"><%= link_to 'Back', root_path %></p>

@@ -393,7 +393,7 @@ module StartHelper
             redirect_to root_path
          else
             logoutExpiredUsers
-            if(type == "home" || type == "aboutus" || type == "hubworld" || type == "privacy")
+            if(type == "home" || type == "aboutus" || type == "hubworld" || type == "privacy" || type == "sitemap")
                removeTransactions
                if(type == "aboutus")
                   displayGreeter("Aboutus")
