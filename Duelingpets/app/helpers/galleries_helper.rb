@@ -20,6 +20,12 @@ module GalleriesHelper
          return value
       end
 
+      def getArtCounts(mainfolder)
+         allArts = Art.all
+         arts = allArts.select{|art| art.review && art.subfolder.mainfolder_id == mainfolder.id}
+         return arts.count
+      end
+
       def getMainfolderArt(mainfolder)
          allSubfolders = mainfolder.subfolders.order("updated_on desc", "created_on desc")
          value = nil
@@ -113,6 +119,12 @@ module GalleriesHelper
                #Come back to this when subsheets is added
                mainfolders = galleryFound.mainfolders
                @mainfolders = Kaminari.paginate_array(mainfolders).page(getGalleryParams("Page")).per(10)
+               allFolders = Subfolder.all
+               subfolders = allFolders.select{|subfolder| subfolder.mainfolder.gallery_id == @gallery.id}
+               @subfolders = subfolders.count
+               allArts = Art.all
+               arts = allArts.select{|art| art.reviewed && art.subfolder.mainfolder.gallery_id == @gallery.id}
+               @arts = arts.count
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == galleryFound.user_id) || logged_in.pouch.privilege == "Admin"))

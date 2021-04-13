@@ -13,6 +13,10 @@ class StartController < ApplicationController
       mode "privacy"
    end
 
+   def rules
+      mode "rules"
+   end
+
    def sitemap
       mode "sitemap"
    end

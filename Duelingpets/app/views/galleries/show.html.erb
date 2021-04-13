@@ -45,6 +45,8 @@
    <p>Group: <%= @gallery.bookgroup.name %></p>
    <p>Viewer: <%= @gallery.gviewer.name %></p>
    <p>Total mainfolders: <%= @gallery.mainfolders.count %></p>
+   <p>Total subfolders: <%= @subfolders %></p>
+   <p>Total arts: <%= @arts %></p>
    <p>Status: <%= getActivity(@gallery.user) %>
       <% if getActivity(@gallery.user) != "Online" && getActivity(@gallery.user) != "Inoperable" %>
          for <%= distance_of_time_in_words_to_now getTime(@gallery.user) %>
@@ -82,6 +84,7 @@
          <% end %>
          <p class="formlinks">Artist: <%= getUserPrivilege(mainfolder.user) %><%= link_to mainfolder.user.vname, user_path(mainfolder.user) %></p>
          <p>Total subfolders: <%= mainfolder.subfolders.count %></p>
+         <p>Total arts: <%= getArtCounts(mainfolder) %></p>
          <p>Status: <%= getActivity(mainfolder.user) %>
             <% if getActivity(mainfolder.user) != "Online" && getActivity(mainfolder.user) != "Inoperable" %>
                for <%= distance_of_time_in_words_to_now getTime(mainfolder.user) %>

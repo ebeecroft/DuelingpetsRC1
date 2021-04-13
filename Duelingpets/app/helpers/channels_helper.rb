@@ -20,6 +20,12 @@ module ChannelsHelper
          return value
       end
 
+      def getMovieCounts(mainplaylist)
+         allMovies = Movie.all
+         movies = allMovies.select{|movie| movie.reviewed && movie.subplaylist.mainplaylist_id == mainplaylist.id}
+         return movies.count
+      end
+
       def getMainplaylistMusic(mainplaylist)
          allSubplaylists = mainplaylist.subplaylists.order("updated_on desc", "created_on desc")
          value = nil
@@ -113,6 +119,12 @@ module ChannelsHelper
                #Come back to this when subsheets is added
                mainplaylists = channelFound.mainplaylists
                @mainplaylists = Kaminari.paginate_array(mainplaylists).page(getChannelParams("Page")).per(10)
+               allPlaylists = Subplaylist.all
+               subplaylists = allPlaylists.select{|subplaylist| subplaylist.mainplaylist.channel_id == @channel.id}
+               @subplaylists = subplaylists.count
+               allMovies = Movie.all
+               movies = allMovies.select{|movie| movie.reviewed && movie.subplaylist.mainplaylist.channel_id == @channel.id}
+               @movies = movies.count
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == channelFound.user_id) || logged_in.pouch.privilege == "Admin"))

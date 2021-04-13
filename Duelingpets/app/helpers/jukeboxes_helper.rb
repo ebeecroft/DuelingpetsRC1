@@ -20,6 +20,12 @@ module JukeboxesHelper
          return value
       end
 
+      def getSoundCounts(mainsheet)
+         allSounds = Sound.all
+         sounds = allSounds.select{|sound| sound.reviewed && sound.subsheet.mainsheet_id == mainsheet.id}
+         return sounds.count
+      end
+
       def getMainsheetMusic(mainsheet)
          allSubsheets = mainsheet.subsheets.order("updated_on desc", "created_on desc")
          value = nil
@@ -113,6 +119,12 @@ module JukeboxesHelper
                #Come back to this when subsheets is added
                mainsheets = jukeboxFound.mainsheets
                @mainsheets = Kaminari.paginate_array(mainsheets).page(getJukeboxParams("Page")).per(10)
+               allSheets = Subsheet.all
+               subsheets = allSheets.select{|subsheet| subsheet.mainsheet.jukebox_id == @jukebox.id}
+               @subsheets = subsheets.count
+               allSounds = Sound.all
+               sounds = allSounds.select{|sound| sound.reviewed && sound.subsheet.mainsheet.jukebox_id == @jukebox.id}
+               @sounds = sounds.count
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == jukeboxFound.user_id) || logged_in.pouch.privilege == "Admin"))

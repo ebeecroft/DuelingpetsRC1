@@ -45,6 +45,8 @@
    <p>Group: <%= @jukebox.bookgroup.name %></p>
    <p>Viewer: <%= @jukebox.gviewer.name %></p>
    <p>Total mainsheets: <%= @jukebox.mainsheets.count %></p>
+   <p>Total subsheets: <%= @subsheets %></p>
+   <p>Total sounds: <%= @sounds %></p>
    <p>Status: <%= getActivity(@jukebox.user) %>
       <% if getActivity(@jukebox.user) != "Online" && getActivity(@jukebox.user) != "Inoperable" %>
          for <%= distance_of_time_in_words_to_now getTime(@jukebox.user) %>
@@ -72,6 +74,7 @@
       <% end %>
       <p class="formlinks">Composer: <%= getUserPrivilege(mainsheet.user) %><%= link_to mainsheet.user.vname, user_path(mainsheet.user) %></p>
       <p>Total subsheets: <%= mainsheet.subsheets.count %></p>
+      <p>Total sounds: <%= getSoundCounts(mainsheet) %></p>
       <p>Status: <%= getActivity(mainsheet.user) %>
          <% if getActivity(mainsheet.user) != "Online" && getActivity(mainsheet.user) != "Inoperable" %>
             for <%= distance_of_time_in_words_to_now getTime(mainsheet.user) %>

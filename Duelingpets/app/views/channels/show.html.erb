@@ -45,6 +45,8 @@
    <p>Group: <%= @channel.bookgroup.name %></p>
    <p>Viewer: <%= @channel.gviewer.name %></p>
    <p>Total mainplaylists: <%= @channel.mainplaylists.count %></p>
+   <p>Total subplaylists: <%= @subplaylists %></p>
+   <p>Total movies: <%= @movies %></p>
    <p>Status: <%= getActivity(@channel.user) %>
       <% if getActivity(@channel.user) != "Online" && getActivity(@channel.user) != "Inoperable" %>
          for <%= distance_of_time_in_words_to_now getTime(@channel.user) %>
@@ -82,6 +84,7 @@
          <% end %>
          <p class="formlinks">Director: <%= getUserPrivilege(mainplaylist.user) %><%= link_to mainplaylist.user.vname, user_path(mainplaylist.user) %></p>
          <p>Total subplaylists: <%= mainplaylist.subplaylists.count %></p>
+         <p>Total movies: <%= getMovieCounts(mainplaylist) %></p>
          <p>Status: <%= getActivity(mainplaylist.user) %>
             <% if getActivity(mainplaylist.user) != "Online" && getActivity(mainplaylist.user) != "Inoperable" %>
                for <%= distance_of_time_in_words_to_now getTime(mainplaylist.user) %>
