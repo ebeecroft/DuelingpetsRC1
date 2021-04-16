@@ -191,6 +191,7 @@ module GalleriesHelper
                            newGallery.created_on = currentTime
                            newGallery.updated_on = currentTime
                         end
+                        galleryCount = logged_in.galleries.count
                         #Determines the type of bookgroup the user belongs to
                         allGroups = Bookgroup.order("created_on desc")
                         allowedGroups = allGroups.select{|bookgroup| bookgroup.id <= getWritingGroup(logged_in, "Id")}
@@ -205,11 +206,18 @@ module GalleriesHelper
 
                         if(type == "create")
                            gallerycost = Fieldcost.find_by_name("Gallery")
-                           if(logged_in.pouch.amount - gallerycost.amount >= 0)
+                           if(galleryCount > 0 && logged_in.pouch.amount - gallerycost.amount >= 0)
                               if(@gallery.save)
                                  logged_in.pouch.amount -= gallerycost.amount
                                  @pouch = logged_in.pouch
                                  @pouch.save
+                                 flash[:success] = "#{@gallery.name} was successfully created."
+                                 redirect_to user_gallery_path(@user, @gallery)
+                              else
+                                 render "new"
+                              end
+                           elsif(galleryCount == 0)
+                              if(@gallery.save)
                                  flash[:success] = "#{@gallery.name} was successfully created."
                                  redirect_to user_gallery_path(@user, @gallery)
                               else

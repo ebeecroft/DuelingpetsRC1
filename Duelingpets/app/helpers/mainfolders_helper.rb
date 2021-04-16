@@ -125,16 +125,24 @@ module MainfoldersHelper
                            newMainfolder.updated_on = currentTime
                            newMainfolder.user_id = logged_in.id
                         end
-
+                        mainfolderCount = logged_in.mainfolders.count
                         @mainfolder = newMainfolder
                         @gallery = galleryFound
 
                         if(type == "create")
                            mainfoldercost = Fieldcost.find_by_name("Mainfolder")
-                           if(logged_in.pouch.amount - mainfoldercost.amount >= 0)
-                              logged_in.pouch.amount -= mainfoldercost.amount
-                              @pouch = logged_in.pouch
-                              @pouch.save
+                           if(mainfolderCount > 0 && logged_in.pouch.amount - mainfoldercost.amount >= 0)
+                              if(@mainfolder.save)
+                                 logged_in.pouch.amount -= mainfoldercost.amount
+                                 @pouch = logged_in.pouch
+                                 @pouch.save
+                                 updateGallery(@mainfolder.gallery)
+                                 flash[:success] = "#{@mainfolder.title} was successfully created."
+                                 redirect_to gallery_mainfolder_path(@gallery, @mainfolder)
+                              else
+                                 render "new"
+                              end
+                           elsif(mainfolderCount == 0)
                               if(@mainfolder.save)
                                  updateGallery(@mainfolder.gallery)
                                  flash[:success] = "#{@mainfolder.title} was successfully created."

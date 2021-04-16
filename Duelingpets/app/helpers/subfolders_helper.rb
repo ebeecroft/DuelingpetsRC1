@@ -121,17 +121,25 @@ module SubfoldersHelper
                            newSubfolder.updated_on = currentTime
                            newSubfolder.user_id = logged_in.id
                         end
-
+                        subfolderCount = logged_in.subfolders.count
                         @subfolder = newSubfolder
                         @mainfolder = mainfolderFound
 
                         if(type == "create")
                            subfoldercost = Fieldcost.find_by_name("Subfolder")
-                           if(logged_in.pouch.amount - subfoldercost.amount >= 0)
+                           if(subfolderCount > 0 && logged_in.pouch.amount - subfoldercost.amount >= 0)
                               if(@subfolder.save)
                                  logged_in.pouch.amount -= subfoldercost.amount
                                  @pouch = logged_in.pouch
                                  @pouch.save
+                                 updateGallery(@subfolder.mainfolder)
+                                 flash[:success] = "#{@subfolder.title} was successfully created."
+                                 redirect_to mainfolder_subfolder_path(@mainfolder, @subfolder)
+                              else
+                                 render "new"
+                              end
+                           elsif(subfolderCount == 0)
+                              if(@subfolder.save)
                                  updateGallery(@subfolder.mainfolder)
                                  flash[:success] = "#{@subfolder.title} was successfully created."
                                  redirect_to mainfolder_subfolder_path(@mainfolder, @subfolder)
