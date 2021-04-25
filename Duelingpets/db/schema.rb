@@ -448,8 +448,6 @@ ActiveRecord::Schema.define(version: 2021_03_21_034706) do
     t.integer "sweak_id"
     t.integer "eweak_id"
     t.integer "element_id"
-    t.datetime "created_on"
-    t.datetime "updated_on"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

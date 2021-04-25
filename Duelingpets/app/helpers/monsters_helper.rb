@@ -296,10 +296,7 @@ module MonstersHelper
                            monsterFound.reviewed = true
                            monsterFound.reviewed_on = currentTime
                            basecost = monsterFound.monstertype.basecost
-                           monstercost = Fieldcost.find_by_name("Monster")
-                           mcost = (monsterFound.cost * 0.10).round
-                           price = 20
-                           #price = (basecost + monstercost.amount + mcost)
+                           price = ((basecost + monsterFound.cost) * 0.70).round
                            pouch = Pouch.find_by_user_id(monsterFound.user_id)
                            #Add dreyterrium cost later
                            if(pouch.amount - price >= 0)

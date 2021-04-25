@@ -2,10 +2,10 @@
    <br>
    <% if current_user.pouch.privilege == "Admin" || current_user.id == @user.id %>
       <h2 class="subheader1">Funds</h2>
-      <p>Pouch: <%= getCurLimit("Pouch", @user) %> points</p>
-      <p><div class="container">Dreyore: <%= getCurLimit("Dreyore", @user) %></div> <div class="container"><%= button_to 'Extract', users_extractore_path(:id=>@user.id), method: :post, class: "button submitbutton" %></div></p>
-      <% if levelcheck("Emerald", @user) > 0 %>
-         <p>Emeralds: <%= getCurLimit("Emerald", @user) %></p>
+      <p>Pouch: <%= getCurLimit("Pouch", @user, "Limit") %> points</p>
+      <p><div class="container">Dreyore: <%= getCurLimit("Dreyore", @user, "Limit") %></div> <div class="container"><%= button_to 'Extract', users_extractore_path(:id=>@user.id), method: :post, class: "button submitbutton" %></div></p>
+      <% if getCurLimit("Emerald", @user, "Value") > 0 %>
+         <p>Emeralds: <%= getCurLimit("Emerald", @user, "Limit") %></p>
       <% end %>
       <br>
       <p>Feature Requests</p>
@@ -201,14 +201,14 @@
 <% if getUserContent(@user, "Galleries") != 0 || getUserContent(@user, "Channels") != 0 || getUserContent(@user, "Jukeboxes") != 0 || getUserContent(@user, "Bookworlds") != 0 || getUserContent(@user, "OCs") != 0 || getUserContent(@user, "Blog") != 0 || getUserContent(@user, "Adblog") != 0 || getUserContent(@user, "Activatedcolors") != 0 || getUserContent(@user, "Inactivecolors") != 0 %>
    <% if getUserContent(@user, "Galleries") != 0 %>
       <div class="container"><%= button_to "My Galleries", user_galleries_path(@user), method: :get, class: "button submitbutton" %></div>
-      <% if current_user && current_user.id == @user.id && levelcheck("Gallery", @user) > 0 %>
+      <% if current_user && current_user.id == @user.id && getCurLimit("Gallery", @user, "Value") > 0 %>
          <div class="container"><%= button_to "New Gallery", new_user_gallery_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
       <br>
-      <p>Gallery limit: <%= getCurLimit("Gallery", @user) %></p>
+      <p>Gallery limit: <%= getCurLimit("Gallery", @user, "Limit") %></p>
    <% else %>
       <p><%= @user.vname %> has not created any galleries yet.</p>
-      <% if current_user && current_user.id == @user.id && levelcheck("Gallery", @user) > 0 %>
+      <% if current_user && current_user.id == @user.id && getCurLimit("Gallery", @user, "Value") > 0 %>
          <br>
          <p><%= button_to "New Gallery", new_user_gallery_path(@user), method: :get, class: "button submitbutton" %></p>
       <% end %>
@@ -216,15 +216,15 @@
    <% if getUserContent(@user, "Channels") != 0 %>
       <br>
       <div class="container"><%= button_to "My Channels", user_channels_path(@user), method: :get, class: "button submitbutton" %></div>
-      <% if current_user && current_user.id == @user.id && levelcheck("Channel", @user) > 0 %>
+      <% if current_user && current_user.id == @user.id && getCurLimit("Channel", @user, "Value") > 0 %>
          <div class="container"><%= button_to "New Channel", new_user_channel_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
       <br>
-      <p>Channel limit: <%= getCurLimit("Channel", @user) %></p>
+      <p>Channel limit: <%= getCurLimit("Channel", @user, "Limit") %></p>
    <% else %>
       <br>
       <p><%= @user.vname %> has not created any channels yet.</p>
-      <% if current_user && current_user.id == @user.id && levelcheck("Channel", @user) > 0 %>
+      <% if current_user && current_user.id == @user.id && getCurLimit("Channel", @user, "Value") > 0 %>
          <br>
          <p><%= button_to "New Channel", new_user_channel_path(@user), method: :get, class: "button submitbutton" %></p>
       <% end %>
@@ -232,15 +232,15 @@
    <% if getUserContent(@user, "Jukeboxes") != 0 %>
       <br>
       <div class="container"><%= button_to "My Jukeboxes", user_jukeboxes_path(@user), method: :get, class: "button submitbutton" %></div>
-      <% if current_user && current_user.id == @user.id && levelcheck("Jukebox", @user) > 0 %>
+      <% if current_user && current_user.id == @user.id && getCurLimit("Jukebox", @user, "Value") > 0 %>
          <div class="container"><%= button_to "New Jukebox", new_user_jukebox_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
       <br>
-      <p>Jukebox limit: <%= getCurLimit("Jukebox", @user) %></p>
+      <p>Jukebox limit: <%= getCurLimit("Jukebox", @user, "Limit") %></p>
    <% else %>
       <br>
       <p><%= @user.vname %> has not created any jukeboxes yet.</p>
-      <% if current_user && current_user.id == @user.id && levelcheck("Jukebox", @user) > 0 %>
+      <% if current_user && current_user.id == @user.id && getCurLimit("Jukebox", @user, "Value") > 0 %>
          <br>
          <p><%= button_to "New Jukebox", new_user_jukebox_path(@user), method: :get, class: "button submitbutton" %></p>
       <% end %>
@@ -252,7 +252,7 @@
          <div class="container"><%= button_to "New Bookworld", new_user_bookworld_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
       <br>
-      <p>Book limit: <%= getCurLimit("Book", @user) %></p>
+      <p>Book limit: <%= getCurLimit("Book", @user, "Limit") %></p>
    <% else %>
       <br>
       <p><%= @user.vname %> has not created any bookworlds yet.</p>
@@ -264,11 +264,11 @@
    <% if getUserContent(@user, "OCs") != 0 %>
       <br>
       <div class="container"><%= button_to "My OCs", user_ocs_path(@user), method: :get, class: "button submitbutton" %></div>
-      <% if current_user && current_user.id == @user.id && levelcheck("OCup", @user) > 0 %>
+      <% if current_user && current_user.id == @user.id && getCurLimit("OCup", @user, "Value") > 0 %>
          <div class="container"><%= button_to "New OC", new_user_oc_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
       <br>
-      <p>OC limit: <%= getCurLimit("OCup", @user) %></p>
+      <p>OC limit: <%= getCurLimit("OCup", @user, "Limit") %></p>
    <% else %>
       <br>
       <p><%= @user.vname %> has not created any ocs yet.</p>
@@ -281,17 +281,17 @@
    <% if getUserContent(@user, "Blog") != 0 || getUserContent(@user, "Adblog") != 0 %>
       <br>
       <div class="container"><%= button_to "My Blog", user_blogs_path(@user), method: :get, class: "button submitbutton" %></div>
-      <% if current_user && current_user.id == @user.id && levelcheck("Blog", @user) > 0 %>
+      <% if current_user && current_user.id == @user.id && getCurLimit("Blog", @user, "Value") > 0 %>
          <div class="container"><%= button_to "New Blog", new_user_blog_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
       <br>
       <p>Blogs: <%= getUserContent(@user, "Blog") %></p>
       <p>Ads: <%= getUserContent(@user, "Adblog") %></p>
-      <p>Blog limit: <%= getCurLimit("Blog", @user) %></p>
+      <p>Blog limit: <%= getCurLimit("Blog", @user, "Limit") %></p>
    <% else %>
       <br>
       <p><%= @user.vname %> has not created any blogs yet.</p>
-      <% if current_user && current_user.id == @user.id && levelcheck("Blog", @user) > 0 %>
+      <% if current_user && current_user.id == @user.id && getCurLimit("Blog", @user, "Value") > 0 %>
          <br>
          <p><%= button_to "New Blog", new_user_blog_path(@user), method: :get, class: "button submitbutton" %></p>
       <% end %>
@@ -318,18 +318,18 @@
    <p><%= @user.vname %> does not have any content yet.</p>
    <% if current_user && current_user.id == @user.id %>
       <br>
-      <% if levelcheck("Gallery", @user) > 0 %>
+      <% if getCurLimit("Gallery", @user, "Value") > 0 %>
          <div class="container"><%= button_to "New Gallery", new_user_gallery_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
-      <% if levelcheck("Channel", @user) > 0 %>
+      <% if getCurLimit("Channel", @user, "Value") > 0 %>
          <div class="container"><%= button_to "New Channel", new_user_channel_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
-      <% if levelcheck("Jukebox", @user) > 0 %>
+      <% if getCurLimit("Jukebox", @user, "Value") > 0 %>
          <div class="container"><%= button_to "New Jukebox", new_user_jukebox_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
       <div class="container"><%= button_to "New Bookworld", new_user_bookworld_path(@user), method: :get, class: "button submitbutton" %></div>
       <div class="container"><%= button_to "New OC", new_user_oc_path(@user), method: :get, class: "button submitbutton" %></div>
-      <% if levelcheck("Blog", @user) > 0 %>
+      <% if getCurLimit("Blog", @user, "Value") > 0 %>
          <div class="container"><%= button_to "New Blog", new_user_blog_path(@user), method: :get, class: "button submitbutton" %></div>
       <% end %>
       <div class="container"><%= button_to "New Colorscheme", new_user_colorscheme_path(@user), method: :get, class: "button submitbutton" %></div>

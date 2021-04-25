@@ -300,9 +300,7 @@ module ItemsHelper
                            itemFound.reviewed = true
                            itemFound.reviewed_on = currentTime
                            basecost = itemFound.itemtype.basecost
-                           itemcost = Fieldcost.find_by_name("Item")
-                           purchasecost = (itemFound.cost * 0.10).round
-                           price = (basecost + itemcost.amount + purchasecost)
+                           price = ((basecost + itemFound.cost) * 0.70).round
                            pouch = Pouch.find_by_user_id(itemFound.user_id)
                            #Add dreyterrium cost later
                            if(pouch.amount - price >= 0)
@@ -312,7 +310,7 @@ module ItemsHelper
                               @pouch = pouch
                               @pouch.save
 
-                              #Adds the creature points to the economy
+                              #Adds the item points to the economy
                               newTransaction = Economy.new(params[:economy])
                               newTransaction.econtype = "Content"
                               newTransaction.content_type = "Item"

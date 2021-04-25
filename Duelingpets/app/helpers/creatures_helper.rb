@@ -315,9 +315,7 @@ module CreaturesHelper
                            creatureFound.reviewed = true
                            creatureFound.reviewed_on = currentTime
                            basecost = creatureFound.creaturetype.basecost
-                           creaturecost = Fieldcost.find_by_name("Creature")
-                           petcost = (creatureFound.cost * 0.10).round
-                           price = (basecost + creaturecost.amount + petcost)
+                           price = ((basecost + creatureFound.cost) * 0.70).round)
                            pouch = Pouch.find_by_user_id(creatureFound.user_id)
                            #Add dreyterrium cost later
                            if(pouch.amount - price >= 0)

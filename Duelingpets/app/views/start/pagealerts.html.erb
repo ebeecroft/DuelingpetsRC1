@@ -5,22 +5,22 @@
 <% provide(:h1, "Pagealerts") %>
 <div class="pageformat">
    <p>Creative content</p>
-   <% if alert("Jukebox") != 0 %>
+   <% if current_user.jukeboxes.count > 0 && alert("Jukebox") != 0 %>
       <p>Jukeboxes: <%= alertMessages("Jukebox", "Name") %></p>
    <% end %>
-   <% if alert("Gallery") != 0 %>
+   <% if current_user.galleries.count > 0 && alert("Gallery") != 0 %>
       <p>Galleries: <%= alertMessages("Gallery", "Name") %></p>
    <% end %>
-   <% if alert("Channel") != 0 %>
+   <% if current_user.channels.count > 0 && alert("Channel") != 0 %>
       <p>Channels: <%= alertMessages("Channel", "Name") %></p>
    <% end %>
-   <% if alert("Book") != 0 %>
+   <% if current_user.books.count > 0 && alert("Book") != 0 %>
       <p>Books: <%= alertMessages("Book", "Name") %></p>
    <% end %>
-   <% if alert("OC") != 0 %>
+   <% if current_user.ocs.count > 0 && alert("OC") != 0 %>
       <p>OCs: <%= alertMessages("OC", "Name") %></p>
    <% end %>
-   <% if alert("Blog") != 0 %>
+   <% if current_user.blogs.count > 0 && alert("Blog") != 0 %>
       <p>Blogs: <%= alertMessages("Blog", "Name") %></p>
    <% end %>
    <br>
@@ -36,7 +36,7 @@
    <% end %>
    <br>
    <p>Player items</p>
-   <% if alert("Partner") != 0 %>
+   <% if current_user.partners.count > 0 && alert("Partner") != 0 %>
       <p>Partners: <%= alertMessages("Partner", "Name") %></p>
    <% end %>
    <% if alert("Item") != 0 %>

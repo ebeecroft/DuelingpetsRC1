@@ -4,6 +4,7 @@ class CreateFieldcosts < ActiveRecord::Migration[5.2]
       t.string :name
       t.integer :amount
       t.string :econtype
+      t.string :pricetype
       t.datetime :created_on
       t.datetime :updated_on
       t.integer :baseinc_id
