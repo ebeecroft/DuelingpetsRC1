@@ -17,6 +17,19 @@ module BlogrepliesHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Blogreply"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def updateBlog(blog)
          blog.updated_on = currentTime
@@ -47,6 +60,14 @@ module BlogrepliesHelper
                      render "edit"
                   end
                elsif(type == "destroy")
+                  if(logged_in.pouch.privilege != "Admin")
+                     #Removes the content and decrements the owner's pouch
+                     cleanup = Fieldcost.find_by_name("Blogreplycleanup")
+                     replyFound.user.pouch.amount -= cleanup.amount
+                     @pouch = replyFound.user.pouch
+                     @pouch.save
+                     economyTransaction("Tax", cleanup.amount, replyFound.user_id)
+                  end
                   @blogreply.destroy
                   flash[:success] = "Reply was successfully removed."
                   if(logged_in.pouch.privilege == "Admin")
@@ -109,15 +130,10 @@ module BlogrepliesHelper
 
                         if(type == "create")
                            if(@blogreply.save)
-                              #arttag = Arttag.new(params[:arttag])
-                              #arttag.art_id = @art.id
-                              #arttag.tag1_id = 1
-                              #@arttag = arttag
-                              #@arttag.save
                               updateBlog(@blogreply.blog)
                               url = "http://www.duelingpets.net/blogreplies/review"
                               CommunityMailer.content_comments(@blogreply, "Blogreply", "Review", 0, url).deliver_now
-                              flash[:success] = "#Reply was successfully created."
+                              flash[:success] = "Reply was successfully created."
                               redirect_to user_blog_path(@blog.user, @blog)
                            else
                               render "new"
@@ -173,41 +189,33 @@ module BlogrepliesHelper
                            updateGallery(artFound.subfolder)
 
                            #Adds the points to the user's pouch
-                           #artpoints = Fieldcost.find_by_name("Art")
-                           #pointsForArt = artpoints.amount
-                           @blogreply = replyFound
-                           @blogreply.save
-                           #pouch = Pouch.find_by_user_id(@art.user_id)
-                           #pouch.amount += pointsForArt
-                           #@pouch = pouch
-                           #@pouch.save
-
-                           #Adds the art points to the economy
-                           #newTransaction = Economy.new(params[:economy])
-                           #newTransaction.econtype = "Content"
-                           #newTransaction.content_type = "Art"
-                           #newTransaction.name = "Source"
-                           #newTransaction.amount = pointsForArt
-                           #newTransaction.user_id = artFound.user_id
-                           #newTransaction.created_on = currentTime
-                           #@economytransaction = newTransaction
-                           #@economytransaction.save
-
-                           CommunityMailer.content_comments(@blogreply, "Blogreply", "Approved", 10, "None").deliver_now
-                           #allWatches = Watch.all
-                           #watchers = allWatches.select{|watch| (((watch.watchtype.name == "Arts" || watch.watchtype.name == "Blogarts") || (watch.watchtype.name == "Artsounds" || watch.watchtype.name == "Artmovies")) || (watch.watchtype.name == "Maincontent" || watch.watchtype.name == "All")) && watch.from_user.id != @art.user_id}
-                           #if(watchers.count > 0)
-                           #   watchers.each do |watch|
-                           #      UserMailer.new_art(@art, watch).deliver
-                           #   end
-                           #end
-                           value = "Reply was approved."
+                           blogreply = Fieldcost.find_by_name("Blogreply")
+                           cost = blogreply.amount
+                           if(pouchFound.amount - cost >= 0)
+                              economyTransaction("Sink", cost, replyFound.user_id)
+                              pouchFound.amount -= cost
+                              @pouch = pouchFound
+                              @pouch.save
+                              @blogreply = replyFound
+                              @blogreply.save
+                              CommunityMailer.content_comments(@blogreply, "Blogreply", "Approved", 10, "None").deliver_now
+                           
+                              #allWatches = Watch.all
+                              #watchers = allWatches.select{|watch| (((watch.watchtype.name == "Arts" || watch.watchtype.name == "Blogarts") || (watch.watchtype.name == "Artsounds" || watch.watchtype.name == "Artmovies")) || (watch.watchtype.name == "Maincontent" || watch.watchtype.name == "All")) && watch.from_user.id != @art.user_id}
+                              #if(watchers.count > 0)
+                              #   watchers.each do |watch|
+                              #      UserMailer.new_art(@art, watch).deliver
+                              #   end
+                              #end
+                              flash[:success] = "Reply was approved."
+                           else
+                              flash[:error] = "User can't afford the blogreply cost!"
+                           end
                         else
                            @blogreply = replyFound
                            CommunityMailer.content_denied(@blogreply, "Blogreply", "Denied", 0, "None").deliver_now
-                           value = "Reply was denied."
+                           flash[:success] = "Reply was denied."
                         end
-                        flash[:success] = value
                         redirect_to blogreplies_review_path
                      else
                         redirect_to root_path

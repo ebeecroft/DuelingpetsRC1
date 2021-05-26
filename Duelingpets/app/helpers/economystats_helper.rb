@@ -293,10 +293,10 @@ module EconomystatsHelper
                #firstContent = Narrative.first.created_on.year
             #end
          elsif(type == "Reply")
-            #allContents = Reply.all
-            #if(allContents.count != 0)
-               #firstContent = Reply.first.created_on.year
-            #end
+            allContents = Blogreply.all
+            if(allContents.count != 0)
+               firstContent = Blogreply.first.created_on.year
+            end
          elsif(type == "Soundcritique")
             #allContents = Soundcomment.all
             #if(allContents.count != 0)

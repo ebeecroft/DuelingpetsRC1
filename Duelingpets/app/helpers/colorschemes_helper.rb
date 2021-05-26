@@ -26,6 +26,19 @@ module ColorschemesHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the chapter points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Colorscheme"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       #Is back button necessary?
       def backButton
@@ -113,6 +126,7 @@ module ColorschemesHelper
                            @pouch = pouchFound
                            @pouch.save
                         end
+                        economyTransaction("Tax", cleanup.amount, colorschemeFound.user.id)
                         @colorscheme.destroy
                         if(logged_in.pouch.privilege == "Admin")
                            redirect_to colorschemes_list_path
@@ -220,18 +234,8 @@ module ColorschemesHelper
                            colors = Fieldcost.find_by_name("Colorscheme")
                            pointsForColors = colors.amount
                            pouchFound = Pouch.find_by_user_id(logged_in.id)
-                           pouchFound.amount += pointsForColors
-
-                           #Adds the colorscheme points to the economy
-                           newTransaction = Economy.new(params[:economy])
-                           newTransaction.econtype = "Content"
-                           newTransaction.content_type = "Colorscheme"
-                           newTransaction.name = "Source"
-                           newTransaction.amount = pointsForColors
-                           newTransaction.user_id = userFound.id
-                           newTransaction.created_on = currentTime
-                           @economytransaction = newTransaction
-                           @economytransaction.save
+                           pouchFound.amount -= pointsForColors
+                           economyTransaction("Sink", cleanup.amount, @colorscheme.user.id)
 
                            ContentMailer.content_created(@colorscheme, "Colorscheme", pointsForColors).deliver_later(wait: 5.minutes)
                            @pouch = pouchFound

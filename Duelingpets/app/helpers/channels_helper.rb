@@ -19,6 +19,32 @@ module ChannelsHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Channel"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
+      
+      def channelValue(channelFound)
+         channel = Fieldcost.find_by_name("Channel")
+         mainplaylist = Fieldcost.find_by_name("Mainplaylist")   
+         subplaylist = Fieldcost.find_by_name("Subplaylist")
+         movie = Fieldcost.find_by_name("Movie")
+         allPlaylists = Subplaylist.all
+         subplaylists = allPlaylists.select{|subplaylist| subplaylist.mainplaylit.channel_id == channelFound.id}
+         allMovies = Movie.all
+         movies = allMovies.select{|movie| movie.reviewed && movie.subplaylist.mainplaylist.channel_id == channelFound.id}
+         points = (channel.amount + (channelFound.mainplaylists.count * mainplaylist.amount) + (subplaylists.count * subplaylist.amount) + (movies.count * movie.amount))
+         return points
+      end
 
       def getMovieCounts(mainplaylist)
          allMovies = Movie.all
@@ -128,7 +154,12 @@ module ChannelsHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == channelFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
+                     #Gives the user points back for selling their channel
+                     points = (channelValue(channelFound) * 0.30).round
+                     channelFound.user.pouch.amount += points
+                     @pouch = channelFound.user.pouch
+                     @pouch.save
+                     economyTransaction("Source", points, channelFound.user_id)
                      @channel.destroy
                      flash[:success] = "#{@channel.name} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
@@ -210,6 +241,7 @@ module ChannelsHelper
                                  logged_in.pouch.amount -= channelcost.amount
                                  @pouch = logged_in.pouch
                                  @pouch.save
+                                 economyTransaction("Sink", channelcost.amount, logged_in.id)
                                  flash[:success] = "#{@channel.name} was successfully created."
                                  redirect_to user_channel_path(@user, @channel)
                               else

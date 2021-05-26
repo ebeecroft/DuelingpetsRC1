@@ -16,6 +16,19 @@ module SubfoldersHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Subfolder"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def updateGallery(mainfolder)
          mainfolder.updated_on = currentTime
@@ -65,7 +78,14 @@ module SubfoldersHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == subfolderFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
+                     if(logged_in.pouch.privilege != "Admin")
+                        #Removes the content and decrements the owner's pouch
+                        cleanup = Fieldcost.find_by_name("Subfoldercleanup")
+                        subfolderFound.user.pouch.amount -= cleanup.amount
+                        @pouch = artFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Tax", cleanup.amount, subfolderFound.user_id)
+                     end
                      @subfolder.destroy
                      flash[:success] = "#{subfolderFound.title} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
@@ -127,19 +147,12 @@ module SubfoldersHelper
 
                         if(type == "create")
                            subfoldercost = Fieldcost.find_by_name("Subfolder")
-                           if(subfolderCount > 0 && logged_in.pouch.amount - subfoldercost.amount >= 0)
+                           if(logged_in.pouch.amount - subfoldercost.amount >= 0)
                               if(@subfolder.save)
                                  logged_in.pouch.amount -= subfoldercost.amount
+                                 economyTransaction("Sink", subfoldercost.amount, subfolder.user_id)
                                  @pouch = logged_in.pouch
                                  @pouch.save
-                                 updateGallery(@subfolder.mainfolder)
-                                 flash[:success] = "#{@subfolder.title} was successfully created."
-                                 redirect_to mainfolder_subfolder_path(@mainfolder, @subfolder)
-                              else
-                                 render "new"
-                              end
-                           elsif(subfolderCount == 0)
-                              if(@subfolder.save)
                                  updateGallery(@subfolder.mainfolder)
                                  flash[:success] = "#{@subfolder.title} was successfully created."
                                  redirect_to mainfolder_subfolder_path(@mainfolder, @subfolder)

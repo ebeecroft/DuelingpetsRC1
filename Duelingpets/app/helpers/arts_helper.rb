@@ -20,6 +20,19 @@ module ArtsHelper
          return value
       end
 
+      def economyTransaction(type, points, artFound)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Art"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = artFound.user_id
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
+
       def updateGallery(subfolder)
          subfolder.updated_on = currentTime
          @subfolder = subfolder
@@ -76,7 +89,14 @@ module ArtsHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == artFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
+                     if(logged_in.pouch.privilege != "Admin")
+                        #Removes the content and decrements the owner's pouch
+                        cleanup = Fieldcost.find_by_name("Artcleanup")
+                        artFound.user.pouch.amount -= cleanup.amount
+                        @pouch = artFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Tax", cleanup.amount, artFound)
+                     end
                      @art.destroy
                      flash[:success] = "#{artFound.title} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
@@ -236,17 +256,7 @@ module ArtsHelper
                            pouch.amount += pointsForArt
                            @pouch = pouch
                            @pouch.save
-
-                           #Adds the art points to the economy
-                           newTransaction = Economy.new(params[:economy])
-                           newTransaction.econtype = "Content"
-                           newTransaction.content_type = "Art"
-                           newTransaction.name = "Source"
-                           newTransaction.amount = pointsForArt
-                           newTransaction.user_id = artFound.user_id
-                           newTransaction.created_on = currentTime
-                           @economytransaction = newTransaction
-                           @economytransaction.save
+                           economyTransaction("Source", pointsForArt, artFound)
 
                            ContentMailer.content_approved(@art, "Art", pointsForArt).deliver_now
                            #allWatches = Watch.all

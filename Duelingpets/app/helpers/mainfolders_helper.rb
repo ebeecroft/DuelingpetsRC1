@@ -16,6 +16,19 @@ module MainfoldersHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Mainfolder"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def updateGallery(gallery)
          gallery.updated_on = currentTime
@@ -69,7 +82,14 @@ module MainfoldersHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == mainfolderFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
+                     if(logged_in.pouch.privilege != "Admin")
+                        #Removes the content and decrements the owner's pouch
+                        cleanup = Fieldcost.find_by_name("Mainfoldercleanup")
+                        mainfolderFound.user.pouch.amount -= cleanup.amount
+                        @pouch = mainfolderFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Tax", cleanup.amount, mainfolderFound.user_id)
+                     end
                      @mainfolder.destroy
                      flash[:success] = "#{mainfolderFound.title} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
@@ -131,19 +151,12 @@ module MainfoldersHelper
 
                         if(type == "create")
                            mainfoldercost = Fieldcost.find_by_name("Mainfolder")
-                           if(mainfolderCount > 0 && logged_in.pouch.amount - mainfoldercost.amount >= 0)
+                           if(logged_in.pouch.amount - mainfoldercost.amount >= 0)
                               if(@mainfolder.save)
                                  logged_in.pouch.amount -= mainfoldercost.amount
+                                 economyTransaction("Sink", mainfoldercost.amount, mainfolder.user_id)
                                  @pouch = logged_in.pouch
                                  @pouch.save
-                                 updateGallery(@mainfolder.gallery)
-                                 flash[:success] = "#{@mainfolder.title} was successfully created."
-                                 redirect_to gallery_mainfolder_path(@gallery, @mainfolder)
-                              else
-                                 render "new"
-                              end
-                           elsif(mainfolderCount == 0)
-                              if(@mainfolder.save)
                                  updateGallery(@mainfolder.gallery)
                                  flash[:success] = "#{@mainfolder.title} was successfully created."
                                  redirect_to gallery_mainfolder_path(@gallery, @mainfolder)

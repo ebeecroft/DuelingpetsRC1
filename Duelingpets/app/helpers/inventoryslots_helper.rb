@@ -21,6 +21,19 @@ module InventoryslotsHelper
          return value
       end
 
+      def economyTransaction(type, points, userid)
+         #Adds the chapter points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Inventory"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
+
       def editCommons(type)
          slotFound = Inventoryslot.find_by_id(getInventoryslotParams("Id"))
          if(slotFound)
@@ -37,9 +50,24 @@ module InventoryslotsHelper
                   end
                elsif(type == "destroy")
                   if(checkSlot(slotFound))
-                     @inventoryslot.destroy
-                     flash[:success] = "Inventory slot #{slotFound.name} was successfully removed!"
-                     redirect_to user_inventory_path(@inventory.user, @inventory)
+                     #Removes the inventory and decrements the owner's pouch
+                     inventory = Fieldcost.find_by_name("Inventoryslotcleanup")
+                     if(slotFound.user.pouch.amount - inventory.amount >= 0)
+                        slotFound.user.pouch.amount -= inventory.amount
+                        @pouch = slotFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Tax", inventory.amount, slotFound.user.id)
+                        @inventoryslot.destroy
+                        flash[:success] = "Inventory slot #{slotFound.name} was successfully removed."
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to inventoryslots_path
+                        else
+                           redirect_to user_inventory_path(@inventory.user, @inventory)
+                        end
+                     else
+                        flash[:error] = "Owner has insufficient points to remove the inventoryslot!"
+                        redirect_to root_path
+                     end
                   else
                      flash[:error] = "Slot #{slotFound.name} has items and can't be removed!"
                      redirect_to root_path
@@ -93,6 +121,7 @@ module InventoryslotsHelper
                               logged_in.pouch.amount -= invslotcost.amount
                               @pouch = logged_in.pouch
                               @pouch.save
+                              economyTransaction("Sink", invslotcost.amount, inventoryFound.user.id)
                               flash[:success] = "#{@inventoryslot.name} was successfully created."
                               redirect_to user_inventory_path(@inventory.user, @inventory)
                            else

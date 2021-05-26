@@ -3,21 +3,22 @@
 <% provide(:keywords, "virtualpet, digitalpets, monster, battle") %>
 <% provide(:robots, "noindex, nofollow") %>
 <% provide(:h1, "Den of Darkness") %>
-<div class="formlinks"><%= paginate @monsters %></div>
-<br>
-<div class="pageformat">
-   <%= form_for(:monsterbattle, url: fight_monsterbattles_path(:fight_id=>activePet.fight.id), method: :post) do |form| %>
-      <% if(@monsters.count > 0) %>
-         <p>Pet: <%= form.collection_select(:partner_id, @pets, :id, :name) %></p>
-         <br>
-      <% end %>
-      <% @monsters.each_with_index do |monster, index| %>
-         <% if(index % 3 == 2) %>
-            <div class="container">
-         <% else %>
-            <!--Container space-->
-            <div class="container">
+<% if !current_user.pouch.firstdreyore %>
+   <div class="formlinks"><%= paginate @monsters %></div>
+   <br>
+   <div class="pageformat">
+      <%= form_for(:monsterbattle, url: fight_monsterbattles_path(:fight_id=>activePet.fight.id), method: :post) do |form| %>
+         <% if(@monsters.count > 0) %>
+            <p>Pet: <%= form.collection_select(:partner_id, @pets, :id, :name) %></p>
+            <br>
          <% end %>
+         <% @monsters.each_with_index do |monster, index| %>
+            <% if(index % 3 == 2) %>
+               <div class="container">
+            <% else %>
+               <!--Container space-->
+               <div class="container">
+            <% end %>
             <% if index == 0 %>
                <p class="formlinks"><%= link_to monster.name, user_monster_path(monster.user, monster) %><%= form.radio_button :monster_id, monster.id, :checked => true %></p>
             <% else %>
@@ -67,18 +68,24 @@
                   for <%= distance_of_time_in_words_to_now getTime(monster.user) %>
                <% end %>
             </p>
-         </div>
-         <% if index % 3 == 2 %>
-            <br>
-            <br>      
+            </div>
+            <% if index % 3 == 2 %>
+               <br>
+               <br>      
+            <% end %>
          <% end %>
-      <% end %>
-      <br>
-      <br>
-      <% if(@monsters.count > 0) %>
-         <p><%= form.submit "Battle", class: "button submitbutton" %></p>
          <br>
+         <br>
+         <% if(@monsters.count > 0) %>
+            <p><%= form.submit "Battle", class: "button submitbutton" %></p>
+            <br>
+         <% end %>
+         <p class="formlinks"><%= link_to 'Back', root_path %></p>
       <% end %>
-      <p class="formlinks"><%= link_to 'Back', root_path %></p>
-   <% end %>
-</div>
+   </div>
+<% else %>
+   <div class="pageformat">
+      <p>The Monsters are currently sleeping as you have not yet spent your newbie dreyore!</p>
+      <p>Come back here later when you have done so.</p>
+   </div>
+<% end %>

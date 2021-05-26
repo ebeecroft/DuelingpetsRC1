@@ -519,6 +519,7 @@ ActiveRecord::Schema.define(version: 2021_03_21_034706) do
     t.string "name"
     t.integer "amount"
     t.string "econtype"
+    t.string "pricetype"
     t.datetime "created_on"
     t.datetime "updated_on"
     t.integer "baseinc_id"

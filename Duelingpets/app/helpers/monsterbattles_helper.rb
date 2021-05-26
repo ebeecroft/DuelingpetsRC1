@@ -47,8 +47,6 @@ module MonsterbattlesHelper
                partner = Partner.find_by_id(monsterbattle.fight.partner.id)
                partner.inbattle = false
                partner.chp = monsterbattle.partner_chp
-               #@partner = partner
-               #@partner.save
                if(battlestatus != "Loss")
                   results3 = `public/Resources/Code/levelup/calc #{monsterbattle.partner_plevel} #{monsterbattle.partner_pexp} #{monsterbattle.monster.exp}`
                   levelups = results3.split(",")
@@ -62,6 +60,36 @@ module MonsterbattlesHelper
                      results4 = `public/Resources/Code/monloot/calc #{monsterbattle.monster_plevel} #{monsterbattle.monster_loot}`
                      dreyoreGained = results4.to_i
                      monsterbattle.dreyore_earned += dreyoreGained
+                     ore = Dreyore.find_by_name("Monster")
+                     if(ore.cur == 0)
+                        dreyoreGained = 0
+                     elsif(ore.cur > 0 && ore.cur - dreyoreGained >= 0)
+                        space = getCurLimit("Dreyore", current_user, "Number")
+                        if(space > 0)
+                           if(space < dreyoreGained)
+                              dreyoreGained = space
+                           end
+                           ore.cur -= dreyoreGained
+                           @ore = ore
+                           @ore.save
+                        else
+                           dreyoreGained = 0
+                        end
+                     else
+                        if(space > 0)
+                           if(space < ore.cur)
+                              dreyoreGained = space
+                              ore.cur -= space
+                           else
+                              dreyoreGained = ore.cur
+                              ore.cur = 0
+                           end
+                           @ore = ore
+                           @ore.save
+                        else
+                           dreyoreGained = 0
+                        end
+                     end
                      current_user.pouch.dreyoreamount += dreyoreGained
                      @pouch = current_user.pouch
                      @pouch.save
@@ -213,12 +241,17 @@ module MonsterbattlesHelper
                      @partner = partnerFound
                      @monsterbattle = newBattle
                      
-                     if(@monsterbattle.save)
-                        @partner.save
-                        flash[:success] = "#{@partner.name} is fighting #{@monsterbattle.monster.name}!"
-                        redirect_to fight_monsterbattle_path(@monsterbattle.fight, @monsterbattle)
+                     if(!logged_in.pouch.firstdreyore)
+                        if(@monsterbattle.save)
+                           @partner.save
+                           flash[:success] = "#{@partner.name} is fighting #{@monsterbattle.monster.name}!"
+                           redirect_to fight_monsterbattle_path(@monsterbattle.fight, @monsterbattle)
+                        else
+                           flash[:error] = "Battle was unable to be saved!"
+                           redirect_to root_path
+                        end
                      else
-                        flash[:error] = "Battle was unable to be saved!"
+                        flash[:error] = "You haven't spent your newbie ore yet!"
                         redirect_to root_path
                      end
                   else

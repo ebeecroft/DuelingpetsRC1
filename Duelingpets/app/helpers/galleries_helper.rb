@@ -19,6 +19,32 @@ module GalleriesHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Gallery"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
+      
+      def galleryValue(galleryFound)
+         gallery = Fieldcost.find_by_name("Gallery")
+         mainfolder = Fieldcost.find_by_name("Mainfolder")   
+         subfolder = Fieldcost.find_by_name("Subfolder")
+         art = Fieldcost.find_by_name("Art")
+         allFolders = Subfolder.all
+         subfolders = allFolders.select{|subfolder| subfolder.mainfolder.gallery_id == galleryFound.id}
+         allArts = Art.all
+         arts = allArts.select{|art| art.reviewed && art.subfolder.mainfolder.gallery_id == galleryFound.id}
+         points = (gallery.amount + (galleryFound.mainfolders.count * mainfolder.amount) + (subfolders.count * subfolder.amount) + (arts.count * art.amount))
+         return points
+      end
 
       def getArtCounts(mainfolder)
          allArts = Art.all
@@ -128,7 +154,12 @@ module GalleriesHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == galleryFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
+                     #Gives the user points back for selling their gallery
+                     points = (galleryValue(galleryFound) * 0.30).round
+                     galleryFound.user.pouch.amount += points
+                     @pouch = galleryFound.user.pouch
+                     @pouch.save
+                     economyTransaction("Source", points, galleryFound.user_id)
                      @gallery.destroy
                      flash[:success] = "#{@gallery.name} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
@@ -206,18 +237,12 @@ module GalleriesHelper
 
                         if(type == "create")
                            gallerycost = Fieldcost.find_by_name("Gallery")
-                           if(galleryCount > 0 && logged_in.pouch.amount - gallerycost.amount >= 0)
+                           if(logged_in.pouch.amount - gallerycost.amount >= 0)
                               if(@gallery.save)
                                  logged_in.pouch.amount -= gallerycost.amount
                                  @pouch = logged_in.pouch
                                  @pouch.save
-                                 flash[:success] = "#{@gallery.name} was successfully created."
-                                 redirect_to user_gallery_path(@user, @gallery)
-                              else
-                                 render "new"
-                              end
-                           elsif(galleryCount == 0)
-                              if(@gallery.save)
+                                 economyTransaction("Sink", gallerycost.amount, logged_in.id)
                                  flash[:success] = "#{@gallery.name} was successfully created."
                                  redirect_to user_gallery_path(@user, @gallery)
                               else

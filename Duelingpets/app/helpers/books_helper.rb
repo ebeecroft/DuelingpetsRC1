@@ -16,6 +16,47 @@ module BooksHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         if(type != "Tax")
+            newTransaction.econtype = "Content"
+         else
+            newTransaction.econtype = "Treasury"
+         end
+         newTransaction.content_type = "Book"
+         newTransaction.name = type
+         newTransaction.amount = points
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            glitchy = User.find_by_vname("Glitchy")
+            newTransaction.user_id = glitchy.id
+         end
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
+      
+      def getChapterCounts(book)
+         allChapters = Chapter.all
+         chapters = allChapters.select{|chapter| chapter.review && chapter.book_id == book.id}
+         return chapters.count
+      end
+      
+      def bookValue(bookFound)
+         chapter = Fieldcost.find_by_name("Chapter")
+         allChapters = Chapter.all
+         chapters = allChapters.select{|chapter| chapter.reviewed && chapter.book_id == bookFound.id}
+         points = 0
+         if(bookFound.bookworld.user_id == bookFound.user_id)
+            points = chapters.count * chapter.amount
+         else
+            points = bookFound.bookworld.price + (chapters.count * chapter.amount)
+         end
+         return points
+      end
 
       def updateBookworld(bookworld)
          bookworld.updated_on = currentTime
@@ -68,7 +109,12 @@ module BooksHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == bookFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
+                     #Gives the user points back for selling their book
+                     points = (bookValue(bookFound) * 0.30).round
+                     bookFound.user.pouch += points
+                     @pouch = bookFound.user.pouch
+                     @pouch.save
+                     economyTransaction("Source", points, bookFound.user_id)
                      @book.destroy
                      flash[:success] = "#{bookFound.title} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
@@ -146,12 +192,16 @@ module BooksHelper
                                     logged_in.pouch.amount -= bookworldFound.price
                                     @pouch = logged_in.pouch
                                     @pouch.save
+                                    economyTransaction("Sink", bookworldFound.price, logged_in.id)
 
-                                    #Might add a small tax of 10%
                                     #Increment the worldOwner's pouch
-                                    bookworldFound.user.pouch.amount += bookworldFound.price
+                                    tax = bookworldFound.price * 0.30
+                                    points = bookworldFound.price - tax
+                                    bookworldFound.user.pouch.amount += points
                                     @pouch2 = bookworldFound.user.pouch
                                     @pouch2.save
+                                    economyTransaction("Source", points, bookworldFound.user_id)
+                                    economyTransaction("Tax", tax, "Glitchy")
                                  end
 
                                  updateBookworld(@book.bookworld)

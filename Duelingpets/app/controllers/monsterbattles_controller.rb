@@ -1,5 +1,6 @@
 class MonsterbattlesController < ApplicationController
    include MonsterbattlesHelper
+   include EconomyretrievalHelper
 
    def index
       mode "index"

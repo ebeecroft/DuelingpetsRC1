@@ -18,6 +18,30 @@ module BookworldsHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Bookworld"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
+      
+      def bookworldValue(bookworldFound)
+         bookworld = Fieldcost.find_by_name("Bookworld")
+         chapter = Fieldcost.find_by_name("Chapter")
+         allBooks = Book.all
+         books = allBooks.select{|book| book.bookworld_id == bookworldFound.id}
+         allChapters = Chapter.all
+         chapters = allChapters.select{|chapter| chapter.reviewed && chapter.book.bookworld_id == bookworldFound.id}
+         points = (bookworld.amount + (books.count * bookworldFound.price) + (chapters.count * chapter.amount))
+         return points
+      end
 
       def indexCommons
          bookworlds = ""
@@ -70,37 +94,36 @@ module BookworldsHelper
          bookworldFound = Bookworld.find_by_name(getBookworldParams("Id"))
          if(bookworldFound)
             removeTransactions
-            #if((current_user && ((bookworldFound.user_id == current_user.id) || (current_user.pouch.privilege == "Admin"))))
-               #visitTimer(type, blogFound)
-               #cleanupOldVisits
-               @bookworld = bookworldFound
+            @bookworld = bookworldFound
 
-               #Come back to this when subsheets is added
-               books = bookworldFound.books
-               @books = Kaminari.paginate_array(books).page(getBookworldParams("Page")).per(10)
-               if(type == "destroy")
-                  logged_in = current_user
-                  if(logged_in && ((logged_in.id == bookworldFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
-                     @bookworld.destroy
-                     flash[:success] = "#{@bookworld.name} was successfully removed."
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to bookworlds_list_path
-                     else
-                        redirect_to user_bookworlds_path(bookworldFound.user)
-                     end
+            #Come back to this when subsheets is added
+            books = bookworldFound.books
+            @books = Kaminari.paginate_array(books).page(getBookworldParams("Page")).per(10)
+            if(type == "destroy")
+               logged_in = current_user
+               if(logged_in && ((logged_in.id == bookworldFound.user_id) || logged_in.pouch.privilege == "Admin"))
+                  #Gives the user points back for selling their gallery
+                  points = (bookworldValue(galleryFound) * 0.30).round
+                  bookworldFound.user.pouch.amount += points
+                  @pouch = bookworldFound.user.pouch
+                  @pouch.save
+                  economyTransaction("Source", points, bookworldFound.user_id)
+                  @bookworld.destroy
+                  flash[:success] = "#{@bookworld.name} was successfully removed."
+                  if(logged_in.pouch.privilege == "Admin")
+                     redirect_to bookworlds_list_path
                   else
-                     redirect_to root_path
+                     redirect_to user_bookworlds_path(bookworldFound.user)
                   end
+               else
+                  redirect_to root_path
                end
-            #else
-            #   redirect_to root_path
-            #end
+            end
          else
             render "webcontrols/missingpage"
          end
       end
-
+      
       def mode(type)
          if(timeExpired)
             logout_user
@@ -155,6 +178,7 @@ module BookworldsHelper
                                  logged_in.pouch.amount -= bookworldcost.amount
                                  @pouch = logged_in.pouch
                                  @pouch.save
+                                 economyTransaction("Sink", bookworldcost.amount, logged_in.id)
                                  flash[:success] = "#{@bookworld.name} was successfully created."
                                  redirect_to user_bookworld_path(@user, @bookworld)
                               else
@@ -228,22 +252,11 @@ module BookworldsHelper
                      flash[:error] = "You can't set points below 0!"
                      redirect_to root_path
                   else
-                     #hoard = Dragonhoard.find_by_id(fieldcostFound.dragonhoard_id)
-                     #basecost = 400
-                     #if(hoard.treasury - basecost > -1)
-                         #Decreases the points left in the dragonhoard
                      bookworldFound.price = pointchange
                      @bookworld = bookworldFound
                      @bookworld.save
-                           #hoard.treasury -= basecost
-                           #@dragonhoard = hoard
-                           #@dragonhoard.save
                      flash[:success] = "Bookworld #{bookworld.name} price was successfully increased/decreased!"
                      redirect_to user_bookworld_path(@bookworld.user, @bookworld)
-                        #else
-                           #flash[:error] = "The Dragonhoard points are insufficient!"
-                           #redirect_to root_path
-                        #end
                   end
                else
                   render "webcontrols/missingpage"

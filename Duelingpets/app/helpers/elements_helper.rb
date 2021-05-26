@@ -18,6 +18,19 @@ module ElementsHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the chapter points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Element"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def getChartData(element, type)
          chart = Elementchart.find_by_element_id(element)
@@ -93,13 +106,23 @@ module ElementsHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == elementFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
-                     @element.destroy
-                     flash[:success] = "#{@element.name} was successfully removed."
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to elements_list_path
+                     #Removes the content and decrements the owner's pouch
+                     element = Fieldcost.find_by_name("Element")
+                     if(elementFound.user.pouch.amount - element.amount >= 0)
+                        elementFound.user.pouch.amount -= element.amount #Remember to come back later to change to emeralds
+                        @pouch = elementFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Tax", price, elementFound.user.id)
+                        @element.destroy
+                        flash[:success] = "#{@element.name} was successfully removed."
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to elements_list_path
+                        else
+                           redirect_to user_elements_path(elementFound.user)
+                        end
                      else
-                        redirect_to user_elements_path(elementFound.user)
+                        flash[:error] = "Owner has insufficient points to remove the element!"
+                        redirect_to root_path
                      end
                   else
                      redirect_to root_path
@@ -242,48 +265,32 @@ module ElementsHelper
                if(logged_in)
                   elementFound = Element.find_by_id(getElementParams("ElementId"))
                   if(elementFound)
-                     pouchFound = Pouch.find_by_user_id(logged_in.id)
-                     if((logged_in.pouch.privilege == "Admin") || ((pouchFound.privilege == "Keymaster") || (pouchFound.privilege == "Reviewer")))
+                     pouchFound = Pouch.find_by_user_id(elementFound.user.id)
+                     if((logged_in.pouch.privilege == "Admin") || ((logged_in.pouch.privilege == "Keymaster") || (logged_in.pouch.privilege == "Reviewer")))
                         if(type == "approve")
-                           #Might revise this section later
                            elementFound.reviewed = true
                            elementFound.reviewed_on = currentTime
-                           #basecost = creatureFound.creaturetype.basecost
-                           #creaturecost = Fieldcost.find_by_name("Creature")
-                           #petcost = (creatureFound.cost * 0.10).round
-                           #price = (basecost + creaturecost.amount + petcost)
-                           #pouch = Pouch.find_by_user_id(creatureFound.user_id)
-                           #Add dreyterrium cost later
-                           #if(pouch.amount - price >= 0)
+                           element = Fieldcost.find_by_name("Element")
+                           if(pouch.amount - element.amount >= 0)
                               @element = elementFound
                               @element.save
-                              #pouch.amount -= price
-                              #@pouch = pouch
-                              #@pouch.save
-
-                              #Adds the creature points to the economy
-                              #newTransaction = Economy.new(params[:economy])
-                              #newTransaction.econtype = "Content"
-                              #newTransaction.content_type = "Creature"
-                              #newTransaction.name = "Sink"
-                              #newTransaction.amount = price
-                              #newTransaction.user_id = creatureFound.user_id
-                              #newTransaction.created_on = currentTime
-                              #@economytransaction = newTransaction
-                              #@economytransaction.save
-                              ContentMailer.content_approved(@element, "Element", price).deliver_now
-                              value = "#{@element.user.vname}'s element #{@element.name} was approved."
-                           #else
-                           #   flash[:error] = "Insufficient funds to create a creature!"
-                           #   redirect_to user_path(logged_in.id)
-                           #end
+                              pouch.amount -= element.amount #Need to change to emeralds later
+                              @pouch = pouch
+                              @pouch.save
+                              economyTransaction("Sink", element.amount, elementFound.user.id)
+                              ContentMailer.content_approved(@element, "Element", element.amount).deliver_now
+                              flash[:success] = "#{@element.user.vname}'s element #{@element.name} was approved."
+                              redirect_to elements_review_path
+                           else
+                              flash[:error] = "Owner has insufficient funds to create an element!"
+                              redirect_to elements_review_path
+                           end
                         else
                            @element = elementFound
                            ContentMailer.content_denied(@element, "Element").deliver_now
-                           value = "#{@element.user.vname}'s element #{@element.name} was denied."
+                           flash[:success] = "#{@element.user.vname}'s element #{@element.name} was denied."
+                           redirect_to elements_review_path
                         end
-                        flash[:success] = value
-                        redirect_to elements_review_path
                      else
                         redirect_to root_path
                      end

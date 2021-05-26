@@ -20,6 +20,19 @@ module ItemsHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the chapter points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Item"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def getItemStats(item, type)
          stats = ""
@@ -138,13 +151,23 @@ module ItemsHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == itemFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
-                     @item.destroy
-                     flash[:success] = "#{@item.name} was successfully removed."
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to items_list_path
+                     #Removes the content and decrements the owner's pouch
+                     price = itemFound.cost * 0.60
+                     if(itemFound.user.pouch.amount - price >= 0)
+                        itemFound.user.pouch.amount -= price
+                        @pouch = itemFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Tax", price, itemFound.user.id)
+                        @item.destroy
+                        flash[:success] = "#{itemFound.name} was successfully removed."
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to items_list_path
+                        else
+                           redirect_to user_items_path(itemFound.user)
+                        end
                      else
-                        redirect_to user_items_path(itemFound.user)
+                        flash[:error] = "Owner has insufficient points to remove the item!"
+                        redirect_to root_path
                      end
                   else
                      redirect_to root_path
@@ -297,6 +320,7 @@ module ItemsHelper
                      pouchFound = Pouch.find_by_user_id(logged_in.id)
                      if((logged_in.pouch.privilege == "Admin") || ((pouchFound.privilege == "Keymaster") || (pouchFound.privilege == "Reviewer")))
                         if(type == "approve")
+                           #Might revise this section later
                            itemFound.reviewed = true
                            itemFound.reviewed_on = currentTime
                            basecost = itemFound.itemtype.basecost
@@ -309,19 +333,10 @@ module ItemsHelper
                               pouch.amount -= price
                               @pouch = pouch
                               @pouch.save
-
-                              #Adds the item points to the economy
-                              newTransaction = Economy.new(params[:economy])
-                              newTransaction.econtype = "Content"
-                              newTransaction.content_type = "Item"
-                              newTransaction.name = "Sink"
-                              newTransaction.amount = price
-                              newTransaction.user_id = itemFound.user_id
-                              newTransaction.created_on = currentTime
-                              @economytransaction = newTransaction
-                              @economytransaction.save
+                              economyTransaction("Sink", price, itemFound.user.id)
                               ContentMailer.content_approved(@item, "Item", price).deliver_now
-                              value = "#{@item.user.vname}'s item #{@item.name} was approved."
+                              flash[:success] = "#{@item.user.vname}'s item #{@item.name} was approved."
+                              redirect_to items_review_path
                            else
                               flash[:error] = "Insufficient funds to create an item!"
                               redirect_to user_path(logged_in.id)
@@ -329,10 +344,9 @@ module ItemsHelper
                         else
                            @item = itemFound
                            ContentMailer.content_denied(@item, "Item").deliver_now
-                           value = "#{@item.user.vname}'s item #{@item.name} was denied."
+                           flash[:success] = "#{@item.user.vname}'s item #{@item.name} was denied."
+                           redirect_to items_review_path
                         end
-                        flash[:success] = value
-                        redirect_to items_review_path
                      else
                         redirect_to root_path
                      end

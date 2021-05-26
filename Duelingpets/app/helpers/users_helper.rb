@@ -31,7 +31,11 @@ module UsersHelper
             end
          elsif(type == "Dreyore")
             max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free3 + user.pouch.pouchslot.member3))
-            level = (user.pouch.dreyoreamount.to_s + "/" + max.to_s)
+            if(result == "Limit")
+               level = (user.pouch.dreyoreamount.to_s + "/" + max.to_s)
+            else
+               level = max - user.pouch.dreyoreamount
+            end
          elsif(type == "OCup")
             max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free5 + user.pouch.pouchslot.member5))
             if(result == "Limit")
@@ -362,31 +366,45 @@ module UsersHelper
             elsif(type == "extractore")
                userFound = User.find_by_id(getUserParams("Id"))
                if(current_user && userFound && userFound.id == current_user.id)
-                  if(userFound.pouch.dreyterriumamount > 0)
-                     hoard = Dragonhoard.find_by_id(1)
-                     hoard.dreyterrium_extracted += 1
-                     if(hoard.dreyterrium_extracted < hoard.dreyterriumchange)
+                  if(userFound.pouch.dreyoreamount > 0)
+                     #Determines what ore type we are looking at
+                     oreFound = ""
+                     if(userFound.pouch.firstdreyore)
+                        oreFound = Dreyore.find_by_name("Newbie")
+                     else
+                        oreFound = Dreyore.find_by_name("Monster")
+                     end
+                     
+                     #Determines what to do with the current ore
+                     oreFound.extracted += 1
+                     if(oreFound.extracted < oreFound.change)
                         #Gives the player points based on the current value
-                        points = hoard.dreyterriumcurrent_value
+                        points = oreFound.price
                         userFound.pouch.amount += points
-                        userFound.pouch.dreyterriumamount -= 1
+                        userFound.pouch.dreyoreamount -= 1
+                        if(userFound.pouch.dreyoreamount == 0 && userFound.pouch.firstdreyore)
+                           userFound.pouch.firstdreyore = false
+                        end
                         @pouch = userFound.pouch
                         @pouch.save
                      else
-                        #Flucates the price of dreyterrium
-                        hoard.dreyterriumcurrent_value += 1
-                        hoard.dreyterrium_extracted = 0
-                        points = hoard.dreyterriumcurrent_value
+                        #Flucates the price of dreyore
+                        oreFound.extracted = 0
+                        oreFound.price += 1
+                        points = oreFound.price
                         userFound.pouch.amount += points
-                        userFound.pouch.dreyterriumamount -= 1
+                        userFound.pouch.dreyoreamount -= 1
+                        if(userFound.pouch.dreyoreamount == 0 && userFound.pouch.firstdreyore)
+                           userFound.pouch.firstdreyore = false
+                        end
                         @pouch = userFound.pouch
                         @pouch.save
                      end
-                     @dragonhoard = hoard
-                     @dragonhoard.save
+                     @ore = oreFound
+                     @ore.save
                      redirect_to user_path(userFound)
                   else
-                     flash[:error] = "You don't have any dreyterrium to extract!"
+                     flash[:error] = "You don't have any dreyore to extract!"
                      redirect_to root_path
                   end
                else

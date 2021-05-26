@@ -22,6 +22,19 @@ module ChaptersHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the chapter points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Chapter"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def updateBookworld(book)
          book.updated_on = currentTime
@@ -93,7 +106,12 @@ module ChaptersHelper
                         end
                      end
 
-                     #Eventually consider adding a sink to this
+                     #Removes the content and decrements the owner's pouch
+                     cleanup = Fieldcost.find_by_name("Chaptercleanup")
+                     chapterFound.user.pouch.amount -= cleanup.amount
+                     @pouch = artFound.user.pouch
+                     @pouch.save
+                     economyTransaction("Tax", cleanup.amount, chapterFound.user.id)
                      @chapter.destroy
                      flash[:success] = "Chapter #{chapterFound.title} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
@@ -262,17 +280,7 @@ module ChaptersHelper
                            pouch.amount += pointsForChapter
                            @pouch = pouch
                            @pouch.save
-
-                           #Adds the oc points to the economy
-                           newTransaction = Economy.new(params[:economy])
-                           newTransaction.econtype = "Content"
-                           newTransaction.content_type = "Chapter"
-                           newTransaction.name = "Source"
-                           newTransaction.amount = pointsForChapter
-                           newTransaction.user_id = chapterFound.user_id
-                           newTransaction.created_on = currentTime
-                           @economytransaction = newTransaction
-                           @economytransaction.save
+                           economyTransaction("Source", pointsForChapter, @chapter.user.id)
 
                            ContentMailer.content_approved(@chapter, "Chapter", pointsForChapters).deliver_now
                            #allWatches = Watch.all

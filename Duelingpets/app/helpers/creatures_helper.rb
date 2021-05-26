@@ -18,6 +18,19 @@ module CreaturesHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the chapter points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Creature"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def getCreatureStats(creature, type)
          value = 0
@@ -154,13 +167,23 @@ module CreaturesHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == creatureFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
-                     @creature.destroy
-                     flash[:success] = "#{@creature.name} was successfully removed."
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to creatures_list_path
+                     #Removes the content and decrements the owner's pouch
+                     price = creatureFound.cost * 0.60
+                     if(creatureFound.user.pouch.amount - price >= 0)
+                        creatureFound.user.pouch.amount -= price
+                        @pouch = creatureFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Tax", price, creatureFound.user.id)
+                        @creature.destroy
+                        flash[:success] = "#{@creature.name} was successfully removed."
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to creatures_list_path
+                        else
+                           redirect_to user_creatures_path(creatureFound.user)
+                        end
                      else
-                        redirect_to user_creatures_path(creatureFound.user)
+                        flash[:error] = "Owner has insufficient points to remove the creature!"
+                        redirect_to root_path
                      end
                   else
                      redirect_to root_path
@@ -315,7 +338,7 @@ module CreaturesHelper
                            creatureFound.reviewed = true
                            creatureFound.reviewed_on = currentTime
                            basecost = creatureFound.creaturetype.basecost
-                           price = ((basecost + creatureFound.cost) * 0.70).round)
+                           price = ((basecost + creatureFound.cost) * 0.70).round
                            pouch = Pouch.find_by_user_id(creatureFound.user_id)
                            #Add dreyterrium cost later
                            if(pouch.amount - price >= 0)
@@ -324,17 +347,7 @@ module CreaturesHelper
                               pouch.amount -= price
                               @pouch = pouch
                               @pouch.save
-
-                              #Adds the creature points to the economy
-                              newTransaction = Economy.new(params[:economy])
-                              newTransaction.econtype = "Content"
-                              newTransaction.content_type = "Creature"
-                              newTransaction.name = "Sink"
-                              newTransaction.amount = price
-                              newTransaction.user_id = creatureFound.user_id
-                              newTransaction.created_on = currentTime
-                              @economytransaction = newTransaction
-                              @economytransaction.save
+                              economyTransaction("Sink", price, creatureFound.user.id)
                               ContentMailer.content_approved(@creature, "Creature", price).deliver_now
                               value = "#{@creature.user.vname}'s creature #{@creature.name} was approved."
                            else

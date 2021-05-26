@@ -20,18 +20,14 @@ module BookgroupretrievalHelper
          #Determines the group
          if(age < 7)
             groupValue = 0
-         elsif(age < 13)
+         elsif(age < 15)
             groupValue = 1
-         elsif(age < 19)
+         elsif(age < 23)
             groupValue = 2
-         elsif(age < 25)
-            groupValue = 3
          elsif(age < 31)
+            groupValue = 3
+         elsif(age >= 31)
             groupValue = 4
-         elsif(age < 37)
-            groupValue = 5
-         elsif(age >= 37)
-            groupValue = 6
          end
          if(type == "Name")
             if(groupValue > 0)
@@ -53,34 +49,26 @@ module BookgroupretrievalHelper
 
          #Group values
          lizardo = nonBot.select{|user| getWritingGroup(user, "Age") < 7}
-         rabbit = nonBot.select{|user| getWritingGroup(user, "Age")  < 13}
-         blueland = nonBot.select{|user| getWritingGroup(user, "Age") < 19}
-         dragon = nonBot.select{|user| getWritingGroup(user, "Age") < 25}
+         rabbit = nonBot.select{|user| getWritingGroup(user, "Age")  < 15}
+         blueland = nonBot.select{|user| getWritingGroup(user, "Age") < 23}
          silverwing = nonBot.select{|user| getWritingGroup(user, "Age") < 31}
-         harahpin = nonBot.select{|user| getWritingGroup(user, "Age") < 37}
-         rings = nonBot.select{|user| getWritingGroup(user, "Age") >= 37}
+         pantorian = nonBot.select{|user| getWritingGroup(user, "Age") >= 31}
 
          #Count values
          rabbitCount = rabbit.count - lizardo.count
          bluelandCount = blueland.count - rabbitCount - lizardo.count
-         dragonCount = dragon.count - bluelandCount - rabbitCount - lizardo.count
-         silverwingCount = silverwing.count - dragonCount - bluelandCount - rabbitCount - lizardo.count
-         harahpinCount = harahpin.count - silverwingCount - dragonCount - bluelandCount - rabbitCount - lizardo.count
-         ringsCount = rings.count
+         silverwingCount = silverwing.count - bluelandCount - rabbitCount - lizardo.count
+         pantorianCount = pantorian.count
  
          value = 0
          if(name == "Rabbit")
             value = rabbitCount
          elsif(name == "Blueland")
             value = bluelandCount
-         elsif(name == "Dragon")
-            value = dragonCount
          elsif(name == "Silverwing")
             value = silverwingCount
-         elsif(name == "Harahpin")
-            value = harahpinCount
-         elsif(name == "Rings")
-            value = ringsCount
+         elsif(name == "Pantorians")
+            value = pantorianCount
          end
          return value
       end

@@ -20,6 +20,19 @@ module EquipslotsHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the chapter points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Equip"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def getEquipItemName(slotindex, inventoryslot, type)
          item = -1
@@ -502,9 +515,24 @@ module EquipslotsHelper
                   end
                elsif(type == "destroy")
                   if(checkSlot(slotFound))
-                     @equipslot.destroy
-                     flash[:success] = "Equip slot #{slotFound.name} was successfully removed!"
-                     redirect_to partner_equip_path(@equip.partner, @equip)
+                     #Removes the equip and decrements the owner's pouch
+                     equip = Fieldcost.find_by_name("Equipslotcleanup")
+                     if(slotFound.user.pouch.amount - equip.amount >= 0)
+                        slotFound.user.pouch.amount -= equip.amount
+                        @pouch = slotFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Tax", equip.amount, slotFound.user.id)
+                        @equip.destroy
+                        flash[:success] = "Equip slot #{slotFound.name} was successfully removed."
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to equips_path
+                        else
+                           redirect_to partner_equip_path(@equip.partner, @equip)
+                        end
+                     else
+                        flash[:error] = "Owner has insufficient points to remove the equipslot!"
+                        redirect_to root_path
+                     end
                   else
                      flash[:error] = "Slot #{slotFound.name} has items and can't be removed!"
                      redirect_to root_path
@@ -561,6 +589,7 @@ module EquipslotsHelper
                               logged_in.pouch.amount -= equipslotcost.amount
                               @pouch = logged_in.pouch
                               @pouch.save
+                              economyTransaction("Sink", equipslotcost, equipFound.user.id)
                               flash[:success] = "#{@equipslot.name} was successfully created."
                               redirect_to partner_equip_path(@equip.partner, @equip)
                            else

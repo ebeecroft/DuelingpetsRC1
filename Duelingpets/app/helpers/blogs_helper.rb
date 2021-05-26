@@ -25,129 +25,26 @@ module BlogsHelper
          end
          return value
       end
-
-      def blogadPricing(blog)
-         #Keeps track of the price
-         pricetag = 0
-
-         #Banner Pricing(36000)
-         if(!blog.adbannerpurchased && blog.adbanner.to_s != "")
-            bannercost = Fieldcost.find_by_name("Banner")
-            pricetag -= bannercost.amount
-         end
-
-         #Large Image Pricing(24000)
-         if(!blog.largeimage1purchased && blog.largeimage1.to_s != "")
-            largeimage = Fieldcost.find_by_name("Largeimage")
-            pricetag -= largeimage.amount
-         end
-
-         if(!blog.largeimage2purchased && blog.largeimage2.to_s != "")
-            largeimage = Fieldcost.find_by_name("Largeimage")
-            pricetag -= largeimage.amount
-         end
-
-         if(!blog.largeimage3purchased && blog.largeimage3.to_s != "")
-            largeimage = Fieldcost.find_by_name("Largeimage")
-            pricetag -= largeimage.amount
-         end
-
-         #Small Image Pricing(10000)
-         if(!blog.smallimage1purchased && blog.smallimage1.to_s != "")
-            smallimage = Fieldcost.find_by_name("Smallimage")
-            pricetag -= smallimage.amount
-         end
-
-         if(!blog.smallimage2purchased && blog.smallimage2.to_s != "")
-            smallimage = Fieldcost.find_by_name("Smallimage")
-            pricetag -= smallimage.amount
-         end
-
-         if(!blog.smallimage3purchased && blog.smallimage3.to_s != "")
-            smallimage = Fieldcost.find_by_name("Smallimage")
-            pricetag -= smallimage.amount
-         end
-
-         if(!blog.smallimage4purchased && blog.smallimage4.to_s != "")
-            smallimage = Fieldcost.find_by_name("Smallimage")
-            pricetag -= smallimage.amount
-         end
-
-         if(!blog.smallimage5purchased && blog.smallimage5.to_s != "")
-            smallimage = Fieldcost.find_by_name("Smallimage")
-            pricetag -= smallimage.amount
-         end
-
-         #Music Pricing(500)
-         if(!blog.musicpurchased && (blog.ogg.to_s != "" || blog.mp3.to_s != ""))
-            musiccost = Fieldcost.find_by_name("MusicAd")
-            pricetag -= musiccost.amount
-         end
-         return pricetag
-      end
-
-      def saveCommons(blog, user, type)
-         @blog = blog
-         @user = user
-         if(@blog.save)
-            url = "http://www.duelingpets.net/blogs/review"
-            ContentMailer.content_review(@blog, "Blog", url).deliver_later(wait: 5.minutes)
-            flash[:success] = "#{@blog.user.vname} blog #{@blog.title} was successfully created."
-            redirect_to user_blog_path(@user, @blog)
+      
+      def economyTransaction(type, points, userid)
+         #Performs a variety of actions depending if it is a blog or an adblog
+         newTransaction = Economy.new(params[:economy])
+         if(type == "Tax")
+            newTransaction.econtype = "Treasury"
          else
-            render "new"
-         end
-      end
-
-      def approveBlog(blogFound, pointsForBlog, econname)
-         #Rememeber to comeback here to set a limit on the amount of points you can add
-         blogFound.reviewed = true
-         if(pointsForBlog != 0)
-            pouch = Pouch.find_by_user_id(blogFound.user_id)
-            currentPoints = pouch.amount + pointsForBlog
-
-            #If the amount of points exceeds the maximum pouch limit
-            #then set the pouch = pouch limit
-
-
-            #can't due this because this section is private
-            #if(currentPoints < getUpgradeLimit(pouch, "Pouch"))
-               pouch.amount += pointsForBlog
-            #else
-            #   pouch.amount = getUpgradeLimit(pouch, "Pouch")
-            #end
-            @pouch = pouch
-            @pouch.save
-         end
-         @blog = blogFound
-         @blog.save
-
-         if(pointsForBlog != 0)
-            #Handles both Economy sources and sinks
-            newTransaction = Economy.new(params[:economy])
             newTransaction.econtype = "Content"
-            newTransaction.content_type = "Blog"
-            if(econname == "Sink")
-               newTransaction.name = "Sink"
-               newTransaction.amount = pointsForBlog.abs
-            elsif(econname == "Source")
-               newTransaction.name = "Source"
-               newTransaction.amount = pointsForBlog
-            end
-            newTransaction.user_id = blogFound.user_id
-            newTransaction.created_on = currentTime
-            @economytransaction = newTransaction
-            @economytransaction.save
          end
-         ContentMailer.content_approved(@blog, "Blog", pointsForBlog).deliver_later(wait: 5.minutes)
-
-         #allWatches = Watch.all
-         #watchers = allWatches.select{|watch| ((((watch.watchtype.name == "Blogs" || watch.watchtype.name == "Blogarts") || (watch.watchtype.name == "Blogsounds" || watch.watchtype.name == "Blogmovies")) || (watch.watchtype.name == "Forumblogs" || watch.watchtype.name == "All"))) && watch.from_user.id != @blog.user_id}
-         #if(watchers.count > 0)
-             #   watchers.each do |watch|
-                    #      UserMailer.new_blog(@blog, watch).deliver
-             #   end
-         #end
+         if(type == "Sink" || type == "Tax")
+            newTransaction.content_type = "Adblog"
+         else
+            newTransaction.content_type = "Blog"
+         end
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
       end
 
       def indexCommons
@@ -195,11 +92,88 @@ module BlogsHelper
                @blog = blogFound
                @user = User.find_by_vname(blogFound.user.vname)
                if(type == "update")
-                  if(@blog.update_attributes(getBlogParams("Blog")))
-                     flash[:success] = "Blog #{@blog.title} was successfully updated."
-                     redirect_to user_blog_path(@blog.user, @blog)
+                  #Sets up variables to determine if ads were used
+                  largeimages = (@blog.largeimage1 != "" || @blog.largeimage2 != "" || @blog.largeimage3 != "")
+                  smallimages = (@blog.smallimage1 != "" || @blog.smallimage2 != "" || @blog.smallimage3 != "" || @blog.smallimage4 != "" || @blog.smallimage5 != "")
+                  largepurchase = (@blog.largeimage1purchased || @blog.largeimage2purchased || @blog.largeimage3purchased)
+                  smallpurchase = (@blog.smallimage1purchased || @blog.smallimage2purchased || @blog.smallimage3purchased || @blog.smallimage4purchased || @blog.smallimage5purchased)
+                  purchases = (@blog.adbannerpurchased || largepurchase || smallpurchase || @blog.musicpurchased)
+                  adsUsed = (purchases || @blog.adbanner != "" || largeimages || smallimages || (@blog.ogg != "" || @blog.mp3 != ""))
+                  if(adsUsed)
+                     bannercost = Fieldcost.find_by_name("Banner")
+                     largeimage = Fieldcost.find_by_name("Largeimage")
+                     smallimage = Fieldcost.find_by_name("Smallimage")
+                     musiccost = Fieldcost.find_by_name("MusicAd")
+                     price = 0
+                     if(@blog.adbanner != "" && !@blog.adbannerpurchased)
+                        price += bannercost.amount
+                     end
+                              
+                     #Add large images to the price if one is chosen
+                     if(largeimages)
+                        if(@blog.largeimage1 != "" && !@blog.largeimage1purchased)
+                           price += largeimage.amount
+                        end
+                        
+                        if(@blog.largeimage2 != "" && !@blog.largeimage2purchased)
+                           price += largeimage.amount
+                        end
+                                 
+                        if(@blog.largeimage3 != "" && !@blog.largeimage3purchased)
+                           price += largeimage.amount
+                        end
+                     end
+                              
+                     #Add small images to the price if one is chosen
+                     if(smallimages)
+                        if(@blog.smallimage1 != "" && !@blog.smallimage1purchased)
+                           price += smallimage.amount
+                        end
+                                 
+                        if(@blog.smallimage2 != "" && !@blog.smallimage2purchased)
+                           price += smallimage.amount
+                        end
+                                 
+                        if(@blog.smallimage3 != "" && !@blog.smallimage3purchased)
+                           price += smallimage.amount
+                        end
+                                 
+                        if(@blog.smallimage4 != "" && !@blog.smallimage4purchased)
+                           price += smallimage.amount
+                        end
+                                 
+                        if(@blog.smallimage5 != "" && !@blog.smallimage5purchased)
+                           price += smallimage.amount
+                        end
+                     end
+                              
+                     #Add music cost to the price if a song is used
+                     if((@blog.ogg != "" || @blog.mp3 != "") && !@blog.musicpurchased)
+                        price += musiccost.amount
+                     end
+                              
+                     if(@blog.user.pouch.amount - price >= 0)
+                        if(@blog.update_attributes(getBlogParams("Blog")))
+                           url = "http://www.duelingpets.net/blogs/review"
+                           ContentMailer.content_review(@blog, "Blog", url).deliver_later(wait: 5.minutes)
+                           flash[:success] = "Blog #{@blog.title} was successfully updated."
+                           redirect_to user_blog_path(@blog.user, @blog)
+                        else
+                           render "edit"
+                        end
+                     else
+                        flash[:error] = "You have insufficient points to pay for all these ads!"
+                        redirect_to root_path
+                     end
                   else
-                     render "edit"
+                     if(@blog.update_attributes(getBlogParams("Blog")))
+                        url = "http://www.duelingpets.net/blogs/review"
+                        ContentMailer.content_review(@blog, "Blog", url).deliver_later(wait: 5.minutes)
+                        flash[:success] = "Blog #{@blog.title} was successfully updated."
+                        redirect_to user_blog_path(@blog.user, @blog)
+                     else
+                        render "edit"
+                     end
                   end
                end
             else
@@ -209,7 +183,7 @@ module BlogsHelper
             render "webcontrols/missingpage"
          end
       end
-
+      
       def showCommons(type)
          blogFound = Blog.find_by_id(getBlogParams("Id"))
          if(blogFound)
@@ -220,13 +194,19 @@ module BlogsHelper
                @blog = blogFound
                blogReplies = @blog.blogreplies.order("created_on desc")
                #Add review later
-               @replies = Kaminari.paginate_array(blogReplies).page(getBlogParams("Page")).per(6)
-               #stars = @blog.blogstars.count
-               #@stars = stars
+               replies = blogReplies.select{|blogreply| blogreply.reviewed || (current_user && blogreply.user_id == current_user.id)}
+               @replies = Kaminari.paginate_array(replies).page(getBlogParams("Page")).per(6)
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == blogFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
+                     if(logged_in.pouch.privilege != "Admin")
+                        #Removes the content and decrements the owner's pouch
+                        cleanup = Fieldcost.find_by_name("Blogcleanup")
+                        blogFound.user.pouch.amount -= cleanup.amount
+                        @pouch = blogFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Tax", cleanup.amount, blogFound)
+                     end
                      @blog.destroy
                      flash[:success] = "#{@blog.title} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
@@ -305,25 +285,83 @@ module BlogsHelper
                         @user = userFound
 
                         if(type == "create")
-                           if(@blog.blogtype.name == "Adblog")
-                              pricetag = blogadPricing(@blog)
-                              #Determines if we can afford our purchases
-                              pouchValue = userFound.pouch.amount + pricetag
-                              if(pouchValue < 0)
-                                 flash[:error] = "You have insufficient points to pay for all these ads!"
-                                 render "new"
-                              elsif(@blog.admascot.to_s != "")
-                                 flash[:error] = "Mascots can only be used for non Adblogs!"
-                                 render "new"
-                              else
-                                 saveCommons(@blog, @user, "Development")
+                           #Sets up variables to determine if ads were used
+                           largeimages = (@blog.largeimage1 != "" || @blog.largeimage2 != "" || @blog.largeimage3 != "")
+                           smallimages = (@blog.smallimage1 != "" || @blog.smallimage2 != "" || @blog.smallimage3 != "" || @blog.smallimage4 != "" || @blog.smallimage5 != "")
+                           adsUsed = (@blog.adbanner != "" || largeimages || smallimages || (@blog.ogg != "" || @blog.mp3 != ""))
+                           if(adsUsed)
+                              bannercost = Fieldcost.find_by_name("Banner")
+                              largeimage = Fieldcost.find_by_name("Largeimage")
+                              smallimage = Fieldcost.find_by_name("Smallimage")
+                              musiccost = Fieldcost.find_by_name("MusicAd")
+                              price = 0
+                              if(@blog.adbanner != "")
+                                 price += bannercost.amount
                               end
-                           elsif(@blog.blogtype.name == "Blog")
-                              pricetag = blogadPricing(@blog)
-                              if(pricetag == 0)
-                                 saveCommons(@blog, @user, "Development")
+                              
+                              #Add large images to the price if one is chosen
+                              if(largeimages)
+                                 if(@blog.largeimage1 != "")
+                                    price += largeimage.amount
+                                 end
+                                 
+                                 if(@blog.largeimage2 != "")
+                                    price += largeimage.amount
+                                 end
+                                 
+                                 if(@blog.largeimage3 != "")
+                                    price += largeimage.amount
+                                 end
+                              end
+                              
+                              #Add small images to the price if one is chosen
+                              if(smallimages)
+                                 if(@blog.smallimage1 != "")
+                                    price += smallimage.amount
+                                 end
+                                 
+                                 if(@blog.smallimage2 != "")
+                                    price += smallimage.amount
+                                 end
+                                 
+                                 if(@blog.smallimage3 != "")
+                                    price += smallimage.amount
+                                 end
+                                 
+                                 if(@blog.smallimage4 != "")
+                                    price += smallimage.amount
+                                 end
+                                 
+                                 if(@blog.smallimage5 != "")
+                                    price += smallimage.amount
+                                 end
+                              end
+                              
+                              #Add music cost to the price if a song is used
+                              if(@blog.ogg != "" || @blog.mp3 != "")
+                                 price += musiccost.amount
+                              end
+                              
+                              if(logged_in.pouch.amount - price >= 0)
+                                 if(@blog.save)
+                                    url = "http://www.duelingpets.net/blogs/review"
+                                    ContentMailer.content_review(@blog, "Blog", url).deliver_later(wait: 5.minutes)
+                                    flash[:success] = "#{@blog.user.vname} blog #{@blog.title} was successfully created."
+                                    redirect_to user_blog_path(@user, @blog)
+                                 else
+                                    render "new"
+                                 end
                               else
-                                 flash[:error] = "You can't use ads on Blogs!"
+                                 flash[:error] = "You have insufficient points to pay for all these ads!"
+                                 redirect_to root_path
+                              end
+                           else
+                              if(@blog.save)
+                                 url = "http://www.duelingpets.net/blogs/review"
+                                 ContentMailer.content_review(@blog, "Blog", url).deliver_later(wait: 5.minutes)
+                                 flash[:success] = "#{@blog.user.vname} blog #{@blog.title} was successfully created."
+                                 redirect_to user_blog_path(@user, @blog)
+                              else
                                  render "new"
                               end
                            end
@@ -399,94 +437,135 @@ module BlogsHelper
                      if(logged_in.pouch.privilege == "Admin" || ((logged_in.pouch.privilege == "Keymaster") || (logged_in.pouch.privilege == "Reviewer")))
                         blogFound.reviewed_on = currentTime
                         if(type == "approve")
-                           hoard = Dragonhoard.find_by_id(1)
-                           pointsForBlog = 0
-                           econname = ""
-                           errorType = 0
-                           if(blogFound.blogtype.name == "Adblog")
-                              pricetag = blogadPricing(blogFound)
-                              pouchValue = blogFound.user.pouch.amount + pricetag
-                              if(pouchValue < 0)
-                                 flash[:error] = "Player can't afford the ads!"
-                                 errorType = 1
-                              else
-                                 pricetag = blogadPricing(blogFound)
-                                 if(!blogFound.largeimage1purchased && blogFound.largeimage1.to_s != "")
+                           #Sets up variables to determine if ads were used
+                           largeimages = (blogFound.largeimage1 != "" || blogFound.largeimage2 != "" || blogFound.largeimage3 != "")
+                           smallimages = (blogFound.smallimage1 != "" || blogFound.smallimage2 != "" || blogFound.smallimage3 != "" || blogFound.smallimage4 != "" || blogFound.smallimage5 != "")
+                           largepurchase = (blogFound.largeimage1purchased || blogFound.largeimage2purchased || blogFound.largeimage3purchased)
+                           smallpurchase = (blogFound.smallimage1purchased || blogFound.smallimage2purchased || blogFound.smallimage3purchased || blogFound.smallimage4purchased || blogFound.smallimage5purchased)
+                           purchases = (blogFound.adbannerpurchased || largepurchase || smallpurchase || blogFound.musicpurchased)
+                           adsUsed = (purchases || blogFound.adbanner != "" || largeimages || smallimages || (blogFound.ogg != "" || blogFound.mp3 != ""))
+                           if(adsUsed)
+                              #Might set a flag for adblog here instead of a seperate table!
+                              bannercost = Fieldcost.find_by_name("Banner")
+                              largeimage = Fieldcost.find_by_name("Largeimage")
+                              smallimage = Fieldcost.find_by_name("Smallimage")
+                              musiccost = Fieldcost.find_by_name("MusicAd")
+                              price = 0
+                              if(blogFound.adbanner != "" && !blogFound.adbannerpurchased)
+                                 blogFound.adbannerpurchased = true
+                                 price += bannercost.amount
+                              end
+                              
+                              #Add large images to the price if one is chosen
+                              if(largeimages)
+                                 if(blogFound.largeimage1 != "" && !blogFound.largeimage1purchased)
                                     blogFound.largeimage1purchased = true
+                                    price += largeimage.amount
                                  end
-                                 if(!blogFound.largeimage2purchased && blogFound.largeimage2.to_s != "")
+                        
+                                 if(blogFound.largeimage2 != "" && !blogFound.largeimage2purchased)
                                     blogFound.largeimage2purchased = true
+                                    price += largeimage.amount
                                  end
-                                 if(!blogFound.largeimage3purchased && blogFound.largeimage3.to_s != "")
+                                 
+                                 if(blogFound.largeimage3 != "" && !blogFound.largeimage3purchased)
                                     blogFound.largeimage3purchased = true
-                                 end
-                                 if(!blogFound.smallimage1purchased && blogFound.smallimage1.to_s != "")
-                                    blogFound.smallimage1purchased = true
-                                 end
-                                 if(!blogFound.smallimage2purchased && blogFound.smallimage2.to_s != "")
-                                    blogFound.smallimage2purchased = true
-                                 end
-                                 if(!blogFound.smallimage3purchased && blogFound.smallimage3.to_s != "")
-                                    blogFound.smallimage3purchased = true
-                                 end
-                                 if(!blogFound.smallimage4purchased && blogFound.smallimage4.to_s != "")
-                                    blogFound.smallimage4purchased = true
-                                 end
-                                 if(!blogFound.smallimage5purchased && blogFound.smallimage5.to_s != "")
-                                    blogFound.smallimage5purchased = true
-                                 end
-                                 if(!blogFound.adbannerpurchased && blogFound.adbanner.to_s != "")
-                                    blogFound.adbannerpurchased = true
-                                 end
-                                 if(!blogFound.musicpurchased && (blogFound.ogg.to_s != "" || blogFound.mp3.to_s != ""))
-                                    blogFound.musicpurchased = true
-                                 end
-                                 if(pricetag < 0)
-                                    profit = pricetag.abs * 0.05
-                                    hoard.profit += profit
-
-                                    #This transaction sends points to the dragonhoard
-                                    newTax = Economy.new(params[:economy])
-                                    newTax.name = "Tax"
-                                    newTax.econtype = "Treasury"
-                                    newTax.content_type = "Blog"
-                                    newTax.amount = profit
-                                    user = User.find_by_id(8)
-                                    newTax.user_id = user.id
-                                    newTax.created_on = currentTime
-                                    @economytransaction = newTax
-                                    @economytransaction.save
-                                    @dragonhoard = hoard
-                                    @dragonhoard.save
-                                    pointsForBlog = pricetag
-                                    econname = "Sink"
+                                    price += largeimage.amount
                                  end
                               end
-                           elsif(blogFound.blogtype.name == "Blog")
-                              if(!blogFound.pointsreceived)
-                                 blogpoints = Fieldcost.find_by_name("Blog")
-                                 pointsForBlog = blogpoints.amount
-                                 if(blogFound.admascot.to_s != "")
-                                    mascotpoints = Fieldcost.find_by_name("Mascot")
-                                    pointsForBlog = mascotpoints.amount
+                              
+                              #Add small images to the price if one is chosen
+                              if(smallimages)
+                                 if(blogFound.smallimage1 != "" && !blogFound.smallimage1purchased)
+                                    blogFound.smallimage1purchased = true
+                                    price += smallimage.amount
                                  end
-                                 econname = "Source"
+                                 
+                                 if(blogFound.smallimage2 != "" && !blogFound.smallimage2purchased)
+                                    blogFound.smallimage2purchased = true
+                                    price += smallimage.amount
+                                 end
+                                 
+                                 if(blogFound.smallimage3 != "" && !blogFound.smallimage3purchased)
+                                    blogFound.smallimage3purchased = true
+                                    price += smallimage.amount
+                                 end
+                                 
+                                 if(blogFound.smallimage4 != "" && !blogFound.smallimage4purchased)
+                                    blogFound.smallimage4purchased = true
+                                    price += smallimage.amount
+                                 end
+                                 
+                                 if(blogFound.smallimage5 != "" && !blogFound.smallimage5purchased)
+                                    blogFound.smallimage5purchased = true
+                                    price += smallimage.amount
+                                 end
+                              end
+                              
+                              #Add music cost to the price if a song is used
+                              if((blogFound.ogg != "" || blogFound.mp3 != "") && !blogFound.musicpurchased)
+                                 blogFound.musicpurchased = true
+                                 price += musiccost.amount
+                              end
+                              
+                              #Decrements the player's pouch for each ad that has not yet been purchased
+                              if(blogFound.user.pouch.amount - price >= 0)
+                                 blogFound.reviewed = true
+                                 @blog = blogFound
+                                 if(@blog.save)
+                                    @blog.user.pouch.amount -= price
+                                    @pouch = @blog.user.pouch
+                                    @pouch.save
+                                    #This will need to be fixed up and changed
+                                    ContentMailer.content_approved(@blog, "Blog", price).deliver_later(wait: 5.minutes)
+                                    #Might add a secondary economy transaction here for taxes here on top of the default sink
+                                    #used for the dragonhoard collecting points. Tax of 0.05
+                                    #Remember econtype is Treasurey, and content type is adblog, name is tax
+                                    #econame is sink
+                                    #Owner for that is glitchy, plus hoard would go here as well
+                                    economyTransaction("Sink", price, @blog.user.id)
+                                    flash[:success] = "#{blogFound.user.vname}'s adblog #{blogFound.title} was approved."
+                                    redirect_to blogs_review_path
+                                 else
+                                    flash[:error] = "Unable to save the current blog!"
+                                    redirect_to root_path
+                                 end
+                              else
+                                 flash[:error] = "Blog owner can't afford the bought ads!"
+                                 redirect_to root_path
+                              end
+                           else
+                              blogFound.reviewed = true
+                              points = 0
+                              #Award points for first time blogs
+                              if(!blogFound.pointsreceived)
+                                 if(blogFound.admascot != "")
+                                    mascot = Fieldcost.find_by_name("Mascot")
+                                    points = mascot.amount
+                                 else
+                                    blog = Fieldcost.find_by_name("Blog")
+                                    points = blog.amount
+                                 end
+                                 blogFound.user.pouch.amount += points
+                                 @pouch = blogFound.user.pouch
+                                 @pouch.save
                                  blogFound.pointsreceived = true
                               end
-                           end
-                           if(errorType != 1)
-                              approveBlog(blogFound, pointsForBlog, econname)
-                              value = "#{blogFound.user.vname}'s blog #{blogFound.title} was approved."
-                           else
-                              redirect_to blogs_review
+                              @blog = blogFound
+                              @blog.save
+                              ContentMailer.content_approved(@blog, "Blog", points).deliver_later(wait: 5.minutes)
+                              economyTransaction("Source", points, @blog.user.id)
+                              flash[:success] = "#{blogFound.user.vname}'s blog #{blogFound.title} was approved."
+                              redirect_to blogs_review_path
+                              #Come back to this later.
+                              #if points + blog > max then set it equal to max
                            end
                         else
                            @blog = blogFound
                            ContentMailer.content_denied(@blog, "Blog").deliver_later(wait: 5.minutes)
-                           value = "#{@blog.user.vname}'s blog #{@blog.title} was denied."
+                           flash[:success] = "#{@blog.user.vname}'s blog #{@blog.title} was denied."
+                           redirect_to blogs_review_path
                         end
-                        flash[:success] = value
-                        redirect_to blogs_review_path
                      else
                         redirect_to root_path
                      end

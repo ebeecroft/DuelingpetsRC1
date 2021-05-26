@@ -1,6 +1,71 @@
 module EconomyretrievalHelper
 
    private
+      def getCurLimit(type, user, result)
+         upgrade = Userupgrade.find_by_name(type)
+         if(type == "Pouch")
+            max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free1 + user.pouch.pouchslot.member1))
+            level = (user.pouch.amount.to_s + "/" + max.to_s)
+         elsif(type == "Emerald")
+            max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free2 + user.pouch.pouchslot.member2))
+            if(result == "Limit")
+               level = (user.pouch.emeraldamount.to_s + "/" + max.to_s)
+            else
+               level = max - user.pouch.emeraldamount
+            end
+         elsif(type == "Dreyore")
+            max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free3 + user.pouch.pouchslot.member3))
+            if(result == "Limit")
+               level = (user.pouch.dreyoreamount.to_s + "/" + max.to_s)
+            else
+               level = max - user.pouch.dreyoreamount
+            end
+         elsif(type == "OCup")
+            max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free5 + user.pouch.pouchslot.member5))
+            if(result == "Limit")
+               level = (user.ocs.count.to_s + "/" + max.to_s)
+            else
+               level = max - user.ocs.count
+            end
+         elsif(type == "Blog")
+            max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free6 + user.pouch.pouchslot.member6))
+            if(result == "Limit")
+               level = (user.blogs.count.to_s + "/" + max.to_s)
+            else
+               level = max - user.blogs.count
+            end
+         elsif(type == "Gallery")
+            max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free7 + user.pouch.pouchslot.member7))
+            if(result == "Limit")
+               level = (user.galleries.count.to_s + "/" + max.to_s)
+            else
+               level = max - user.galleries.count
+            end
+         elsif(type == "Book")
+            max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free8 + user.pouch.pouchslot.member8))
+            if(result == "Limit")
+               level = (user.books.count.to_s + "/" + max.to_s)
+            else
+               level = max - user.books.count
+            end
+         elsif(type == "Jukebox")
+            max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free9 + user.pouch.pouchslot.member9))
+            if(result == "Limit")
+               level = (user.jukeboxes.count.to_s + "/" + max.to_s)
+            else
+               level = max - user.jukeboxes.count
+            end
+         elsif(type == "Channel")
+            max = (upgrade.base + upgrade.baseinc * (user.pouch.pouchslot.free10 + user.pouch.pouchslot.member10))
+            if(result == "Limit")
+               level = (user.channels.count.to_s + "/" + max.to_s)
+            else
+               level = max - user.channels.count
+            end
+         end
+         return level
+      end
+
       def getEconomyChanges(type)
          econs = Economy.order("created_on desc")
          points = 0
