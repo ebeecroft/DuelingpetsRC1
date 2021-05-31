@@ -16,6 +16,19 @@ module MainsheetsHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Mainsheet"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def updateJukebox(jukebox)
          jukebox.updated_on = currentTime
@@ -69,13 +82,20 @@ module MainsheetsHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == mainsheetFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
+                     if(logged_in.pouch.privilege != "Admin")
+                        #Removes the content and decrements the owner's pouch
+                        cleanup = Fieldcost.find_by_name("Mainsheetcleanup")
+                        mainsheetFound.user.pouch.amount -= cleanup.amount
+                        @pouch = mainsheetFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Tax", cleanup.amount, mainsheetFound.user_id)
+                     end
                      @mainsheet.destroy
                      flash[:success] = "#{mainsheetFound.title} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
                         redirect_to mainsheets_path
                      else
-                        redirect_to user_jukebox_path(mainsheetFound.jukebox.user, mainsheet.jukebox)
+                        redirect_to user_jukebox_path(mainsheetFound.jukebox.user, mainsheetFound.jukebox)
                      end
                   else
                      redirect_to root_path
@@ -132,10 +152,11 @@ module MainsheetsHelper
                         if(type == "create")
                            mainsheetcost = Fieldcost.find_by_name("Mainsheet")
                            if(logged_in.pouch.amount - mainsheetcost.amount >= 0)
-                              logged_in.pouch.amount -= mainsheetcost.amount
-                              @pouch = logged_in.pouch
-                              @pouch.save
                               if(@mainsheet.save)
+                                 logged_in.pouch.amount -= mainsheetcost.amount
+                                 economyTransaction("Sink", mainsheetcost.amount, mainsheet.user_id)
+                                 @pouch = logged_in.pouch
+                                 @pouch.save
                                  updateJukebox(@mainsheet.jukebox)
                                  flash[:success] = "#{@mainsheet.title} was successfully created."
                                  redirect_to jukebox_mainsheet_path(@jukebox, @mainsheet)

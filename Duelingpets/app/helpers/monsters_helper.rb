@@ -22,6 +22,19 @@ module MonstersHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Monster"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def validateMonsterStats(level)
          minhp = 30
@@ -136,13 +149,23 @@ module MonstersHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == monsterFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
-                     @monster.destroy
-                     flash[:success] = "#{@monster.name} was successfully removed."
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to monsters_list_path
+                     #Removes the content and decrements the owner's pouch
+                     price = monsterFound.cost * 0.60
+                     if(monsterFound.user.pouch.amount - price >= 0)
+                        monsterFound.user.pouch.amount -= price
+                        @pouch = monsterFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Tax", price, monsterFound.user.id)
+                        @monster.destroy
+                        flash[:success] = "#{@monster.name} was successfully removed."
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to monsters_list_path
+                        else
+                           redirect_to user_monsters_path(monsterFound.user)
+                        end
                      else
-                        redirect_to user_monsters_path(monsterFound.user)
+                        flash[:error] = "Owner has insufficient points to remove the monster!"
+                        redirect_to root_path
                      end
                   else
                      redirect_to root_path
@@ -305,19 +328,10 @@ module MonstersHelper
                               pouch.amount -= price
                               @pouch = pouch
                               @pouch.save
-
-                              #Adds the creature points to the economy
-                              newTransaction = Economy.new(params[:economy])
-                              newTransaction.econtype = "Content"
-                              newTransaction.content_type = "Monster"
-                              newTransaction.name = "Sink"
-                              newTransaction.amount = price
-                              newTransaction.user_id = monsterFound.user_id
-                              newTransaction.created_on = currentTime
-                              @economytransaction = newTransaction
-                              @economytransaction.save
+                              economyTransaction("Sink", price, monsterFound.user.id)
                               ContentMailer.content_approved(@monster, "Monster", price).deliver_now
-                              value = "#{@monster.user.vname}'s monster #{@monster.name} was approved."
+                              flash[:success] = "#{@monster.user.vname}'s monster #{@monster.name} was approved."
+                              redirect_to monsters_review_path
                            else
                               flash[:error] = "Insufficient funds to create a monster!"
                               redirect_to user_path(logged_in.id)
@@ -325,10 +339,9 @@ module MonstersHelper
                         else
                            @monster = monsterFound
                            ContentMailer.content_denied(@monster, "Monster").deliver_now
-                           value = "#{@monster.user.vname}'s monster #{@monster.name} was denied."
+                           flash[:success] = "#{@monster.user.vname}'s monster #{@monster.name} was denied."
+                           redirect_to monsters_review_path
                         end
-                        flash[:success] = value
-                        redirect_to monsters_review_path
                      else
                         redirect_to root_path
                      end

@@ -16,6 +16,19 @@ module SuggestionsHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Suggestion"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def indexCommons
          logged_in = current_user
@@ -105,7 +118,12 @@ module SuggestionsHelper
 
                         if(type == "create")
                            if(@suggestion.save)
-                              ContentMailer.content_created(@suggestion, "Suggestion", 5).deliver_now
+                              suggestion = Fieldcost.find_by_name("Suggestion")
+                              logged_in.pouch.amount += suggestion.amount
+                              @pouch = logged_in.pouch
+                              @pouch.save
+                              economyTransaction("Source", suggestion.amount, newSuggestion.user_id)
+                              ContentMailer.content_created(@suggestion, "Suggestion", suggetion.amount).deliver_now
                               flash[:success] = "Suggestion #{@suggestion.title} was successfully created."
                               redirect_to suggestions_path
                            else

@@ -20,14 +20,14 @@ module ArtsHelper
          return value
       end
 
-      def economyTransaction(type, points, artFound)
+      def economyTransaction(type, points, userid)
          #Adds the art points to the economy
          newTransaction = Economy.new(params[:economy])
          newTransaction.econtype = "Content"
          newTransaction.content_type = "Art"
          newTransaction.name = type
          newTransaction.amount = points
-         newTransaction.user_id = artFound.user_id
+         newTransaction.user_id = userid
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -95,7 +95,7 @@ module ArtsHelper
                         artFound.user.pouch.amount -= cleanup.amount
                         @pouch = artFound.user.pouch
                         @pouch.save
-                        economyTransaction("Tax", cleanup.amount, artFound)
+                        economyTransaction("Tax", cleanup.amount, artFound.user.id)
                      end
                      @art.destroy
                      flash[:success] = "#{artFound.title} was successfully removed."
@@ -256,7 +256,7 @@ module ArtsHelper
                            pouch.amount += pointsForArt
                            @pouch = pouch
                            @pouch.save
-                           economyTransaction("Source", pointsForArt, artFound)
+                           economyTransaction("Source", pointsForArt, artFound.user.id)
 
                            ContentMailer.content_approved(@art, "Art", pointsForArt).deliver_now
                            #allWatches = Watch.all

@@ -16,6 +16,19 @@ module SubsheetsHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Subsheet"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def updateJukebox(mainsheet)
          mainsheet.updated_on = currentTime
@@ -65,7 +78,14 @@ module SubsheetsHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == subsheetFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
+                     if(logged_in.pouch.privilege != "Admin")
+                        #Removes the content and decrements the owner's pouch
+                        cleanup = Fieldcost.find_by_name("Subsheetcleanup")
+                        subsheetFound.user.pouch.amount -= cleanup.amount
+                        @pouch = subsheetFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Tax", cleanup.amount, subsheetFound.user_id)
+                     end
                      @subsheet.destroy
                      flash[:success] = "#{subsheetFound.title} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
@@ -132,6 +152,7 @@ module SubsheetsHelper
                                  logged_in.pouch.amount -= subsheetcost.amount
                                  @pouch = logged_in.pouch
                                  @pouch.save
+                                 economyTransaction("Sink", subsheetcost.amount, newSubsheet.user_id)
                                  updateJukebox(@subsheet.mainsheet)
                                  flash[:success] = "#{@subsheet.title} was successfully created."
                                  redirect_to mainsheet_subsheet_path(@mainsheet, @subsheet)

@@ -19,6 +19,19 @@ module MoviesHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Movie"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def updateChannel(subplaylist)
          subplaylist.updated_on = currentTime
@@ -76,8 +89,15 @@ module MoviesHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == movieFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
-                     @movie.destroy
+                     if(logged_in.pouch.privilege != "Admin")
+                        #Removes the content and decrements the owner's pouch
+                        cleanup = Fieldcost.find_by_name("Moviecleanup")
+                        movieFound.user.pouch.amount -= cleanup.amount
+                        @pouch = movieFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Tax", cleanup.amount, movieFound.user.id)
+                     end
+                     @art.destroy
                      flash[:success] = "#{movieFound.title} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
                         redirect_to movies_path
@@ -236,18 +256,7 @@ module MoviesHelper
                            pouch.amount += pointsForMovie
                            @pouch = pouch
                            @pouch.save
-
-                           #Adds the sound points to the economy
-                           newTransaction = Economy.new(params[:economy])
-                           newTransaction.econtype = "Content"
-                           newTransaction.content_type = "Movie"
-                           newTransaction.name = "Source"
-                           newTransaction.amount = pointsForMovie
-                           newTransaction.user_id = movieFound.user_id
-                           newTransaction.created_on = currentTime
-                           @economytransaction = newTransaction
-                           @economytransaction.save
-
+                           economyTransaction("Source", pointsForMovie, movieFound.user.id)
                            ContentMailer.content_approved(@movie, "Movie", pointsForMovie).deliver_now
                            #allWatches = Watch.all
                            #watchers = allWatches.select{|watch| (((watch.watchtype.name == "Arts" || watch.watchtype.name == "Blogarts") || (watch.watchtype.name == "Artsounds" || watch.watchtype.name == "Artmovies")) || (watch.watchtype.name == "Maincontent" || watch.watchtype.name == "All")) && watch.from_user.id != @art.user_id}
@@ -256,14 +265,14 @@ module MoviesHelper
                            #      UserMailer.new_art(@art, watch).deliver
                            #   end
                            #end
-                           value = "#{@movie.user.vname}'s movie #{@movie.title} was approved."
+                           flash[:success] = "#{@movie.user.vname}'s movie #{@movie.title} was approved."
+                           redirect_to movies_review_path
                         else
                            @movie = movieFound
                            ContentMailer.content_denied(@movie, "Movie").deliver_now
-                           value = "#{@movie.user.vname}'s movie #{@movie.title} was denied."
+                           flash[:success] = "#{@movie.user.vname}'s movie #{@movie.title} was denied."
+                           redirect_to movies_review_path
                         end
-                        flash[:success] = value
-                        redirect_to movies_review_path
                      else
                         redirect_to root_path
                      end

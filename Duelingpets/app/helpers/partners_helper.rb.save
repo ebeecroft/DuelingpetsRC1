@@ -304,3 +304,72 @@ module PartnersHelper
          end
       end
 end
+
+e == "Admin")
+                  editCommons(type)
+               else
+                  allMode = Maintenancemode.find_by_id(1)
+                  creatureMode = Maintenancemode.find_by_id(10)
+                  if(allMode.maintenance_on || creatureMode.maintenance_on)
+                     if(allMode.maintenance_on)
+                        render "/start/maintenance"
+                     else
+                        render "/creatures/maintenance"
+                     end
+                  else
+                     editCommons(type)
+                  end
+               end
+            elsif(type == "show" || type == "destroy")
+               allMode = Maintenancemode.find_by_id(1)
+               creatureMode = Maintenancemode.find_by_id(10)
+               if(allMode.maintenance_on || creatureMode.maintenance_on)
+                  if(current_user && current_user.pouch.privilege == "Admin")
+                     showCommons(type)
+                  else
+                     if(allMode.maintenance_on)
+                        render "/start/maintenance"
+                     else
+                        render "/creatures/maintenance"
+                     end
+                  end
+               else
+                  showCommons(type)
+               end
+            elsif(type == "list")
+               if(current_user && current_user.pouch.privilege == "Admin")
+                  allPets = Partner.order("updated_on desc, adopted_on desc")
+                  @partners = Kaminari.paginate_array(allPets).page(getPartnerParams("Page")).per(10)
+               else
+                  redirect_to root_path
+               end
+            elsif(type == "setactive")
+               partnerFound = Partner.find_by_id(getPartnerParams("PartnerId"))
+               logged_in = current_user
+               if(logged_in && partnerFound && logged_in.id == partnerFound.user_id)
+                  if(!partnerFound.activepet)
+                     #Unsets the previous mainpet
+                     pets = logged_in.partners.order("updated_on desc, adopted_on desc")
+                     pets.each do |partner|
+                        if(partner.activepet)
+                           partner.activepet = false
+                           @pet = partner
+                           @pet.save
+                        end
+                     end
+                     partnerFound.activepet = true
+                     @partner = partnerFound
+                     @partner.save
+                     flash[:success] = "{partnerFound.name} is now the mainpet!"
+                     redirect_to user_partner_path(@partner.user, @partner)
+                  else
+                     flash[:error] = "That pet is already the mainpet!"
+                     redirect_to user_path(logged_in)
+                  end
+               else
+                  redirect_to root_path
+               end
+            end
+         end
+      end
+end

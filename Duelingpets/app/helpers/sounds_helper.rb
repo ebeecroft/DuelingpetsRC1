@@ -19,6 +19,19 @@ module SoundsHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Sound"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def updateJukebox(subsheet)
          subsheet.updated_on = currentTime
@@ -78,6 +91,14 @@ module SoundsHelper
                   if(logged_in && ((logged_in.id == soundFound.user_id) || logged_in.pouch.privilege == "Admin"))
                      #Eventually consider adding a sink to this
                      @sound.destroy
+                     if(logged_in.pouch.privilege != "Admin")
+                        #Removes the content and decrements the owner's pouch
+                        cleanup = Fieldcost.find_by_name("Soundcleanup")
+                        soundFound.user.pouch.amount -= cleanup.amount
+                        @pouch = soundFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Tax", cleanup.amount, soundFound.user.id)
+                     end
                      flash[:success] = "#{soundFound.title} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
                         redirect_to sounds_path
@@ -236,18 +257,7 @@ module SoundsHelper
                            pouch.amount += pointsForSound
                            @pouch = pouch
                            @pouch.save
-
-                           #Adds the sound points to the economy
-                           newTransaction = Economy.new(params[:economy])
-                           newTransaction.econtype = "Content"
-                           newTransaction.content_type = "Sound"
-                           newTransaction.name = "Source"
-                           newTransaction.amount = pointsForSound
-                           newTransaction.user_id = soundFound.user_id
-                           newTransaction.created_on = currentTime
-                           @economytransaction = newTransaction
-                           @economytransaction.save
-
+                           economyTransaction("Source", pointsForSound, soundFound.user.id)
                            ContentMailer.content_approved(@sound, "Sound", pointsForSound).deliver_now
                            #allWatches = Watch.all
                            #watchers = allWatches.select{|watch| (((watch.watchtype.name == "Arts" || watch.watchtype.name == "Blogarts") || (watch.watchtype.name == "Artsounds" || watch.watchtype.name == "Artmovies")) || (watch.watchtype.name == "Maincontent" || watch.watchtype.name == "All")) && watch.from_user.id != @art.user_id}
@@ -256,14 +266,14 @@ module SoundsHelper
                            #      UserMailer.new_art(@art, watch).deliver
                            #   end
                            #end
-                           value = "#{@sound.user.vname}'s sound #{@sound.title} was approved."
+                           flash[:success] = "#{@sound.user.vname}'s sound #{@sound.title} was approved."
+                           redirect_to sounds_review_path
                         else
                            @sound = soundFound
                            ContentMailer.content_denied(@sound, "Sound").deliver_now
-                           value = "#{@sound.user.vname}'s sound #{@sound.title} was denied."
+                           flash[:success] = "#{@sound.user.vname}'s sound #{@sound.title} was denied."
+                           redirect_to sounds_review_path
                         end
-                        flash[:success] = value
-                        redirect_to sounds_review_path
                      else
                         redirect_to root_path
                      end

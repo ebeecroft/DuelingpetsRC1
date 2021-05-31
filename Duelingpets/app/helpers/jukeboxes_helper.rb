@@ -19,6 +19,32 @@ module JukeboxesHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Channel"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
+      
+      def jukeboxValue(jukeboxFound)
+         jukebox = Fieldcost.find_by_name("Jukebox")
+         mainsheet = Fieldcost.find_by_name("Mainsheet")   
+         subsheet = Fieldcost.find_by_name("Subsheet")
+         sound = Fieldcost.find_by_name("Sound")
+         allSheets = Subsheet.all
+         subsheets = allSheets.select{|subsheet| subsheet.mainsheet.jukebox_id == jukeboxFound.id}
+         allSounds = Sound.all
+         sounds = allSounds.select{|sound| sound.reviewed && sound.subsheet.mainsheet.jukebox_id == jukeboxFound.id}
+         points = (jukebox.amount + (jukeboxFound.mainsheets.count * mainsheet.amount) + (subsheets.count * subsheet.amount) + (sounds.count * sound.amount))
+         return points
+      end
 
       def getSoundCounts(mainsheet)
          allSounds = Sound.all
@@ -128,7 +154,12 @@ module JukeboxesHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == jukeboxFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
+                     #Gives the user points back for selling their channel
+                     points = (jukeboxValue(jukeboxFound) * 0.30).round
+                     jukeboxFound.user.pouch.amount += points
+                     @pouch = jukeboxFound.user.pouch
+                     @pouch.save
+                     economyTransaction("Source", points, jukeboxFound.user_id)
                      @jukebox.destroy
                      flash[:success] = "#{@jukebox.name} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
@@ -210,6 +241,7 @@ module JukeboxesHelper
                                  logged_in.pouch.amount -= jukeboxcost.amount
                                  @pouch = logged_in.pouch
                                  @pouch.save
+                                 economyTransaction("Sink", jukeboxcost.amount, logged_in.id)
                                  flash[:success] = "#{@jukebox.name} was successfully created."
                                  redirect_to user_jukebox_path(@user, @jukebox)
                               else

@@ -20,6 +20,19 @@ module OcsHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "OC"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def indexCommons
          if(optional)
@@ -86,9 +99,16 @@ module OcsHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == ocFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
+                     if(logged_in.pouch.privilege != "Admin")
+                        #Removes the content and decrements the owner's pouch
+                        cleanup = Fieldcost.find_by_name("OCcleanup")
+                        ocFound.user.pouch.amount -= cleanup.amount
+                        @pouch = ocFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Tax", cleanup.amount, ocFound.user.id)
+                     end
                      @oc.destroy
-                     flash[:success] = "#{@oc.name} was successfully removed."
+                     flash[:success] = "#{ocFound.title} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
                         redirect_to ocs_list_path
                      else
@@ -245,30 +265,17 @@ module OcsHelper
                if(logged_in)
                   ocFound = Oc.find_by_id(getOcParams("OcId"))
                   if(ocFound)
-                     pouchFound = Pouch.find_by_user_id(logged_in.id)
+                     pouchFound = Pouch.find_by_user_id(ocFound.user.pouch.id)
                      if((logged_in.pouch.privilege == "Admin") || ((pouchFound.privilege == "Keymaster") || (pouchFound.privilege == "Reviewer")))
                         if(type == "approve")
                            ocFound.reviewed = true
                            ocFound.reviewed_on = currentTime
                            if(!ocFound.pointsreceived)
-                              ocpoints = Fieldcost.find_by_name("OCpoints")
-                              pointsForOC = ocpoints.amount
-                              pouch = Pouch.find_by_user_id(ocFound.user_id)
-                              pouch.amount += pointsForOC
+                              price = Fieldcost.find_by_name("OCpoints")
+                              pouch.amount -= price.amount
                               @pouch = pouch
                               @pouch.save
-
-                              #Adds the oc points to the economy
-                              newTransaction = Economy.new(params[:economy])
-                              newTransaction.econtype = "Content"
-                              newTransaction.content_type = "OC"
-                              newTransaction.name = "Source"
-                              newTransaction.amount = pointsForOC
-                              newTransaction.user_id = ocFound.user_id
-                              newTransaction.created_on = currentTime
-                              @economytransaction = newTransaction
-                              @economytransaction.save
-
+                              economyTransaction("Sink", price.amount, ocFound.user.id)
                               ContentMailer.content_approved(ocFound, "OC", pointsForOC).deliver_now
                               ocFound.pointsreceived = true
                            end
@@ -281,14 +288,14 @@ module OcsHelper
                            #      UserMailer.new_art(@art, watch).deliver
                            #   end
                            #end
-                           value = "#{@oc.user.vname}'s oc #{@oc.name} was approved."
+                           flash[:success] = "#{@oc.user.vname}'s oc #{@oc.name} was approved."
+                           redirect_to ocs_review_path
                         else
                            @oc = ocFound
                            ContentMailer.content_denied(@oc, "OC").deliver_now
-                           value = "#{@oc.user.vname}'s oc #{@oc.name} was denied."
+                           flash[:success] = "#{@oc.user.vname}'s oc #{@oc.name} was denied."
+                           redirect_to ocs_review_path
                         end
-                        flash[:success] = value
-                        redirect_to ocs_review_path
                      else
                         redirect_to root_path
                      end

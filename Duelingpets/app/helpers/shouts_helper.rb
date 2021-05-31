@@ -18,6 +18,19 @@ module ShoutsHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Shout"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def editCommons(type)
          shoutFound = Shout.find_by_id(getShoutParams("Id"))
@@ -48,6 +61,14 @@ module ShoutsHelper
          shoutFound = Shout.find_by_id(params[:id])
          if(shoutFound && logged_in)
             if((logged_in.pouch.privilege == "Admin" || logged_in.pouch.privilege == "Manager") || ((shoutFound.user_id == logged_in.id) || (shoutFound.shoutbox.user_id == logged_in.id)))
+               if(logged_in.pouch.privilege != "Admin")
+                  #Removes the content and decrements the owner's pouch
+                  cleanup = Fieldcost.find_by_name("Shoutcleanup")
+                  shoutFound.user.pouch.amount -= cleanup.amount
+                  @pouch = pmFound.user.pouch
+                  @pouch.save
+                  economyTransaction("Tax", cleanup.amount, shoutFound.user.id)
+               end
                flash[:success] = "Shout was successfully removed!"
                @shout = shoutFound
                @shout.destroy
@@ -170,6 +191,7 @@ module ShoutsHelper
                               shoutFound.reviewed_on = currentTime
                               @shout = shoutFound
                               @shout.save
+                              economyTransaction("Sink", shoutcost.amount, shoutFound.user.id)
                               url = "None"
                               CommunityMailer.shouts(@shout, "Approved", url).deliver_now
                               value = "#{@shout.user.vname}'s shout message #{@shout.message} was approved!"

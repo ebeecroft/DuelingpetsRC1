@@ -15,6 +15,19 @@ module UserupgradesHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Upgrade"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def getUpgrades(buytype, upgradetype, pouch, upgrade)
          #Add an additional slot later to switch to members
@@ -105,10 +118,12 @@ module UserupgradesHelper
             price = getUpgrades(buytype, "Cost", pouchFound, upgrade)
             message = "#{buytype}"
             if(price != 0 && (pouchFound.amount - price > -1))
+               #Prints out the object that was purchased
                pouchFound.amount -= price
                message1 = "#{buytype}"
                level = getUpgrades(buytype, "Purchase", pouchFound, upgrade)
                message2 = "#{level}"
+               economyTransaction("Sink", price, logged_in.id)
                @pouch = pouchFound
                @pouch.save
                flash[:success] = "Your " + message1 + " level is now: " + message2

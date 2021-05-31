@@ -18,6 +18,19 @@ module TagsHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the chapter points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Tag"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def indexCommons
          if(optional)
@@ -63,13 +76,23 @@ module TagsHelper
                      render "edit"
                   end
                elsif(type == "destroy")
-                  #Eventually consider adding a sink to this
-                  @tag.destroy
-                  flash[:success] = "#{tagFound.name} was successfully removed."
-                  if(logged_in.pouch.privilege == "Admin")
+                  #Removes the content and decrements the owner's pouch
+                  tag = Fieldcost.find_by_name("Tag")
+                  if(tagFound.user.pouch.amount - tag.amount >= 0)
+                     tagFound.user.pouch.amount -= tag.amount #Remember to come back later to change to emeralds
+                     @pouch = tagFound.user.pouch
+                     @pouch.save
+                     economyTransaction("Tax", tag.amount, tagFound.user.id)
+                     @tag.destroy
+                     flash[:success] = "#{tagFound.name} was successfully removed."
+                     if(logged_in.pouch.privilege == "Admin")
                         redirect_to tags_list_path
+                     else
+                        redirect_to user_tags_path(tagFound.user)
+                     end
                   else
-                     redirect_to user_tags_path(tagFound.user)
+                     flash[:error] = "Owner has insufficient points to remove the tag!"
+                     redirect_to root_path
                   end
                end
             else
@@ -138,6 +161,7 @@ module TagsHelper
                                  logged_in.pouch.amount -= tagcost.amount
                                  @pouch = logged_in.pouch
                                  @pouch.save
+                                 economyTransaction("Sink", tagcost.amount, tagFound.user.id)
                                  flash[:success] = "#{@tag.name} was successfully created."
                                  redirect_to user_tags_path(@user)
                               else

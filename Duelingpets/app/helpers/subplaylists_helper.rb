@@ -16,6 +16,19 @@ module SubplaylistsHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Subplaylist"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def updateChannel(mainplaylist)
          mainplaylist.updated_on = currentTime
@@ -65,7 +78,14 @@ module SubplaylistsHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == subplaylistFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
+                     if(logged_in.pouch.privilege != "Admin")
+                        #Removes the content and decrements the owner's pouch
+                        cleanup = Fieldcost.find_by_name("Subplaylistcleanup")
+                        subplaylistFound.user.pouch.amount -= cleanup.amount
+                        @pouch = subplaylistFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Tax", cleanup.amount, subplaylistFound.user_id)
+                     end
                      @subplaylist.destroy
                      flash[:success] = "#{subplaylistFound.title} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
@@ -130,6 +150,7 @@ module SubplaylistsHelper
                            if(logged_in.pouch.amount - subplaylistcost.amount >= 0)
                               if(@subplaylist.save)
                                  logged_in.pouch.amount -= subplaylistcost.amount
+                                 economyTransaction("Sink", subplaylistcost.amount, newSubplaylist.user_id)
                                  @pouch = logged_in.pouch
                                  @pouch.save
                                  updateChannel(@subplaylist.mainplaylist)

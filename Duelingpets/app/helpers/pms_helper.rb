@@ -19,6 +19,19 @@ module PmsHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "PM"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def unreadPMs(pm)
          title = ""
@@ -72,9 +85,16 @@ module PmsHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && (((logged_in.id == pmFound.user_id) || (logged_in.id == pmFound.pmbox.user_id)) || (logged_in.pouch.privilege == "Admin")))
-                     #Eventually consider adding a sink to this
+                     if(logged_in.pouch.privilege != "Admin")
+                        #Removes the content and decrements the owner's pouch
+                        cleanup = Fieldcost.find_by_name("PMcleanup")
+                        pmFound.user.pouch.amount -= cleanup.amount
+                        @pouch = pmFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Tax", cleanup.amount, pmFound.user.id)
+                     end
                      @pm.destroy
-                     flash[:success] = "#{@pm.title} was successfully removed."
+                     flash[:success] = "#{pmFound.title} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
                         redirect_to pms_path
                      else
@@ -138,6 +158,10 @@ module PmsHelper
                            pmcost = Fieldcost.find_by_name("PMcost")
                            if(logged_in.pouch.amount - pmcost.amount >= 0)
                               if(@pm.save)
+                                 logged_in.pouch.amount -= pmcost.amount
+                                 @pouch = logged_in.pouch
+                                 @pouch.save
+                                 economyTransaction("Sink", pmcost.amount, logged_in.id)
                                  url = "http://www.duelingpets.net/pmboxes/inbox"
                                  CommunityMailer.messaging(@pm, "PM", url).deliver_now
                                  flash[:success] = "#{@pm.title} was successfully created."

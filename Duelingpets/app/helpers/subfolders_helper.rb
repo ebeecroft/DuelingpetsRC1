@@ -82,7 +82,7 @@ module SubfoldersHelper
                         #Removes the content and decrements the owner's pouch
                         cleanup = Fieldcost.find_by_name("Subfoldercleanup")
                         subfolderFound.user.pouch.amount -= cleanup.amount
-                        @pouch = artFound.user.pouch
+                        @pouch = subfolderFound.user.pouch
                         @pouch.save
                         economyTransaction("Tax", cleanup.amount, subfolderFound.user_id)
                      end
@@ -150,7 +150,7 @@ module SubfoldersHelper
                            if(logged_in.pouch.amount - subfoldercost.amount >= 0)
                               if(@subfolder.save)
                                  logged_in.pouch.amount -= subfoldercost.amount
-                                 economyTransaction("Sink", subfoldercost.amount, subfolder.user_id)
+                                 economyTransaction("Sink", subfoldercost.amount, newSubfolder.user_id)
                                  @pouch = logged_in.pouch
                                  @pouch.save
                                  updateGallery(@subfolder.mainfolder)

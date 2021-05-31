@@ -16,6 +16,19 @@ module ReferralsHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Referral"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def mode(type)
          if(timeExpired)
@@ -78,6 +91,7 @@ module ReferralsHelper
                               pouch.amount += pointsForReferral
                               @pouch = pouch
                               @pouch.save
+                              economyTransaction("Source", pointsForReferral, pouch.user.id)
 
                               #Emails the user about the new referral
                               ContentMailer.content_created(@referral, "Referral", pointsForReferral).deliver_now
@@ -151,6 +165,7 @@ module ReferralsHelper
                      pouch.amount += pointsForReferral
                      @pouch = pouch
                      @pouch.save
+                     economyTransaction("Source", pointsForReferral, pouch.user.id)
 
                      #Emails the user about the new referral
                      ContentMailer.content_created(@referral, "Referral", pointsForReferral).deliver_now

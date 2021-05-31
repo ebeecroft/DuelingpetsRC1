@@ -16,6 +16,19 @@ module MainplaylistsHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid)
+         #Adds the art points to the economy
+         newTransaction = Economy.new(params[:economy])
+         newTransaction.econtype = "Content"
+         newTransaction.content_type = "Mainplaylist"
+         newTransaction.name = type
+         newTransaction.amount = points
+         newTransaction.user_id = userid
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def updateChannel(channel)
          channel.updated_on = currentTime
@@ -65,17 +78,24 @@ module MainplaylistsHelper
 
                #Come back to this when subsheets is added
                subplaylists = mainplaylistFound.subplaylists
-               @subplaylists = Kaminari.paginate_array(subplaylists).page(getMainplaylistParams("Page")).per(10)
+               @subplaylists = Kaminari.paginate_array(subplaylists).page(getMainplaylistParams("Page")).per(10)               
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == mainplaylistFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
-                     @mainplaylist.destroy
+                     if(logged_in.pouch.privilege != "Admin")
+                        #Removes the content and decrements the owner's pouch
+                        cleanup = Fieldcost.find_by_name("Mainplaylistcleanup")
+                        mainplaylistFound.user.pouch.amount -= cleanup.amount
+                        @pouch = mainplaylistFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Tax", cleanup.amount, mainplaylistFound.user_id)
+                     end
+                     @mainfolder.destroy
                      flash[:success] = "#{mainplaylistFound.title} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
                         redirect_to mainplaylists_path
                      else
-                        redirect_to user_channel_path(mainplaylistFound.channel.user, mainplaylistFound.channel)
+                        redirect_to user_channel_path(mainplaylistFound.channel.user, mainplaylist.channel)
                      end
                   else
                      redirect_to root_path
@@ -132,10 +152,11 @@ module MainplaylistsHelper
                         if(type == "create")
                            mainplaylistcost = Fieldcost.find_by_name("Mainplaylist")
                            if(logged_in.pouch.amount - mainplaylistcost.amount >= 0)
-                              logged_in.pouch.amount -= mainplaylistcost.amount
-                              @pouch = logged_in.pouch
-                              @pouch.save
                               if(@mainplaylist.save)
+                                 logged_in.pouch.amount -= mainplaylistcost.amount
+                                 economyTransaction("Sink", mainplaylistcost.amount, mainplaylist.user_id)
+                                 @pouch = logged_in.pouch
+                                 @pouch.save
                                  updateChannel(@mainplaylist.channel)
                                  flash[:success] = "#{@mainplaylist.title} was successfully created."
                                  redirect_to channel_mainplaylist_path(@channel, @mainplaylist)
