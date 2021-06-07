@@ -26,22 +26,25 @@ module BlogsHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Performs a variety of actions depending if it is a blog or an adblog
+      def economyTransaction(type, points, userid, currency, contentType)
          newTransaction = Economy.new(params[:economy])
-         if(type == "Tax")
-            newTransaction.econtype = "Treasury"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Communication"
          else
-            newTransaction.econtype = "Content"
+            newTransaction.attribute = "Treasury"
          end
-         if(type == "Sink" || type == "Tax")
-            newTransaction.content_type = "Adblog"
-         else
-            newTransaction.content_type = "Blog"
-         end
-         newTransaction.name = type
+         #Content type can be either Blog or Adblog
+         newTransaction.content_type = contentType
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -199,20 +202,27 @@ module BlogsHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == blogFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     if(logged_in.pouch.privilege != "Admin")
+                     cleanup = Fieldcost.find_by_name("Blogcleanup")
+                     if(blogFound.user.pouch.amount - cleanup.amount >= 0)
                         #Removes the content and decrements the owner's pouch
-                        cleanup = Fieldcost.find_by_name("Blogcleanup")
                         blogFound.user.pouch.amount -= cleanup.amount
                         @pouch = blogFound.user.pouch
                         @pouch.save
-                        economyTransaction("Tax", cleanup.amount, blogFound)
-                     end
-                     @blog.destroy
-                     flash[:success] = "#{@blog.title} was successfully removed."
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to blogs_list_path
+                        economyTransaction("Sink", cleanup.amount, blogFound.user.id, "Points", "Blog")
+                        flash[:success] = "#{@blog.title} was successfully removed."
+                        @blog.destroy
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to blogs_list_path
+                        else
+                           redirect_to user_blogs_path(blogFound.user)
+                        end
                      else
-                        redirect_to user_blogs_path(blogFound.user)
+                        flash[:error] = "#{@blog.user.vname}'s has insufficient points to remove the blog!"
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to blogs_list_path
+                        else
+                           redirect_to user_blogs_path(blogFound.user)
+                        end
                      end
                   else
                      redirect_to root_path
@@ -511,28 +521,25 @@ module BlogsHelper
                               #Decrements the player's pouch for each ad that has not yet been purchased
                               if(blogFound.user.pouch.amount - price >= 0)
                                  blogFound.reviewed = true
+                                 rate = Ratecost.find_by_name("Purchaserate")
+                                 tax = (price * rate.amount)
                                  @blog = blogFound
-                                 if(@blog.save)
-                                    @blog.user.pouch.amount -= price
-                                    @pouch = @blog.user.pouch
-                                    @pouch.save
-                                    #This will need to be fixed up and changed
-                                    ContentMailer.content_approved(@blog, "Blog", price).deliver_later(wait: 5.minutes)
-                                    #Might add a secondary economy transaction here for taxes here on top of the default sink
-                                    #used for the dragonhoard collecting points. Tax of 0.05
-                                    #Remember econtype is Treasurey, and content type is adblog, name is tax
-                                    #econame is sink
-                                    #Owner for that is glitchy, plus hoard would go here as well
-                                    economyTransaction("Sink", price, @blog.user.id)
-                                    flash[:success] = "#{blogFound.user.vname}'s adblog #{blogFound.title} was approved."
-                                    redirect_to blogs_review_path
-                                 else
-                                    flash[:error] = "Unable to save the current blog!"
-                                    redirect_to root_path
-                                 end
+                                 @blog.save
+                                 @blog.user.pouch.amount -= price
+                                 @pouch = @blog.user.pouch
+                                 @pouch.save
+                                 hoard = Dragonhoard.find_by_id(1)
+                                 hoard.profit += tax
+                                 @hoard = hoard
+                                 @hoard.save
+                                 economyTransaction("Sink", price - tax, blogFound.user.id, "Points", "Adblog")
+                                 economyTransaction("Tax", tax, blogFound.user.id, "Points", "Adblog")
+                                 ContentMailer.content_approved(@blog, "Adblog", price).deliver_later(wait: 5.minutes)
+                                 flash[:success] = "#{blogFound.user.vname}'s adblog #{blogFound.title} was approved."
+                                 redirect_to blogs_review_path
                               else
-                                 flash[:error] = "Blog owner can't afford the bought ads!"
-                                 redirect_to root_path
+                                 flash[:error] = "#{blogFound.user.vname} can't afford the bought ads!"
+                                 redirect_to blogs_review_path
                               end
                            else
                               blogFound.reviewed = true

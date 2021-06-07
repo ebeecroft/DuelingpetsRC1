@@ -17,22 +17,23 @@ module BooksHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Adds the art points to the economy
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
+         #Determines the type of attribute to return
          if(type != "Tax")
-            newTransaction.econtype = "Content"
+            newTransaction.attribute = "Content"
          else
-            newTransaction.econtype = "Treasury"
+            newTransaction.attribute = "Treasury"
          end
          newTransaction.content_type = "Book"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
          if(type != "Tax")
             newTransaction.user_id = userid
          else
-            glitchy = User.find_by_vname("Glitchy")
-            newTransaction.user_id = glitchy.id
+            newTransaction.dragonhoard_id = 1
          end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
@@ -114,7 +115,7 @@ module BooksHelper
                      bookFound.user.pouch += points
                      @pouch = bookFound.user.pouch
                      @pouch.save
-                     economyTransaction("Source", points, bookFound.user_id)
+                     economyTransaction("Source", points, bookFound.user.id, "Points")
                      @book.destroy
                      flash[:success] = "#{bookFound.title} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
@@ -183,7 +184,7 @@ module BooksHelper
 
                      if(type == "create")
                         worldOwner = (logged_in.id == bookworldFound.user_id)
-                        if(worldOwner || bookworld.open_world)
+                        if(worldOwner || bookworldFound.open_world)
                            bookcost = (logged_in.pouch.amount - bookworldFound.price)
                            if(worldOwner || (!worldOwner && bookcost >= 0))
                               if(@book.save)
@@ -192,18 +193,22 @@ module BooksHelper
                                     logged_in.pouch.amount -= bookworldFound.price
                                     @pouch = logged_in.pouch
                                     @pouch.save
-                                    economyTransaction("Sink", bookworldFound.price, logged_in.id)
+                                    rate = Ratecost.find_by_name("Purchaserate")
+                                    tax = (bookworldFound.price * rate.amount)
+                                    hoard = Dragonhoard.find_by_id(1)
+                                    hoard.profit += tax
+                                    @hoard = hoard
+                                    @hoard.save
+                                    economyTransaction("Sink", bookworldFound.price - tax, newBook.user.id, "Points")
+                                    economyTransaction("Tax", tax, newBook.user.id, "Points")
 
                                     #Increment the worldOwner's pouch
-                                    tax = bookworldFound.price * 0.30
                                     points = bookworldFound.price - tax
                                     bookworldFound.user.pouch.amount += points
                                     @pouch2 = bookworldFound.user.pouch
                                     @pouch2.save
-                                    economyTransaction("Source", points, bookworldFound.user_id)
-                                    economyTransaction("Tax", tax, "Glitchy")
+                                    economyTransaction("Source", points, bookworldFound.user.id, "Points")
                                  end
-
                                  updateBookworld(@book.bookworld)
                                  flash[:success] = "#{@book.title} was successfully created."
                                  redirect_to bookworld_book_path(@bookworld, @book)

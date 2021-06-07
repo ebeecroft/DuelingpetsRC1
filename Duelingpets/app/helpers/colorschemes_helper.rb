@@ -27,14 +27,24 @@ module ColorschemesHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Adds the chapter points to the economy
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Content"
+         else
+            newTransaction.attribute = "Treasury"
+         end
          newTransaction.content_type = "Colorscheme"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -107,7 +117,6 @@ module ColorschemesHelper
                   end
                elsif(type == "destroy")
                   if(!colorschemeFound.democolor && colorschemeFound.id != 1)
-                     flash[:success] = "#{@colorscheme.name} was successfully removed."
                      allInfos = Userinfo.all
                      infosToChange = allInfos.select{|userinfo| userinfo.colorscheme_id == @colorscheme.id}
                      infosToChange.each do |userinfo|
@@ -115,18 +124,14 @@ module ColorschemesHelper
                         @userinfo = userinfo
                         @userinfo.save
                      end
-                     hoard = Dragonhoard.find_by_id(1)
-                     colorcost = Fieldcost.find_by_name("Colorschemecleanup")
-                     cleanupcost = colorcost.amount
-
-                     pouchFound = Pouch.find_by_user_id(logged_in.id)
-                     if(logged_in.pouch.privilege == "Admin" || (cleanupcost <= pouchFound.amount))
-                        if(logged_in.pouch.privilege != "Admin")
-                           pouchFound.amount -= cleanupcost
-                           @pouch = pouchFound
-                           @pouch.save
-                        end
-                        economyTransaction("Tax", cleanup.amount, colorschemeFound.user.id)
+                     cleanup = Fieldcost.find_by_name("Colorschemecleanup")
+                     if(colorschemeFound.user.pouch.amount - cleanup.amount >= 0)
+                        #Removes the content and decrements the owner's pouch
+                        colorschemeFound.user.pouch.amount -= cleanup.amount
+                        @pouch = colorschemeFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Sink", cleanup.amount, colorschemeFound.user.id, "Points")
+                        flash[:success] = "#{@colorscheme.name} was successfully removed."
                         @colorscheme.destroy
                         if(logged_in.pouch.privilege == "Admin")
                            redirect_to colorschemes_list_path
@@ -134,8 +139,12 @@ module ColorschemesHelper
                            redirect_to user_colorschemes_path(colorschemeFound.user)
                         end
                      else
-                        flash[:error] = "You do not have enough points to delete this color!"
-                        redirect_to root_path
+                        flash[:error] = "#{@colorscheme.user.vname}'s has insufficient points to remove the colorscheme!"
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to colorschemes_list_path
+                        else
+                           redirect_to user_colorschemes_path(colorschemeFound.user)
+                        end
                      end
                   else
                      flash[:error] = "You can't delete a mandatory color!"
@@ -229,21 +238,29 @@ module ColorschemesHelper
                      @user = userFound
                      @colorscheme = newColorscheme
                      if(type == "create")
-                        if(@colorscheme.save)
-                           #Adds points to the users pouch
-                           colors = Fieldcost.find_by_name("Colorscheme")
-                           pointsForColors = colors.amount
-                           pouchFound = Pouch.find_by_user_id(logged_in.id)
-                           pouchFound.amount -= pointsForColors
-                           economyTransaction("Sink", cleanup.amount, @colorscheme.user.id)
-
-                           ContentMailer.content_created(@colorscheme, "Colorscheme", pointsForColors).deliver_later(wait: 5.minutes)
-                           @pouch = pouchFound
-                           @pouch.save
-                           flash[:success] = "#{@colorscheme.name} was successfully created."
-                           redirect_to colorschemes_url
+                        price = Fieldcost.find_by_name("Colorscheme")
+                        rate = Ratecost.find_by_name("Purchaserate")
+                        tax = (price.amount * rate.amount)
+                        if(logged_in.pouch.amount - price.amount >= 0)
+                           if(@colorscheme.save)
+                              logged_in.pouch.amount -= price.amount
+                              @pouch = logged_in.pouch
+                              @pouch.save
+                              hoard = Dragonhoard.find_by_id(1)
+                              hoard.profit += tax
+                              @hoard = hoard
+                              @hoard.save
+                              economyTransaction("Sink", price.amount - tax, logged_in.id, "Points")
+                              economyTransaction("Tax", tax, logged_in.id, "Points")
+                              ContentMailer.content_created(@colorscheme, "Colorscheme", price.amount).deliver_later(wait: 5.minutes)
+                              flash[:success] = "#{@colorscheme.name} was successfully created."
+                              redirect_to colorschemes_path
+                           else
+                              render "new"
+                           end
                         else
-                           render "new"
+                           flash[:error] = "Insufficient funds to create a colorscheme!"
+                           redirect_to root_path
                         end
                      end
                   else

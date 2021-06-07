@@ -19,14 +19,24 @@ module CreaturesHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Adds the chapter points to the economy
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Content"
+         else
+            newTransaction.attribute = "Treasury"
+         end
          newTransaction.content_type = "Creature"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -47,7 +57,7 @@ module CreaturesHelper
          elsif(type == "Str")
             value = (creature.creaturetype.basestr + creature.strength)
          elsif(type == "MP")
-            value = creature.mp
+            value = creature.mp * 4
          elsif(type == "Matk")
             value = creature.matk
          elsif(type == "Mdef")
@@ -173,7 +183,7 @@ module CreaturesHelper
                         creatureFound.user.pouch.amount -= price
                         @pouch = creatureFound.user.pouch
                         @pouch.save
-                        economyTransaction("Tax", price, creatureFound.user.id)
+                        economyTransaction("Sink", price, creatureFound.user.id, "Points")
                         @creature.destroy
                         flash[:success] = "#{@creature.name} was successfully removed."
                         if(logged_in.pouch.privilege == "Admin")
@@ -182,7 +192,7 @@ module CreaturesHelper
                            redirect_to user_creatures_path(creatureFound.user)
                         end
                      else
-                        flash[:error] = "Owner has insufficient points to remove the creature!"
+                        flash[:error] = "#{@creature.user.vname}'s has insufficient points to remove the creature!"
                         redirect_to root_path
                      end
                   else
@@ -332,13 +342,15 @@ module CreaturesHelper
                   creatureFound = Creature.find_by_id(getCreatureParams("CreatureId"))
                   if(creatureFound)
                      pouchFound = Pouch.find_by_user_id(logged_in.id)
-                     if((logged_in.pouch.privilege == "Admin") || ((pouchFound.privilege == "Keymaster") || (pouchFound.privilege == "Reviewer")))
+                     if((logged_in.pouch.privilege == "Admin") || ((logged_in.pouch.privilege == "Keymaster") || (logged_in.pouch.privilege == "Reviewer")))
                         if(type == "approve")
                            #Might revise this section later
                            creatureFound.reviewed = true
                            creatureFound.reviewed_on = currentTime
                            basecost = creatureFound.creaturetype.basecost
                            price = ((basecost + creatureFound.cost) * 0.70).round
+                           rate = Ratecost.find_by_name("Purchaserate")
+                           tax = (price * rate.amount)
                            pouch = Pouch.find_by_user_id(creatureFound.user_id)
                            #Add dreyterrium cost later
                            if(pouch.amount - price >= 0)
@@ -347,20 +359,26 @@ module CreaturesHelper
                               pouch.amount -= price
                               @pouch = pouch
                               @pouch.save
+                              hoard = Dragonhoard.find_by_id(1)
+                              hoard.profit += tax
+                              @hoard = hoard
+                              @hoard.save
                               economyTransaction("Sink", price, creatureFound.user.id)
+                              economyTransaction("Sink", price - tax, creatureFound.user.id, "Points")
+                              economyTransaction("Tax", tax, creatureFound.user.id, "Points")
                               ContentMailer.content_approved(@creature, "Creature", price).deliver_now
-                              value = "#{@creature.user.vname}'s creature #{@creature.name} was approved."
+                              flash[:success] = "#{@creature.user.vname}'s creature #{@creature.name} was approved."
+                              redirect_to creatures_review_path
                            else
                               flash[:error] = "Insufficient funds to create a creature!"
-                              redirect_to user_path(logged_in.id)
+                              redirect_to creatures_review_path
                            end
                         else
                            @creature = creatureFound
                            ContentMailer.content_denied(@creature, "Creature").deliver_now
-                           value = "#{@creature.user.vname}'s creature #{@creature.name} was denied."
+                           flash[:success] = "#{@creature.user.vname}'s creature #{@creature.name} was denied."
+                           redirect_to creatures_review_path
                         end
-                        flash[:success] = value
-                        redirect_to creatures_review_path
                      else
                         redirect_to root_path
                      end

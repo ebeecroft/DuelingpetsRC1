@@ -18,14 +18,24 @@ module BlogrepliesHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Adds the art points to the economy
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Communication"
+         else
+            newTransaction.attribute = "Treasury"
+         end
          newTransaction.content_type = "Blogreply"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -66,7 +76,7 @@ module BlogrepliesHelper
                      replyFound.user.pouch.amount -= cleanup.amount
                      @pouch = replyFound.user.pouch
                      @pouch.save
-                     economyTransaction("Tax", cleanup.amount, replyFound.user_id)
+                     economyTransaction("Sink", cleanup.amount, replyFound.user_id, "Points")
                   end
                   @blogreply.destroy
                   flash[:success] = "Reply was successfully removed."
@@ -181,42 +191,48 @@ module BlogrepliesHelper
                if(logged_in)
                   replyFound = Blogreply.find_by_id(getReplyParams("ReplyId"))
                   if(replyFound)
-                     pouchFound = Pouch.find_by_user_id(logged_in.id)
-                     if((logged_in.pouch.privilege == "Admin") || ((pouchFound.privilege == "Keymaster") || (pouchFound.privilege == "Reviewer")))
+                     pouchFound = Pouch.find_by_user_id(replyFound.user.id)
+                     if((logged_in.pouch.privilege == "Admin") || ((logged_in.pouch.privilege == "Keymaster") || (logged_in.pouch.privilege == "Reviewer")))
                         if(type == "approve")
                            replyFound.reviewed = true
                            replyFound.reviewed_on = currentTime
-                           updateGallery(artFound.subfolder)
-
-                           #Adds the points to the user's pouch
-                           blogreply = Fieldcost.find_by_name("Blogreply")
-                           cost = blogreply.amount
-                           if(pouchFound.amount - cost >= 0)
-                              economyTransaction("Sink", cost, replyFound.user_id)
-                              pouchFound.amount -= cost
-                              @pouch = pouchFound
-                              @pouch.save
+                           updateBlog(replyFound.blog)
+                           if(!replyFound.purchased)
+                              price = Fieldcost.find_by_name("Blogreply")
+                              rate = Ratecost.find_by_name("Purchaserate")
+                              tax = (price.amount * rate.amount).round
+                              if(pouch.amount - price.amount >= 0)
+                                 pouch.amount -= price.amount
+                                 @pouch = pouch
+                                 @pouch.save
+                                 hoard = Dragonhoard.find_by_id(1)
+                                 hoard.profit += tax
+                                 @hoard = hoard
+                                 @hoard.save
+                                 economyTransaction("Sink", price.amount - tax, replyFound.user_id, "Points")
+                                 economyTransaction("Tax", tax, replyFound.user_id, "Points")
+                                 replyFound.purchased = true
+                                 @blogreply = replyFound
+                                 @blogreply.save
+                                 flash[:success] = "#{replyFound.user.vname}'s comment was approved."
+                                 CommunityMailer.content_comments(@blogreply, "Blogreply", "Approved", price.amount, "None").deliver_now
+                              else
+                                 flash[:error] = "#{replyFound.user.vname}'s funds are too low to create a comment!"
+                              end
+                              redirect_to blogreplies_review_path
+                           else
                               @blogreply = replyFound
                               @blogreply.save
-                              CommunityMailer.content_comments(@blogreply, "Blogreply", "Approved", 10, "None").deliver_now
-                           
-                              #allWatches = Watch.all
-                              #watchers = allWatches.select{|watch| (((watch.watchtype.name == "Arts" || watch.watchtype.name == "Blogarts") || (watch.watchtype.name == "Artsounds" || watch.watchtype.name == "Artmovies")) || (watch.watchtype.name == "Maincontent" || watch.watchtype.name == "All")) && watch.from_user.id != @art.user_id}
-                              #if(watchers.count > 0)
-                              #   watchers.each do |watch|
-                              #      UserMailer.new_art(@art, watch).deliver
-                              #   end
-                              #end
-                              flash[:success] = "Reply was approved."
-                           else
-                              flash[:error] = "User can't afford the blogreply cost!"
+                              flash[:success] = "#{replyFound.user.vname}'s comment was approved."
+                              CommunityMailer.content_comments(@blogreply, "Blogreply", "Approved", 0, "None").deliver_now
+                              redirect_to blogreplies_review_path
                            end
                         else
                            @blogreply = replyFound
                            CommunityMailer.content_denied(@blogreply, "Blogreply", "Denied", 0, "None").deliver_now
-                           flash[:success] = "Reply was denied."
+                           flash[:success] = "#{replyFound.user.vname}'s comment was denied."
+                           redirect_to blogreplies_review_path
                         end
-                        redirect_to blogreplies_review_path
                      else
                         redirect_to root_path
                      end

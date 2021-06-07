@@ -19,14 +19,24 @@ module BookworldsHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Adds the art points to the economy
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Content"
+         else
+            newTransaction.attribute = "Treasury"
+         end
          newTransaction.content_type = "Bookworld"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -103,11 +113,11 @@ module BookworldsHelper
                logged_in = current_user
                if(logged_in && ((logged_in.id == bookworldFound.user_id) || logged_in.pouch.privilege == "Admin"))
                   #Gives the user points back for selling their gallery
-                  points = (bookworldValue(galleryFound) * 0.30).round
+                  points = (bookworldValue(bookworldFound) * 0.30).round
                   bookworldFound.user.pouch.amount += points
                   @pouch = bookworldFound.user.pouch
                   @pouch.save
-                  economyTransaction("Source", points, bookworldFound.user_id)
+                  economyTransaction("Source", points, bookworldFound.user.id, "Points")
                   @bookworld.destroy
                   flash[:success] = "#{@bookworld.name} was successfully removed."
                   if(logged_in.pouch.privilege == "Admin")
@@ -172,13 +182,20 @@ module BookworldsHelper
                         @user = userFound
 
                         if(type == "create")
-                           bookworldcost = Fieldcost.find_by_name("Bookworld")
-                           if(logged_in.pouch.amount - bookworldcost.amount >= 0)
+                           price = Fieldcost.find_by_name("Bookworld")
+                           rate = Ratecost.find_by_name("Purchaserate")
+                           tax = (price.amount * rate.amount)
+                           if(logged_in.pouch.amount - price.amount >= 0)
                               if(@bookworld.save)
-                                 logged_in.pouch.amount -= bookworldcost.amount
+                                 logged_in.pouch.amount -= price.amount
                                  @pouch = logged_in.pouch
                                  @pouch.save
-                                 economyTransaction("Sink", bookworldcost.amount, logged_in.id)
+                                 hoard = Dragonhoard.find_by_id(1)
+                                 hoard.profit += tax
+                                 @hoard = hoard
+                                 @hoard.save
+                                 economyTransaction("Sink", price.amount - tax, logged_in.id, "Points")
+                                 economyTransaction("Tax", tax, logged_in.id, "Points")
                                  flash[:success] = "#{@bookworld.name} was successfully created."
                                  redirect_to user_bookworld_path(@user, @bookworld)
                               else
