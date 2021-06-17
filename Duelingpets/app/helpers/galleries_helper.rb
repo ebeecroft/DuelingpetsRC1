@@ -20,14 +20,24 @@ module GalleriesHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Adds the art points to the economy
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Content"
+         else
+            newTransaction.attribute = "Treasury"
+         end
          newTransaction.content_type = "Gallery"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -159,7 +169,7 @@ module GalleriesHelper
                      galleryFound.user.pouch.amount += points
                      @pouch = galleryFound.user.pouch
                      @pouch.save
-                     economyTransaction("Source", points, galleryFound.user_id)
+                     economyTransaction("Source", points, galleryFound.user_id, "Points")
                      @gallery.destroy
                      flash[:success] = "#{@gallery.name} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
@@ -236,13 +246,20 @@ module GalleriesHelper
                         @user = userFound
 
                         if(type == "create")
-                           gallerycost = Fieldcost.find_by_name("Gallery")
-                           if(logged_in.pouch.amount - gallerycost.amount >= 0)
+                           price = Fieldcost.find_by_name("Gallery")
+                           rate = Ratecost.find_by_name("Purchaserate")
+                           tax = (price.amount * rate.amount)
+                           if(logged_in.pouch.amount - price.amount >= 0)
                               if(@gallery.save)
-                                 logged_in.pouch.amount -= gallerycost.amount
+                                 logged_in.pouch.amount -= price.amount
                                  @pouch = logged_in.pouch
                                  @pouch.save
-                                 economyTransaction("Sink", gallerycost.amount, logged_in.id)
+                                 hoard = Dragonhoard.find_by_id(1)
+                                 hoard.profit += tax
+                                 @hoard = hoard
+                                 @hoard.save
+                                 economyTransaction("Sink", price.amount - tax, logged_in.id, "Points")
+                                 economyTransaction("Tax", tax, logged_in.id, "Points")
                                  flash[:success] = "#{@gallery.name} was successfully created."
                                  redirect_to user_gallery_path(@user, @gallery)
                               else

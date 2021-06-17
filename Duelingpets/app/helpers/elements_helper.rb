@@ -19,14 +19,24 @@ module ElementsHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Adds the chapter points to the economy
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Content"
+         else
+            newTransaction.attribute = "Treasury"
+         end
          newTransaction.content_type = "Element"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -107,12 +117,12 @@ module ElementsHelper
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == elementFound.user_id) || logged_in.pouch.privilege == "Admin"))
                      #Removes the content and decrements the owner's pouch
-                     element = Fieldcost.find_by_name("Element")
-                     if(elementFound.user.pouch.amount - element.amount >= 0)
-                        elementFound.user.pouch.amount -= element.amount #Remember to come back later to change to emeralds
+                     price = Fieldcost.find_by_name("Element")
+                     if(elementFound.user.pouch.amount - price.amount >= 0)
+                        elementFound.user.pouch.amount -= price.amount #Remember to come back later to change to emeralds
                         @pouch = elementFound.user.pouch
                         @pouch.save
-                        economyTransaction("Tax", price, elementFound.user.id)
+                        economyTransaction("Sink", price.amount, elementFound.user.id, "Points")
                         @element.destroy
                         flash[:success] = "#{@element.name} was successfully removed."
                         if(logged_in.pouch.privilege == "Admin")
@@ -121,7 +131,7 @@ module ElementsHelper
                            redirect_to user_elements_path(elementFound.user)
                         end
                      else
-                        flash[:error] = "Owner has insufficient points to remove the element!"
+                        flash[:error] = "#{@element.user.vname}'s has insufficient points to remove the element!"
                         redirect_to root_path
                      end
                   else
@@ -270,14 +280,21 @@ module ElementsHelper
                         if(type == "approve")
                            elementFound.reviewed = true
                            elementFound.reviewed_on = currentTime
-                           element = Fieldcost.find_by_name("Element")
-                           if(pouch.amount - element.amount >= 0)
+                           price = Fieldcost.find_by_name("Element")
+                           rate = Ratecost.find_by_name("Purchaserate")
+                           tax = (price.amount * rate.amount)
+                           if(pouch.amount - price.amount >= 0)
                               @element = elementFound
                               @element.save
                               pouch.amount -= element.amount #Need to change to emeralds later
                               @pouch = pouch
                               @pouch.save
-                              economyTransaction("Sink", element.amount, elementFound.user.id)
+                              hoard = Dragonhoard.find_by_id(1)
+                              hoard.profit += tax
+                              @hoard = hoard
+                              @hoard.save
+                              economyTransaction("Sink", price.amount - tax, elementFound.user.id, "Points")
+                              economyTransaction("Tax", tax, elementFound.user.id, "Points")
                               ContentMailer.content_approved(@element, "Element", element.amount).deliver_now
                               flash[:success] = "#{@element.user.vname}'s element #{@element.name} was approved."
                               redirect_to elements_review_path

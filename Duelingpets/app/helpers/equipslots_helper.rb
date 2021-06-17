@@ -21,14 +21,24 @@ module EquipslotsHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Adds the chapter points to the economy
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Purchase"
+         else
+            newTransaction.attribute = "Treasury"
+         end
          newTransaction.content_type = "Equip"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -516,12 +526,12 @@ module EquipslotsHelper
                elsif(type == "destroy")
                   if(checkSlot(slotFound))
                      #Removes the equip and decrements the owner's pouch
-                     equip = Fieldcost.find_by_name("Equipslotcleanup")
-                     if(slotFound.user.pouch.amount - equip.amount >= 0)
-                        slotFound.user.pouch.amount -= equip.amount
+                     price = Fieldcost.find_by_name("Equipslotcleanup")
+                     if(slotFound.user.pouch.amount - price.amount >= 0)
+                        slotFound.user.pouch.amount -= price.amount
                         @pouch = slotFound.user.pouch
                         @pouch.save
-                        economyTransaction("Tax", equip.amount, slotFound.user.id)
+                        economyTransaction("Sink", price.amount, slotFound.equip.partner.user.id, "Points")
                         @equip.destroy
                         flash[:success] = "Equip slot #{slotFound.name} was successfully removed."
                         if(logged_in.pouch.privilege == "Admin")
@@ -530,7 +540,7 @@ module EquipslotsHelper
                            redirect_to partner_equip_path(@equip.partner, @equip)
                         end
                      else
-                        flash[:error] = "Owner has insufficient points to remove the equipslot!"
+                        flash[:error] = "#{@equipslot.equip.partner.user.vname}'s has insufficient points to remove the equipslot!"
                         redirect_to root_path
                      end
                   else
@@ -583,13 +593,20 @@ module EquipslotsHelper
                      @equip = equipFound
                      @equipslot = newSlot
                      if(type == "create")
-                        equipslotcost = Fieldcost.find_by_name("Equipslot")
-                        if(logged_in.pouch.amount - equipslotcost.amount >= 0)
+                        price = Fieldcost.find_by_name("Equipslot")
+                        rate = Ratecost.find_by_name("Purchaserate")
+                        tax = (price.amount * rate.amount)
+                        if(logged_in.pouch.amount - price.amount >= 0)
                            if(@equipslot.save)
-                              logged_in.pouch.amount -= equipslotcost.amount
+                              logged_in.pouch.amount -= price.amount
                               @pouch = logged_in.pouch
                               @pouch.save
-                              economyTransaction("Sink", equipslotcost, equipFound.user.id)
+                              hoard = Dragonhoard.find_by_id(1)
+                              hoard.profit += tax
+                              @hoard = hoard
+                              @hoard.save
+                              economyTransaction("Sink", price.amount - tax, equipFound.user.id, "Points")
+                              economyTransaction("Tax", tax, equipFound.user.id, "Points")
                               flash[:success] = "#{@equipslot.name} was successfully created."
                               redirect_to partner_equip_path(@equip.partner, @equip)
                            else

@@ -21,14 +21,24 @@ module ItemsHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Adds the chapter points to the economy
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Content"
+         else
+            newTransaction.attribute = "Treasury"
+         end
          newTransaction.content_type = "Item"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -157,7 +167,7 @@ module ItemsHelper
                         itemFound.user.pouch.amount -= price
                         @pouch = itemFound.user.pouch
                         @pouch.save
-                        economyTransaction("Tax", price, itemFound.user.id)
+                        economyTransaction("Sink", price, itemFound.user.id, "Points")
                         @item.destroy
                         flash[:success] = "#{itemFound.name} was successfully removed."
                         if(logged_in.pouch.privilege == "Admin")
@@ -166,7 +176,7 @@ module ItemsHelper
                            redirect_to user_items_path(itemFound.user)
                         end
                      else
-                        flash[:error] = "Owner has insufficient points to remove the item!"
+                        flash[:error] = "#{@item.user.vname}'s has insufficient points to remove the item!"
                         redirect_to root_path
                      end
                   else
@@ -318,13 +328,15 @@ module ItemsHelper
                   itemFound = Item.find_by_id(getItemParams("ItemId"))
                   if(itemFound)
                      pouchFound = Pouch.find_by_user_id(logged_in.id)
-                     if((logged_in.pouch.privilege == "Admin") || ((pouchFound.privilege == "Keymaster") || (pouchFound.privilege == "Reviewer")))
+                     if((logged_in.pouch.privilege == "Admin") || ((logged_in.pouch.privilege == "Keymaster") || (logged_in.pouch.privilege == "Reviewer")))
                         if(type == "approve")
                            #Might revise this section later
                            itemFound.reviewed = true
                            itemFound.reviewed_on = currentTime
                            basecost = itemFound.itemtype.basecost
                            price = ((basecost + itemFound.cost) * 0.70).round
+                           rate = Ratecost.find_by_name("Purchaserate")
+                           tax = (price * rate.amount)
                            pouch = Pouch.find_by_user_id(itemFound.user_id)
                            #Add dreyterrium cost later
                            if(pouch.amount - price >= 0)
@@ -333,7 +345,12 @@ module ItemsHelper
                               pouch.amount -= price
                               @pouch = pouch
                               @pouch.save
-                              economyTransaction("Sink", price, itemFound.user.id)
+                              hoard = Dragonhoard.find_by_id(1)
+                              hoard.profit += tax
+                              @hoard = hoard
+                              @hoard.save
+                              economyTransaction("Sink", price - tax, itemFound.user.id, "Points")
+                              economyTransaction("Tax", tax, itemFound.user.id, "Points")
                               ContentMailer.content_approved(@item, "Item", price).deliver_now
                               flash[:success] = "#{@item.user.vname}'s item #{@item.name} was approved."
                               redirect_to items_review_path

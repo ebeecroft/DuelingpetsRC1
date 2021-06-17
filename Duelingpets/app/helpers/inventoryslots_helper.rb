@@ -20,15 +20,25 @@ module InventoryslotsHelper
          end
          return value
       end
-
-      def economyTransaction(type, points, userid)
-         #Adds the chapter points to the economy
+      
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Purchase"
+         else
+            newTransaction.attribute = "Treasury"
+         end
          newTransaction.content_type = "Inventory"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -51,12 +61,12 @@ module InventoryslotsHelper
                elsif(type == "destroy")
                   if(checkSlot(slotFound))
                      #Removes the inventory and decrements the owner's pouch
-                     inventory = Fieldcost.find_by_name("Inventoryslotcleanup")
-                     if(slotFound.user.pouch.amount - inventory.amount >= 0)
-                        slotFound.user.pouch.amount -= inventory.amount
+                     price = Fieldcost.find_by_name("Inventoryslotcleanup")
+                     if(slotFound.user.pouch.amount - price.amount >= 0)
+                        slotFound.user.pouch.amount -= price.amount
                         @pouch = slotFound.user.pouch
                         @pouch.save
-                        economyTransaction("Tax", inventory.amount, slotFound.user.id)
+                        economyTransaction("Sink", price.amount, slotFound.inventory.user.id, "Points")
                         @inventoryslot.destroy
                         flash[:success] = "Inventory slot #{slotFound.name} was successfully removed."
                         if(logged_in.pouch.privilege == "Admin")
@@ -65,7 +75,7 @@ module InventoryslotsHelper
                            redirect_to user_inventory_path(@inventory.user, @inventory)
                         end
                      else
-                        flash[:error] = "Owner has insufficient points to remove the inventoryslot!"
+                        flash[:error] = "#{@inventoryslot.inventory.user.vname}'s has insufficient points to remove the inventoryslot!"
                         redirect_to root_path
                      end
                   else
@@ -115,13 +125,20 @@ module InventoryslotsHelper
                      @inventory = inventoryFound
                      @inventoryslot = newSlot
                      if(type == "create")
-                        invslotcost = Fieldcost.find_by_name("Inventoryslot")
-                        if(logged_in.pouch.amount - invslotcost.amount >= 0)
+                        price = Fieldcost.find_by_name("Inventoryslot")
+                        rate = Ratecost.find_by_name("Purchaserate")
+                        tax = (price.amount * rate.amount)
+                        if(logged_in.pouch.amount - price.amount >= 0)
                            if(@inventoryslot.save)
-                              logged_in.pouch.amount -= invslotcost.amount
+                              logged_in.pouch.amount -= price.amount
                               @pouch = logged_in.pouch
                               @pouch.save
-                              economyTransaction("Sink", invslotcost.amount, inventoryFound.user.id)
+                              hoard = Dragonhoard.find_by_id(1)
+                              hoard.profit += tax
+                              @hoard = hoard
+                              @hoard.save
+                              economyTransaction("Sink", price.amount - tax, inventoryFound.user.id, "Points")
+                              economyTransaction("Tax", tax, inventoryFound.user.id, "Points")
                               flash[:success] = "#{@inventoryslot.name} was successfully created."
                               redirect_to user_inventory_path(@inventory.user, @inventory)
                            else

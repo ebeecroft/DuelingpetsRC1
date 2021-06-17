@@ -363,7 +363,6 @@ module CreaturesHelper
                               hoard.profit += tax
                               @hoard = hoard
                               @hoard.save
-                              economyTransaction("Sink", price, creatureFound.user.id)
                               economyTransaction("Sink", price - tax, creatureFound.user.id, "Points")
                               economyTransaction("Tax", tax, creatureFound.user.id, "Points")
                               ContentMailer.content_approved(@creature, "Creature", price).deliver_now
