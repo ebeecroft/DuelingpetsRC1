@@ -17,14 +17,24 @@ module MainfoldersHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Adds the art points to the economy
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Content"
+         else
+            newTransaction.attribute = "Treasury"
+         end
          newTransaction.content_type = "Mainfolder"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -82,20 +92,27 @@ module MainfoldersHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == mainfolderFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     if(logged_in.pouch.privilege != "Admin")
+                     cleanup = Fieldcost.find_by_name("Mainfoldercleanup")
+                     if(mainfolderFound.user.pouch.amount - cleanup.amount >= 0)
                         #Removes the content and decrements the owner's pouch
-                        cleanup = Fieldcost.find_by_name("Mainfoldercleanup")
                         mainfolderFound.user.pouch.amount -= cleanup.amount
                         @pouch = mainfolderFound.user.pouch
                         @pouch.save
-                        economyTransaction("Tax", cleanup.amount, mainfolderFound.user_id)
-                     end
-                     @mainfolder.destroy
-                     flash[:success] = "#{mainfolderFound.title} was successfully removed."
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to mainfolders_path
+                        economyTransaction("Sink", cleanup.amount, mainfolderFound.user.id, "Points")
+                        flash[:success] = "#{@mainfolder.title} was successfully removed."
+                        @mainfolder.destroy
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to mainfolders_path
+                        else
+                           redirect_to user_gallery_path(mainfolderFound.gallery.user, mainfolderFound.gallery)
+                        end
                      else
-                        redirect_to user_gallery_path(mainfolderFound.gallery.user, mainfolder.gallery)
+                        flash[:error] = "#{@mainfolder.user.vname}'s has insufficient points to remove the mainfolder!"
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to mainfolders_path
+                        else
+                           redirect_to user_gallery_path(mainfolderFound.gallery.user, mainfolderFound.gallery)
+                        end
                      end
                   else
                      redirect_to root_path
@@ -115,7 +132,7 @@ module MainfoldersHelper
             redirect_to root_path
          else
             logoutExpiredUsers
-            if(type == "index") #Guests
+            if(type == "index")
                logged_in = current_user
                if(logged_in && logged_in.pouch.privilege == "Admin")
                   removeTransactions
@@ -150,13 +167,20 @@ module MainfoldersHelper
                         @gallery = galleryFound
 
                         if(type == "create")
-                           mainfoldercost = Fieldcost.find_by_name("Mainfolder")
-                           if(logged_in.pouch.amount - mainfoldercost.amount >= 0)
+                           price = Fieldcost.find_by_name("Mainfolder")
+                           rate = Ratecost.find_by_name("Purchaserate")
+                           tax = (price.amount * rate.amount)
+                           if(logged_in.pouch.amount - price.amount >= 0)
                               if(@mainfolder.save)
-                                 logged_in.pouch.amount -= mainfoldercost.amount
-                                 economyTransaction("Sink", mainfoldercost.amount, mainfolder.user_id)
+                                 logged_in.pouch.amount -= price.amount
                                  @pouch = logged_in.pouch
                                  @pouch.save
+                                 hoard = Dragonhoard.find_by_id(1)
+                                 hoard.profit += tax
+                                 @hoard = hoard
+                                 @hoard.save
+                                 economyTransaction("Sink", price.amount - tax, mainfolderFound.user.id, "Points")
+                                 economyTransaction("Tax", tax, mainfolderFound.user.id, "Points")
                                  updateGallery(@mainfolder.gallery)
                                  flash[:success] = "#{@mainfolder.title} was successfully created."
                                  redirect_to gallery_mainfolder_path(@gallery, @mainfolder)

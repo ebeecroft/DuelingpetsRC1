@@ -20,14 +20,24 @@ module PmrepliesHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Adds the art points to the economy
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Communication"
+         else
+            newTransaction.attribute = "Treasury"
+         end
          newTransaction.content_type = "PMreply"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -57,22 +67,29 @@ module PmrepliesHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == pmreplyFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     if(logged_in.pouch.privilege != "Admin")
+                     cleanup = Fieldcost.find_by_name("PMreplycleanup")
+                     if(pmreplyFound.user.pouch.amount - cleanup.amount >= 0)
                         #Removes the content and decrements the owner's pouch
-                        cleanup = Fieldcost.find_by_name("PMreplycleanup")
                         pmreplyFound.user.pouch.amount -= cleanup.amount
                         @pouch = pmreplyFound.user.pouch
                         @pouch.save
-                        economyTransaction("Tax", cleanup.amount, pmreplyFound.user.id)
-                     end
-                     @pmreply = pmreplyFound
-                     @pm = Pm.find_by_id(pmreplyFound.pm.id)
-                     @pmreply.destroy
-                     flash[:success] = "PMreply was successfully removed."
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to pmreplies_path
+                        economyTransaction("Sink", cleanup.amount, pmreplyFound.user.id, "Points")
+                        flash[:success] = "PMreply was successfully removed."
+                        @pmreply = pmreplyFound
+                        @pm = Pm.find_by_id(pmreplyFound.pm.id)
+                        @pmreply.destroy
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to pmreplies_path
+                        else
+                           redirect_to pmbox_pm_path(@pm.pmbox, @pm)
+                        end
                      else
-                        redirect_to pmbox_pm_path(@pm.pmbox, @pm)
+                        flash[:error] = "#{pmreplyFound.user.vname}'s has insufficient points to remove the pmreply!"
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to pmreplies_path
+                        else
+                           redirect_to pmbox_pm_path(@pm.pmbox, @pm)
+                        end
                      end
                   else
                      redirect_to root_path
@@ -131,14 +148,21 @@ module PmrepliesHelper
                         @pm = pmFound
 
                         if(type == "create")
-                           pmreplycost = Fieldcost.find_by_name("PMreply")
-                           if(logged_in.pouch.amount - pmreplycost.amount >= 0)
+                           price = Fieldcost.find_by_name("PMreply")
+                           rate = Ratecost.find_by_name("Purchaserate")
+                           tax = (price.amount * rate.amount)
+                           if(logged_in.pouch.amount - price.amount >= 0)
                               if(@pmreply.save)
-                                 logged_in.pouch.amount -= pmreplycost.amount
+                                 logged_in.pouch.amount -= price.amount
                                  @pouch = logged_in.pouch
                                  @pouch.save
+                                 hoard = Dragonhoard.find_by_id(1)
+                                 hoard.profit += tax
+                                 @hoard = hoard
+                                 @hoard.save
                                  @pm.save
-                                 economyTransaction("Sink", pmreplycost.amount, pmreplyFound.user.id)
+                                 economyTransaction("Sink", price.amount - tax, logged_in.id, "Points")
+                                 economyTransaction("Tax", tax, logged_in.id, "Points")
                                  url = "http://www.duelingpets.net/pmboxes/{@pm.pmbox_id}/pms/{@pm.id}"
                                  CommunityMailer.messaging(@pmreply, "PMreply", url).deliver_now
                                  flash[:success] = "PMreply was successfully created."

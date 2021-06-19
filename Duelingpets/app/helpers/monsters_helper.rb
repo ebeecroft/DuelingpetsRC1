@@ -23,14 +23,24 @@ module MonstersHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Adds the art points to the economy
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Content"
+         else
+            newTransaction.attribute = "Treasury"
+         end
          newTransaction.content_type = "Monster"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -155,7 +165,7 @@ module MonstersHelper
                         monsterFound.user.pouch.amount -= price
                         @pouch = monsterFound.user.pouch
                         @pouch.save
-                        economyTransaction("Tax", price, monsterFound.user.id)
+                        economyTransaction("Sink", price, monsterFound.user.id, "Points")
                         @monster.destroy
                         flash[:success] = "#{@monster.name} was successfully removed."
                         if(logged_in.pouch.privilege == "Admin")
@@ -164,7 +174,7 @@ module MonstersHelper
                            redirect_to user_monsters_path(monsterFound.user)
                         end
                      else
-                        flash[:error] = "Owner has insufficient points to remove the monster!"
+                        flash[:error] = "#{@monster.user.vname}'s has insufficient points to remove the monster!"
                         redirect_to root_path
                      end
                   else
@@ -319,7 +329,9 @@ module MonstersHelper
                            monsterFound.reviewed = true
                            monsterFound.reviewed_on = currentTime
                            basecost = monsterFound.monstertype.basecost
-                           price = ((basecost + monsterFound.cost) * 0.70).round
+                           price = ((basecost + creatureFound.cost) * 0.70).round
+                           rate = Ratecost.find_by_name("Purchaserate")
+                           tax = (price * rate.amount)
                            pouch = Pouch.find_by_user_id(monsterFound.user_id)
                            #Add dreyterrium cost later
                            if(pouch.amount - price >= 0)
@@ -328,7 +340,12 @@ module MonstersHelper
                               pouch.amount -= price
                               @pouch = pouch
                               @pouch.save
-                              economyTransaction("Sink", price, monsterFound.user.id)
+                              hoard = Dragonhoard.find_by_id(1)
+                              hoard.profit += tax
+                              @hoard = hoard
+                              @hoard.save
+                              economyTransaction("Sink", price - tax, monsterFound.user.id, "Points")
+                              economyTransaction("Tax", tax, monsterFound.user.id, "Points")
                               ContentMailer.content_approved(@monster, "Monster", price).deliver_now
                               flash[:success] = "#{@monster.user.vname}'s monster #{@monster.name} was approved."
                               redirect_to monsters_review_path

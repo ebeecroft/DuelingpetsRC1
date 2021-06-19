@@ -21,14 +21,24 @@ module OcsHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Adds the art points to the economy
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Content"
+         else
+            newTransaction.attribute = "Treasury"
+         end
          newTransaction.content_type = "OC"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -99,20 +109,27 @@ module OcsHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == ocFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     if(logged_in.pouch.privilege != "Admin")
+                     cleanup = Fieldcost.find_by_name("OCcleanup")
+                     if(mainsheetFound.user.pouch.amount - cleanup.amount >= 0)
                         #Removes the content and decrements the owner's pouch
-                        cleanup = Fieldcost.find_by_name("OCcleanup")
                         ocFound.user.pouch.amount -= cleanup.amount
                         @pouch = ocFound.user.pouch
                         @pouch.save
-                        economyTransaction("Tax", cleanup.amount, ocFound.user.id)
-                     end
-                     @oc.destroy
-                     flash[:success] = "#{ocFound.title} was successfully removed."
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to ocs_list_path
+                        economyTransaction("Sink", cleanup.amount, ocFound.user.id, "Points")
+                        flash[:success] = "#{@oc.title} was successfully removed."
+                        @mainsheet.destroy
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to ocs_list_path
+                        else
+                           redirect_to user_ocs_path(ocFound.user)
+                        end
                      else
-                        redirect_to user_ocs_path(ocFound.user)
+                        flash[:error] = "#{@oc.user.vname}'s has insufficient points to remove the oc!"
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to ocs_list_path
+                        else
+                           redirect_to user_ocs_path(ocFound.user)
+                        end
                      end
                   else
                      redirect_to root_path
@@ -266,30 +283,38 @@ module OcsHelper
                   ocFound = Oc.find_by_id(getOcParams("OcId"))
                   if(ocFound)
                      pouchFound = Pouch.find_by_user_id(ocFound.user.pouch.id)
-                     if((logged_in.pouch.privilege == "Admin") || ((pouchFound.privilege == "Keymaster") || (pouchFound.privilege == "Reviewer")))
+                     if((logged_in.pouch.privilege == "Admin") || ((logged_in.pouch.privilege == "Keymaster") || (logged_in.pouch.privilege == "Reviewer")))
                         if(type == "approve")
                            ocFound.reviewed = true
                            ocFound.reviewed_on = currentTime
-                           if(!ocFound.pointsreceived)
-                              price = Fieldcost.find_by_name("OCpoints")
-                              pouch.amount -= price.amount
-                              @pouch = pouch
-                              @pouch.save
-                              economyTransaction("Sink", price.amount, ocFound.user.id)
-                              ContentMailer.content_approved(ocFound, "OC", pointsForOC).deliver_now
-                              ocFound.pointsreceived = true
+                           price = Fieldcost.find_by_name("OCpoints")
+                           rate = Ratecost.find_by_name("Purchaserate")
+                           tax = (price * rate.amount)
+                           if(pouch.amount - price >= 0)
+                              #Template for sinks
+                              if(!ocFound.pointsreceived)
+                                 pouch.amount -= price
+                                 @pouch = pouch
+                                 @pouch.save
+                                 hoard = Dragonhoard.find_by_id(1)
+                                 hoard.profit += tax
+                                 @hoard = hoard
+                                 @hoard.save
+                                 economyTransaction("Sink", price - tax, ocFound.user.id, "Points")
+                                 economyTransaction("Tax", tax, ocFound.user.id, "Points")
+                                 ocFound.pointsreceived = true
+                              else
+                                 price = 0
+                              end
+                              @oc = ocFound
+                              @oc.save
+                              ContentMailer.content_approved(@monster, "OC", price).deliver_now
+                              flash[:success] = "#{@oc.user.vname}'s oc #{@oc.name} was approved."
+                              redirect_to ocs_review_path
+                           else
+                              flash[:error] = "Insufficient funds to create an oc!"
+                              redirect_to ocs_review_path
                            end
-                           @oc = ocFound
-                           @oc.save
-                           #allWatches = Watch.all
-                           #watchers = allWatches.select{|watch| (((watch.watchtype.name == "Arts" || watch.watchtype.name == "Blogarts") || (watch.watchtype.name == "Artsounds" || watch.watchtype.name == "Artmovies")) || (watch.watchtype.name == "Maincontent" || watch.watchtype.name == "All")) && watch.from_user.id != @art.user_id}
-                           #if(watchers.count > 0)
-                           #   watchers.each do |watch|
-                           #      UserMailer.new_art(@art, watch).deliver
-                           #   end
-                           #end
-                           flash[:success] = "#{@oc.user.vname}'s oc #{@oc.name} was approved."
-                           redirect_to ocs_review_path
                         else
                            @oc = ocFound
                            ContentMailer.content_denied(@oc, "OC").deliver_now
