@@ -17,14 +17,24 @@ module SubsheetsHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Adds the art points to the economy
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Content"
+         else
+            newTransaction.attribute = "Treasury"
+         end
          newTransaction.content_type = "Subsheet"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -78,20 +88,27 @@ module SubsheetsHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == subsheetFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     if(logged_in.pouch.privilege != "Admin")
+                     cleanup = Fieldcost.find_by_name("Subsheetcleanup")
+                     if(subsheetFound.user.pouch.amount - cleanup.amount >= 0)
                         #Removes the content and decrements the owner's pouch
-                        cleanup = Fieldcost.find_by_name("Subsheetcleanup")
                         subsheetFound.user.pouch.amount -= cleanup.amount
                         @pouch = subsheetFound.user.pouch
                         @pouch.save
-                        economyTransaction("Tax", cleanup.amount, subsheetFound.user_id)
-                     end
-                     @subsheet.destroy
-                     flash[:success] = "#{subsheetFound.title} was successfully removed."
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to subsheets_path
+                        economyTransaction("Sink", cleanup.amount, subsheetFound.user.id, "Points")
+                        flash[:success] = "#{@subsheet.title} was successfully removed."
+                        @subsheet.destroy
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to subsheets_path
+                        else
+                           redirect_to jukebox_mainsheet_path(subsheetFound.mainsheet.jukebox, subsheet.mainsheet)
+                        end
                      else
-                        redirect_to jukebox_mainsheet_path(subsheetFound.mainsheet.jukebox, subsheet.mainsheet)
+                        flash[:error] = "#{@subsheet.user.vname}'s has insufficient points to remove the subsheet!"
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to subsheets_path
+                        else
+                           redirect_to jukebox_mainsheet_path(subsheetFound.mainsheet.jukebox, subsheet.mainsheet)
+                        end
                      end
                   else
                      redirect_to root_path
@@ -146,13 +163,20 @@ module SubsheetsHelper
                         @mainsheet = mainsheetFound
 
                         if(type == "create")
-                           subsheetcost = Fieldcost.find_by_name("Subsheet")
-                           if(logged_in.pouch.amount - subsheetcost.amount >= 0)
+                           price = Fieldcost.find_by_name("Subsheet")
+                           rate = Ratecost.find_by_name("Purchaserate")
+                           tax = (price.amount * rate.amount)
+                           if(logged_in.pouch.amount - price.amount >= 0)
                               if(@subsheet.save)
-                                 logged_in.pouch.amount -= subsheetcost.amount
+                                 logged_in.pouch.amount -= price.amount
                                  @pouch = logged_in.pouch
                                  @pouch.save
-                                 economyTransaction("Sink", subsheetcost.amount, newSubsheet.user_id)
+                                 hoard = Dragonhoard.find_by_id(1)
+                                 hoard.profit += tax
+                                 @hoard = hoard
+                                 @hoard.save
+                                 economyTransaction("Sink", price.amount - tax, newSubsheet.user.id, "Points")
+                                 economyTransaction("Tax", tax, newSubsheet.user.id, "Points")
                                  updateJukebox(@subsheet.mainsheet)
                                  flash[:success] = "#{@subsheet.title} was successfully created."
                                  redirect_to mainsheet_subsheet_path(@mainsheet, @subsheet)

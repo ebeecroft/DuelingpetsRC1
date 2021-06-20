@@ -17,14 +17,24 @@ module SubplaylistsHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Adds the art points to the economy
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Content"
+         else
+            newTransaction.attribute = "Treasury"
+         end
          newTransaction.content_type = "Subplaylist"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -78,20 +88,27 @@ module SubplaylistsHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == subplaylistFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     if(logged_in.pouch.privilege != "Admin")
+                     cleanup = Fieldcost.find_by_name("Subplaylistcleanup")
+                     if(subplaylistFound.user.pouch.amount - cleanup.amount >= 0)
                         #Removes the content and decrements the owner's pouch
-                        cleanup = Fieldcost.find_by_name("Subplaylistcleanup")
                         subplaylistFound.user.pouch.amount -= cleanup.amount
                         @pouch = subplaylistFound.user.pouch
                         @pouch.save
-                        economyTransaction("Tax", cleanup.amount, subplaylistFound.user_id)
-                     end
-                     @subplaylist.destroy
-                     flash[:success] = "#{subplaylistFound.title} was successfully removed."
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to subplaylists_path
+                        economyTransaction("Sink", cleanup.amount, subplaylistFound.user.id, "Points")
+                        flash[:success] = "#{@subplaylist.title} was successfully removed."
+                        @subplaylist.destroy
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to subplaylists_path
+                        else
+                           redirect_to channel_mainplaylist_path(subplaylistFound.mainplaylist.channel, subplaylist.mainplaylist)
+                        end
                      else
-                        redirect_to channel_mainplaylist_path(subplaylistFound.mainplaylist.channel, subplaylist.mainplaylist)
+                        flash[:error] = "#{@subplaylist.user.vname}'s has insufficient points to remove the subplaylist!"
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to subplaylists_path
+                        else
+                           redirect_to channel_mainplaylist_path(subplaylistFound.mainplaylist.channel, subplaylist.mainplaylist)
+                        end
                      end
                   else
                      redirect_to root_path
@@ -146,13 +163,20 @@ module SubplaylistsHelper
                         @mainplaylist = mainplaylistFound
 
                         if(type == "create")
-                           subplaylistcost = Fieldcost.find_by_name("Subplaylist")
-                           if(logged_in.pouch.amount - subplaylistcost.amount >= 0)
+                           price = Fieldcost.find_by_name("Subplaylist")
+                           rate = Ratecost.find_by_name("Purchaserate")
+                           tax = (price.amount * rate.amount)
+                           if(logged_in.pouch.amount - price.amount >= 0)
                               if(@subplaylist.save)
-                                 logged_in.pouch.amount -= subplaylistcost.amount
-                                 economyTransaction("Sink", subplaylistcost.amount, newSubplaylist.user_id)
+                                 logged_in.pouch.amount -= price.amount
                                  @pouch = logged_in.pouch
                                  @pouch.save
+                                 hoard = Dragonhoard.find_by_id(1)
+                                 hoard.profit += tax
+                                 @hoard = hoard
+                                 @hoard.save
+                                 economyTransaction("Sink", price.amount - tax, subplaylistFound.user.id, "Points")
+                                 economyTransaction("Tax", tax, subplaylistFound.user.id, "Points")
                                  updateChannel(@subplaylist.mainplaylist)
                                  flash[:success] = "#{@subplaylist.title} was successfully created."
                                  redirect_to mainplaylist_subplaylist_path(@mainplaylist, @subplaylist)

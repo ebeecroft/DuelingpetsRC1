@@ -19,14 +19,24 @@ module TagsHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Adds the chapter points to the economy
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Content"
+         else
+            newTransaction.attribute = "Treasury"
+         end
          newTransaction.content_type = "Tag"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -76,23 +86,27 @@ module TagsHelper
                      render "edit"
                   end
                elsif(type == "destroy")
-                  #Removes the content and decrements the owner's pouch
-                  tag = Fieldcost.find_by_name("Tag")
-                  if(tagFound.user.pouch.amount - tag.amount >= 0)
-                     tagFound.user.pouch.amount -= tag.amount #Remember to come back later to change to emeralds
+                  cleanup = Fieldcost.find_by_name("Subsheetcleanup")
+                  if(tagFound.user.pouch.amount - cleanup.amount >= 0)
+                     #Removes the content and decrements the owner's pouch
+                     tagFound.user.pouch.amount -= cleanup.amount
                      @pouch = tagFound.user.pouch
                      @pouch.save
-                     economyTransaction("Tax", tag.amount, tagFound.user.id)
+                     economyTransaction("Sink", cleanup.amount, tagFound.user.id, "Points")
+                     flash[:success] = "#{@tag.name} was successfully removed."
                      @tag.destroy
-                     flash[:success] = "#{tagFound.name} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")
                         redirect_to tags_list_path
                      else
                         redirect_to user_tags_path(tagFound.user)
                      end
                   else
-                     flash[:error] = "Owner has insufficient points to remove the tag!"
-                     redirect_to root_path
+                     flash[:error] = "#{@tag.user.vname}'s has insufficient points to remove the tag!"
+                     if(logged_in.pouch.privilege == "Admin")
+                        redirect_to tags_list_path
+                     else
+                        redirect_to user_tags_path(tagFound.user)
+                     end
                   end
                end
             else
@@ -155,13 +169,20 @@ module TagsHelper
                         @user = userFound
 
                         if(type == "create")
-                           tagcost = Fieldcost.find_by_name("Tag")
-                           if(logged_in.pouch.amount - tagcost.amount >= 0)
+                           price = Fieldcost.find_by_name("Tag")
+                           rate = Ratecost.find_by_name("Purchaserate")
+                           tax = (price.amount * rate.amount)
+                           if(logged_in.pouch.amount - price.amount >= 0)
                               if(@tag.save)
-                                 logged_in.pouch.amount -= tagcost.amount
+                                 logged_in.pouch.amount -= price.amount
                                  @pouch = logged_in.pouch
                                  @pouch.save
-                                 economyTransaction("Sink", tagcost.amount, tagFound.user.id)
+                                 hoard = Dragonhoard.find_by_id(1)
+                                 hoard.profit += tax
+                                 @hoard = hoard
+                                 @hoard.save
+                                 economyTransaction("Sink", price.amount - tax, newTag.user.id, "Points")
+                                 economyTransaction("Tax", tax, newTag.user.id, "Points")
                                  flash[:success] = "#{@tag.name} was successfully created."
                                  redirect_to user_tags_path(@user)
                               else

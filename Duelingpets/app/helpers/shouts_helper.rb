@@ -19,14 +19,24 @@ module ShoutsHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Adds the art points to the economy
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Communication"
+         else
+            newTransaction.attribute = "Treasury"
+         end
          newTransaction.content_type = "Shout"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -61,21 +71,28 @@ module ShoutsHelper
          shoutFound = Shout.find_by_id(params[:id])
          if(shoutFound && logged_in)
             if((logged_in.pouch.privilege == "Admin" || logged_in.pouch.privilege == "Manager") || ((shoutFound.user_id == logged_in.id) || (shoutFound.shoutbox.user_id == logged_in.id)))
-               if(logged_in.pouch.privilege != "Admin")
+               cleanup = Fieldcost.find_by_name("Shoutcleanup")
+               if(shoutFound.user.pouch.amount - cleanup.amount >= 0)
                   #Removes the content and decrements the owner's pouch
-                  cleanup = Fieldcost.find_by_name("Shoutcleanup")
                   shoutFound.user.pouch.amount -= cleanup.amount
-                  @pouch = pmFound.user.pouch
+                  @pouch = shoutFound.user.pouch
                   @pouch.save
-                  economyTransaction("Tax", cleanup.amount, shoutFound.user.id)
-               end
-               flash[:success] = "Shout was successfully removed!"
-               @shout = shoutFound
-               @shout.destroy
-               if(logged_in.pouch.privilege == "Admin")
-                  redirect_to shouts_path
+                  economyTransaction("Sink", cleanup.amount, shoutFound.user.id, "Points")
+                  flash[:success] = "Shout was successfully removed!"
+                  @shout = shoutFound
+                  @shout.destroy
+                  if(logged_in.pouch.privilege == "Admin")
+                     redirect_to shouts_path
+                  else
+                     redirect_to user_path(shoutFound.shoutbox.user)
+                  end
                else
-                  redirect_to user_path(shoutFound.shoutbox.user)
+                  flash[:error] = "#{shoutFound.user.vname}'s has insufficient points to remove the shout!"
+                  if(logged_in.pouch.privilege == "Admin")
+                     redirect_to shouts_path
+                  else
+                     redirect_to user_path(shoutFound.shoutbox.user)
+                  end
                end
             else
                redirect_to root_path
@@ -84,7 +101,7 @@ module ShoutsHelper
             redirect_to root_path
          end
       end
-
+      
       def mode(type)
          if(timeExpired)
             logout_user
@@ -182,29 +199,38 @@ module ShoutsHelper
                      if((logged_in.pouch.privilege == "Admin" || logged_in.pouch.privilege == "Manager") || (logged_in.id == shoutFound.shoutbox.user_id))
                         if(type == "approve")
                            #Determines if the player can pay for it
-                           shoutcost = Fieldcost.find_by_name("Shout")
-                           if(shoutFound.user.pouch.amount - shoutcost.amount >= 0)
-                              shoutFound.user.pouch.amount -= shoutcost.amount
+                           price = Fieldcost.find_by_name("Shout")
+                           rate = Ratecost.find_by_name("Purchaserate")
+                           tax = (price * rate.amount)
+                           if(shoutFound.user.pouch.amount - price.amount >= 0)
+                              shoutFound.user.pouch.amount -= price.amount
                               @pouch = shoutFound.user.pouch
                               @pouch.save
+                              hoard = Dragonhoard.find_by_id(1)
+                              hoard.profit += tax
+                              @hoard = hoard
+                              @hoard.save
                               shoutFound.reviewed = true
                               shoutFound.reviewed_on = currentTime
                               @shout = shoutFound
                               @shout.save
-                              economyTransaction("Sink", shoutcost.amount, shoutFound.user.id)
+                              economyTransaction("Sink", price - tax, shoutFound.user.id, "Points")
+                              economyTransaction("Tax", tax, shoutFound.user.id, "Points")
                               url = "None"
                               CommunityMailer.shouts(@shout, "Approved", url).deliver_now
-                              value = "#{@shout.user.vname}'s shout message #{@shout.message} was approved!"
+                              flash[:success] = "#{@shout.user.vname}'s shout message #{@shout.message} was approved!"
+                              redirect_to shouts_review_path
                            else
-                              value = "Insufficient funds for approving this shout!"
+                              flash[:error] = "Insufficient funds to create a shout!"
+                              redirect_to shouts_review_path
                            end
                         else
                            @shout = shoutFound
                            url = "None"
                            CommunityMailer.shouts(@shout, "Denied", url).deliver_now
-                           value = "#{shoutFound.user.vname}'s shout message #{shoutFound.message} was denied!"
+                           flash[:success] = "#{shoutFound.user.vname}'s shout message #{shoutFound.message} was denied!"
+                           redirect_to shouts_review_path
                         end
-                        redirect_to shouts_review_path
                      else
                         redirect_to root_path
                      end
