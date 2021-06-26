@@ -18,6 +18,21 @@ module DreyoresHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, dreyore, currency)
+         newTransaction = Economy.new(params[:economy])
+         #Determines the type of attribute to return
+         newTransaction.attribute = "Dreyore"
+         newTransaction.content_type = dreyore.name
+         newTransaction.econtype = type
+         newTransaction.amount = points
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         newTransaction.dragonhoard_id = 1
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def getDreyterriumLeft
          allPouches = Pouch.all
@@ -39,7 +54,7 @@ module DreyoresHelper
                   allDreyores = Dreyore.order("updated_on desc, created_on desc")
                   @dreyores = Kaminari.paginate_array(allDreyores).page(getDreyoreParams("Page")).per(10)
                elsif(type == "edit" || type == "update")
-                  dreyoreFound = dreyore.find_by_id(getDreyoreParams("Id"))
+                  dreyoreFound = Dreyore.find_by_id(getDreyoreParams("Id"))
                   if(dreyoreFound)
                      dreyoreFound.updated_on = currentTime
                      @dreyore = dreyoreFound
@@ -58,7 +73,7 @@ module DreyoresHelper
                elsif(type == "addore")
                   dreyoreFound = Dreyore.find_by_id(getDreyoreParams("DreyoreId"))
                   if(dreyoreFound)
-                     if(dreyoreFound.cur < dreyoreFound.cap)
+                     if((dreyoreFound.cur + dreyoreFound.baseinc) <= dreyoreFound.cap)
                         if((dreyoreFound.name == "Newbie" && getDreyterriumLeft == 0) || dreyoreFound.name == "Monster")
                            dreyoreFound.cur += dreyoreFound.baseinc
                            if(dreyoreFound.extracted != 0)
@@ -68,25 +83,29 @@ module DreyoresHelper
                            if(dreyoreFound.price != fieldcost.amount)
                               dreyoreFound.price = fieldcost.amount
                            end
+                           #Fieldprice * fixed rate + Constant * baseinc of that field
+                           price = ((dreyoreFound.cur * 0.35) + (8 * dreyoreFound.baseinc)).round
                            hoard = dreyoreFound.dragonhoard
-                           if(hoard.treasury - hoard.basecost > -1)
-                              flash[:success] = "#{dreyoreFound.name} was successfully increased!"
+                           if(hoard.treasury - price >= 0)
+                              hoard.treasury -= price
+                              @hoard = hoard
+                              @hoard.save
                               @dreyore = dreyoreFound
                               @dreyore.save
-                              @dragonhoard = hoard
-                              @dragonhoard.save
-                              redirect_to dreyores_path
+                              economyTransaction("Sink", price, dreyoreFound, "Points")
+                              flash[:success] = "#{dreyoreFound.name} was successfully increased!"
+                              redirect_to dragonhoards_path
                            else
-                              flash[:error] = "Not enough points to add Dreyterrium!"
-                              redirect_to root_path
+                              flash[:error] = "Funds too low to add Dreyore to #{dreyoreFound.name} ore!"
+                              redirect_to dragonhoards_path
                            end
                         else
-                           flash[:error] = "There is still dreyterrium left in the players pouches!"
-                           redirect_to root_path
+                           flash[:error] = "There is still dreyore left in the players pouches!"
+                           redirect_to dragonhoards_path
                         end
                      else
-                        flash[:error] = "Dreyterrium #{dreyore.name} is at the max!"
-                        redirect_to root_path
+                        flash[:error] = "Dreyore #{dreyore.name} is at the max!"
+                        redirect_to dragonhoards_path
                      end
                   else
                      redirect_to root_path

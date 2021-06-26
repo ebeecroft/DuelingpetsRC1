@@ -16,6 +16,29 @@ module DonationboxesHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, contentType, userid, currency)
+         newTransaction = Economy.new(params[:economy])
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Donation"
+         else
+            newTransaction.attribute = "Treasury"
+         end
+         newTransaction.content_type = contentType
+         newTransaction.econtype = type
+         newTransaction.amount = points
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def editCommons(type)
          donationboxFound = Donationbox.find_by_id(getDonationboxParams("Id"))
@@ -96,10 +119,16 @@ module DonationboxesHelper
                      #Send the points to the user's pouch
                      pouch = Pouch.find_by_user_id(donationboxFound.user.id)
                      netPoints = donationboxFound.progress - pointsTax
+                     economyTransaction("Source", netPoints, "Donationbox", pouch.user.id, "Points")
+                     economyTransaction("Tax", pointsTax, "Donationbox", "None", "Points")
                      CommunityMailer.donations(donationboxFound, "Retrieve", netPoints, taxRate, pointsTax).deliver_now
                      pouch.amount += netPoints
                      @pouch = pouch
                      @pouch.save
+                     hoard = Dragonhoard.find_by_id(1)
+                     hoard.profit += pointsTax
+                     @hoard = hoard
+                     @hoard.save
                   elsif(type == "refund" && (logged_in.pouch.privilege == "Admin" || !donationboxFound.hitgoal))
                      errorFlag = 0
                      allDonors = Donor.all
@@ -110,6 +139,7 @@ module DonationboxesHelper
                         donor.user.pouch.amount += donor.amount
                         donationboxFound.progress -= donor.amount
                         CommunityMailer.donations(donor, "Refund", donor.amount, 0, 0).deliver_now
+                        economyTransaction("Source", donor.amount, "Donor", donor.user.id, "Points")
                         @tempbox = donationboxFound
                         @tempbox.save
                         @pouch = donor.user.pouch

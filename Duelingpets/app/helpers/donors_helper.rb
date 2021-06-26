@@ -16,6 +16,29 @@ module DonorsHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid, currency)
+         newTransaction = Economy.new(params[:economy])
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Donation"
+         else
+            newTransaction.attribute = "Treasury"
+         end
+         newTransaction.content_type = "Donor"
+         newTransaction.econtype = type
+         newTransaction.amount = points
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def mode(type)
          if(timeExpired)
@@ -73,11 +96,12 @@ module DonorsHelper
                                     end
                                     @donationbox = donationboxFound
                                     if(@donationbox.valid?)
-                                       flash[:success] = "#{@donor.user.vname}'s donation was successfully added!"
                                        @donationbox.save
                                        logged_in.pouch.amount -= @donor.amount
                                        @pouch = logged_in.pouch
                                        @pouch.save
+                                       economyTransaction("Sink", @donor.amount, logged_in.id, "Points")
+                                       flash[:success] = "#{@donor.user.vname}'s donation was successfully added!"
                                        CommunityMailer.donations(@donor, "Donated", @donor.amount, 0, 0).deliver_now
                                        redirect_to user_path(@donationbox.user)
                                     else

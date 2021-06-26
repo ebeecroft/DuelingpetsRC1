@@ -32,7 +32,30 @@ module WarehousesHelper
          end
          return value
       end
-
+      
+      def economyTransaction(type, points, contentType, userid, currency)
+         newTransaction = Economy.new(params[:economy])
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.attribute = "Purchase"
+         else
+            newTransaction.attribute = "Treasury"
+         end
+         newTransaction.content_type = contentType
+         newTransaction.econtype = type
+         newTransaction.amount = points
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1   
+         end
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
+      
       def editCommons(type)
          warehouseFound = Warehouse.find_by_name(getWarehouseParams("Id"))
          if(warehouseFound)
@@ -229,17 +252,32 @@ module WarehousesHelper
                               logged_in.pouch.emeraldamount -= emeralds
                               @pouch = logged_in.pouch
                               @pouch.save
-                              warehouseFound.profit += cost
-                              @warehouse = warehouseFound
-                              @warehouse.save
-                              #Eventually need to keep track of transactions
                               if(pet.user_id != logged_in.id)
                                  owner = Pouch.find_by_user_id(pet.user_id)
                                  points = (cost  * 0.20).round
+                                 ems = (emeralds * 0.08).round
                                  owner.amount += points
+                                 owner.emeraldamount += ems
                                  @owner = owner
                                  @owner.save
+                                 warehouseFound.profit += (cost - points)
+                                 warehouseFound.emeralds += (emeralds - ems)
+                                 economyTransaction("Sink", cost, pet.creaturetype.name, logged_in.id, "Points")
+                                 economyTransaction("Sink", emeralds, pet.creaturetype.name, logged_in.id, "Points")
+                                 economyTransaction("Tax", (cost - points), pet.creaturetype.name, "None", "Points")
+                                 economyTransaction("Tax", (emeralds - ems), pet.creaturetype.name, "None", "Emeralds")
+                                 economyTransaction("Source", points, pet.creaturetype.name, owner.user.id, "Points")
+                                 economyTransaction("Source", ems, pet.creaturetype.name, owner.user.id, "Emeralds")
+                              else
+                                 warehouseFound.profit += cost
+                                 warehouseFound.emeralds += emeralds
+                                 economyTransaction("Sink", cost, pet.creaturetype.name, logged_in.id, "Points")
+                                 economyTransaction("Sink", emeralds, pet.creaturetype.name, logged_in.id, "Points")
+                                 economyTransaction("Tax", cost, pet.creaturetype.name, "None", "Points")
+                                 economyTransaction("Tax", emeralds, pet.creaturetype.name, "None", "Emeralds")
                               end
+                              @warehouse = warehouseFound
+                              @warehouse.save
                            end
                            #Builds the partners equipbag
                            newEquip = Equip.new(params[:equip])
@@ -271,9 +309,6 @@ module WarehousesHelper
                            logged_in.pouch.emeraldamount -= emeralds
                            @pouch = logged_in.pouch
                            @pouch.save
-                           warehouseFound.profit += cost
-                           @warehouse = warehouseFound
-                           @warehouse.save
                            updateWares(wareIndex, ware, "Shelf")
                            @witemshelf = ware
                            @witemshelf.save
@@ -285,10 +320,29 @@ module WarehousesHelper
                            if(item.user_id != logged_in.id)
                               owner = Pouch.find_by_user_id(item.user_id)
                               points = (cost * 0.20).round
+                              ems = (emeralds * 0.08).round
                               owner.amount += points
+                              owner.emeraldamount += ems
                               @owner = owner
                               @owner.save
+                              warehouseFound.profit += (cost - points)
+                              warehouseFound.emeralds += (emeralds - ems)
+                              economyTransaction("Sink", cost, item.itemtype.name, logged_in.id, "Points")
+                              economyTransaction("Sink", emeralds, item.itemtype.name, logged_in.id, "Points")
+                              economyTransaction("Tax", (cost - points), item.itemtype.name, "None", "Points")
+                              economyTransaction("Tax", (emeralds - ems), item.itemtype.name, "None", "Emeralds")
+                              economyTransaction("Source", points, item.itemtype.name, owner.user.id, "Points")
+                              economyTransaction("Source", ems, item.itemtype.name, owner.user.id, "Emeralds")
+                           else
+                              warehouseFound.profit += cost
+                              warehouseFound.emeralds += emeralds
+                              economyTransaction("Sink", cost, item.itemtype.name, logged_in.id, "Points")
+                              economyTransaction("Sink", emeralds, item.itemtype.name, logged_in.id, "Points")
+                              economyTransaction("Tax", cost, item.itemtype.name, "None", "Points")
+                              economyTransaction("Tax", emeralds, item.itemtype.name, "None", "Emeralds")
                            end
+                           @warehouse = warehouseFound
+                           @warehouse.save
                            flash[:success] = "Item #{item.name} was added to the inventory!"
                            redirect_to user_inventory_path(@inventoryslot.inventory.user, @inventoryslot.inventory)
                         else

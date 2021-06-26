@@ -55,7 +55,7 @@ module RatecostsHelper
                      end
                   end
                elsif(type == "edit" || type == "update")
-                  ratecostFound = ratecost.find_by_id(getRatecostParams("Id"))
+                  ratecostFound = Ratecost.find_by_id(getRatecostParams("Id"))
                   if(ratecostFound)
                      ratecostFound.updated_on = currentTime
 
