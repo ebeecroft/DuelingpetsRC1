@@ -18,6 +18,42 @@ module MonsterbattlesHelper
          end
          return value
       end
+      
+      def getMonsterStats(monster, type)
+         value = 0
+         if(type == "Level")
+            value = monster.level
+         elsif(type == "HP")
+            value = (monster.monstertype.basehp + (monster.hp * 4))
+         elsif(type == "Atk")
+            value = (monster.monstertype.baseatk + monster.atk)
+         elsif(type == "Def")
+            value = (monster.monstertype.basedef + monster.def)
+         elsif(type == "Agi")
+            value = (monster.monstertype.baseagi + monster.agility)
+         elsif(type == "MP")
+            value = monster.mp * 4
+         elsif(type == "Matk")
+            value = monster.matk
+         elsif(type == "Mdef")
+            value = monster.mdef
+         elsif(type == "Magi")
+            value = monster.magi
+         elsif(type == "Exp")
+            value = monster.exp + monster.monstertype.baseexp
+         elsif(type == "Loot")
+            value = monster.loot
+         elsif(type == "Nightmare")
+            value = monster.nightmare + monster.monstertype.basenightmare
+         elsif(type == "Shinycraze")
+            value = monster.shinycraze + monster.monstertype.baseshinycraze
+         elsif(type == "Party")
+            value = monster.party + monster.monstertype.baseparty
+         elsif(type == "Rarity")
+            value = monster.rarity
+         end
+         return value
+      end
 
       def getBattleCalc(monsterbattle)
          #Sets up variables to check validity of partner and monster
@@ -48,7 +84,7 @@ module MonsterbattlesHelper
                partner.inbattle = false
                partner.chp = monsterbattle.partner_chp
                if(battlestatus != "Loss")
-                  results3 = `public/Resources/Code/levelup/calc #{monsterbattle.partner_plevel} #{monsterbattle.partner_pexp} #{monsterbattle.monster.exp}`
+                  results3 = `public/Resources/Code/levelup/calc #{monsterbattle.partner_plevel} #{monsterbattle.partner_pexp} #{getMonsterStats(monsterbattle.monster, "Exp")}`
                   levelups = results3.split(",")
                   exp, levels, tokens = levelups.map{|str| str.to_i}
                   monsterbattle.partner_plevel += levels
@@ -191,7 +227,6 @@ module MonsterbattlesHelper
                      newBattle.started_on = currentTime
                      
                      #Stores the Partner physical stats
-                     newBattle.creaturetype_id = partnerFound.creature.creaturetype_id #Necessary?
                      newBattle.partner_plevel = partnerFound.plevel
                      newBattle.partner_pexp = partnerFound.pexp
                      newBattle.partner_chp = partnerFound.chp
@@ -217,26 +252,28 @@ module MonsterbattlesHelper
                      partnerFound.inbattle = true
                      
                      #Stores the Monster physical stats
-                     newBattle.monstertype_id = monsterFound.monstertype_id #Necessary?
                      newBattle.monster_plevel = (monsterFound.level - 1)
-                     newBattle.monster_chp = monsterFound.hp
-                     newBattle.monster_hp = monsterFound.hp
-                     newBattle.monster_atk = monsterFound.atk
-                     newBattle.monster_def = monsterFound.def
-                     newBattle.monster_agility = monsterFound.agility
+                     newBattle.monster_chp = getMonsterStats(monsterFound, "HP")
+                     newBattle.monster_hp = getMonsterStats(monsterFound, "HP")
+                     newBattle.monster_atk = getMonsterStats(monsterFound, "Atk")
+                     newBattle.monster_def = getMonsterStats(monsterFound, "Def")
+                     newBattle.monster_agility = getMonsterStats(monsterFound, "Agi")
                      
                      #Stores the Monster magical stats
                      newBattle.monster_mlevel = (monsterFound.level - 1)
-                     newBattle.monster_cmp = monsterFound.mp
-                     newBattle.monster_mp = monsterFound.mp
-                     newBattle.monster_matk = monsterFound.matk
-                     newBattle.monster_mdef = monsterFound.mdef
-                     newBattle.monster_magi = monsterFound.magi
+                     newBattle.monster_cmp = getMonsterStats(monsterFound, "MP")
+                     newBattle.monster_mp = getMonsterStats(monsterFound, "MP")
+                     newBattle.monster_matk = getMonsterStats(monsterFound, "Matk")
+                     newBattle.monster_mdef = getMonsterStats(monsterFound, "Mdef")
+                     newBattle.monster_magi = getMonsterStats(monsterFound, "Magi")
                      
                      #Stores the Monster battle traits
-                     newBattle.monster_loot = monsterFound.loot
+                     newBattle.monster_loot = getMonsterStats(monsterFound, "Loot")
+                     newBattle.monster_exp = getMonsterStats(monsterFound, "Exp")
+                     newBattle.monster_nightmare = getMonsterStats(monsterFound, "Nightmare")
+                     newBattle.monster_shinycraze = getMonsterStats(monsterFound, "Shinycraze")
+                     newBattle.monster_party = getMonsterStats(monsterFound, "Party")
                      newBattle.monster_mischief = monsterFound.mischief
-                     newBattle.monster_id = monsterFound.id
                      
                      @partner = partnerFound
                      @monsterbattle = newBattle
@@ -277,10 +314,8 @@ module MonsterbattlesHelper
             elsif(type == "battle")
                logged_in = current_user
                battleFound = Monsterbattle.find_by_id(params[:monsterbattle_id])
-               #raise "Battle found is: #{battleFound}"
                if(logged_in && battleFound)
                   if(logged_in.id == battleFound.fight.partner.user_id)
-                     #raise "My battle is found"
                      getBattleCalc(battleFound)
                   else
                      redirect_to root_path

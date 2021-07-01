@@ -45,36 +45,56 @@ module MonstersHelper
          @economytransaction = newTransaction
          @economytransaction.save
       end
-
+      
+      def getMonsterStats(monster, type)
+         value = 0
+         if(type == "Level")
+            value = monster.level
+         elsif(type == "HP")
+            value = (monster.monstertype.basehp + (monster.hp * 4))
+         elsif(type == "Atk")
+            value = (monster.monstertype.baseatk + monster.atk)
+         elsif(type == "Def")
+            value = (monster.monstertype.basedef + monster.def)
+         elsif(type == "Agi")
+            value = (monster.monstertype.baseagi + monster.agility)
+         elsif(type == "MP")
+            value = monster.mp * 4
+         elsif(type == "Matk")
+            value = monster.matk
+         elsif(type == "Mdef")
+            value = monster.mdef
+         elsif(type == "Magi")
+            value = monster.magi
+         elsif(type == "Exp")
+            value = monster.exp + monster.monstertype.baseexp
+         elsif(type == "Loot")
+            value = monster.loot
+         elsif(type == "Nightmare")
+            value = monster.nightmare + monster.monstertype.basenightmare
+         elsif(type == "Shinycraze")
+            value = monster.shinycraze + monster.monstertype.baseshinycraze
+         elsif(type == "Party")
+            value = monster.party + monster.monstertype.baseparty
+         elsif(type == "Rarity")
+            value = monster.rarity
+         end
+         return value
+      end
+      
       def validateMonsterStats(level)
-         minhp = 30
-         minatk = 16
-         mindef = 16
-         minagi = 16
-         minexp = 10
-
          #Determines the error message
          if(level == -1)
-            message = "HP is below min value of #{minhp}!"
-         elsif(level == -2)
-            message = "ATK is below min value of #{minatk}!"
-         elsif(level == -3)
-            message = "DEF is below min value of #{mindef}!"
-         elsif(level == -4)
-            message = "AGI is below min value of #{minagi}!"
-         elsif(level == -5)
             message = "MP can't be 0 if magic fields are not 0!"
-         elsif(level == -6)
+         elsif(level == -2)
             message = "MP can't be set to 5 or more if magic fields are set to 0!"
-         elsif(level == -7)
+         elsif(level == -3)
             message = "MP can't be set to a value between 0 and 5!"
-         elsif(level == -8)
-            message = "Exp is below min value of #{minexp}!"
-         elsif(level == -9)
-            message = "Creature's total skill points is not divisible by 18!"
-         elsif(level == -10)
+         elsif(level == -4)
+            message = "monster's total skill points is not divisible by 18!" #12 stats
+         elsif(level == -5)
             message = "Rarity can't be 0!"
-         elsif(level == -11)
+         elsif(level == -6)
             message = "Monster skill values can't be empty!"
          end
          flash[:error] = message
@@ -91,7 +111,7 @@ module MonstersHelper
             @monster.level = monsterLevel
             @monster.loot = monsterLoot
          else
-            @monster.level = -11
+            @monster.level = -6
          end
       end
 

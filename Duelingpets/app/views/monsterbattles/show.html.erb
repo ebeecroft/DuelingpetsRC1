@@ -88,25 +88,26 @@
             <p>Physical skills</p>
             <p>Level: <%= @monsterbattle.monster_plevel %></p>
             <p>Hp: <%= @monsterbattle.monster_chp %>/<%= @monsterbattle.monster_hp %></p>
-            <p>Atk: <%= @monsterbattle.monster_atk %></p>
-            <p>Def: <%= @monsterbattle.monster_def %></p>
-            <p>Agility: <%= @monsterbattle.monster_agility %></p>
+            <p>Atk: <%= getMonsterStats(@monsterbattle.monster, "Atk") %></p>
+            <p>Def: <%= getMonsterStats(@monsterbattle.monster, "Def") %></p>
+            <p>Agility: <%= getMonsterStats(@monsterbattle.monster, "Agi") %></p>
          </div>
          <div class="container">
             <p>Magical skills</p>
             <p>Level: <%= @monsterbattle.monster_mlevel %></p>
             <p>Mp: <%= @monsterbattle.monster_cmp %>/<%= @monsterbattle.monster_mp %></p>
-            <p>Atk: <%= @monsterbattle.monster_matk %></p>
-            <p>Def: <%= @monsterbattle.monster_mdef %></p>
-            <p>Agility: <%= @monsterbattle.monster_magi %></p>
+            <p>Atk: <%= getMonsterStats(@monsterbattle.monster, "Matk") %></p>
+            <p>Def: <%= getMonsterStats(@monsterbattle.monster, "Mdef") %></p>
+            <p>Agility: <%= getMonsterStats(@monsterbattle.monster, "Magi") %></p>
          </div>
          <br>
          <br>
          <p>Battle traits</p>
-         <p>Loot: <%= @monsterbattle.monster_loot %></p>
-         <p>Nightmare: <%= @monsterbattle.monster.nightmare %></p>
-         <p>Shinycraze: <%= @monsterbattle.monster.shinycraze %></p>
-         <p>Party: <%= @monsterbattle.monster.party %></p>
+         <p>Exp: <%= getMonsterStats(@monsterbattle.monster, "Exp") %></p>
+         <p>Loot: <%= getMonsterStats(@monsterbattle.monster, "Loot") %></p>
+         <p>Nightmare: <%= getMonsterStats(@monsterbattle.monster, "Nightmare") %></p>
+         <p>Shinycraze: <%= getMonsterStats(@monsterbattle.monster, "Shinycraze") %></p>
+         <p>Party: <%= getMonsterStats(@monsterbattle.monster, "Party") %></p>
          <p>Mischief: <%= @monsterbattle.monster_mischief %></p>
          <% if @monsterbattle.battleresult != "Not-Started" %>
             <p>Damage: <%= @monsterbattle.monster_damage %></p>

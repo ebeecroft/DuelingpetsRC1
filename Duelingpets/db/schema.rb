@@ -436,8 +436,10 @@ ActiveRecord::Schema.define(version: 2021_03_21_034706) do
     t.string "econtype"
     t.string "content_type"
     t.integer "amount"
+    t.string "currency"
     t.datetime "created_on"
     t.integer "user_id"
+    t.integer "dragonhoard_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -779,8 +781,6 @@ ActiveRecord::Schema.define(version: 2021_03_21_034706) do
     t.integer "partner_lives"
     t.integer "partner_damage", default: 0
     t.boolean "partner_activepet", default: false
-    t.integer "creaturetype_id"
-    t.string "monster_mischief"
     t.integer "monster_plevel"
     t.integer "monster_chp"
     t.integer "monster_hp"
@@ -793,9 +793,13 @@ ActiveRecord::Schema.define(version: 2021_03_21_034706) do
     t.integer "monster_matk"
     t.integer "monster_mdef"
     t.integer "monster_magi"
+    t.integer "monster_exp"
+    t.string "monster_mischief"
+    t.integer "monster_nightmare"
+    t.integer "monster_shinycraze"
+    t.integer "monster_party"
     t.integer "monster_loot"
     t.integer "monster_damage", default: 0
-    t.integer "monstertype_id"
     t.integer "round", default: 0
     t.integer "tokens_earned", default: 0
     t.integer "exp_earned", default: 0
@@ -849,6 +853,14 @@ ActiveRecord::Schema.define(version: 2021_03_21_034706) do
   create_table "monstertypes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.datetime "created_on"
+    t.integer "basehp"
+    t.integer "baseatk"
+    t.integer "basedef"
+    t.integer "baseagi"
+    t.integer "baseexp"
+    t.integer "basenightmare"
+    t.integer "baseshinycraze"
+    t.integer "baseparty"
     t.integer "basecost"
     t.integer "emeraldcost"
     t.datetime "created_at", null: false

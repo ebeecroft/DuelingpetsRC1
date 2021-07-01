@@ -40,22 +40,22 @@
                <p><%= image_tag(monster.image_url(:thumb)) %></p>
             <% end %>
             <br>
-            <p>Level: <%= monster.level %></p>
-            <p>HP: <%= monster.hp %></p>
-            <p>MP: <%= monster.mp %></p>
-            <p>Atk: <%= monster.atk %></p>
-            <p>Def: <%= monster.def %></p>
-            <p>Agility: <%= monster.agility %></p>
-            <p>Matk: <%= monster.matk %></p>
-            <p>Mdef: <%= monster.mdef %></p>
-            <p>Magi: <%= monster.magi %></p>
-            <p>Exp: <%= monster.exp %></p>
-            <p>Nightmare: <%= monster.nightmare %></p>
-            <p>Shinycraze: <%= monster.shinycraze %></p>
-            <p>Party: <%= monster.party %></p>
-            <p>Loot: <%= monster.loot %></p>
+            <p>Level: <%= getMonsterStats(monster, "Level") %></p>
+            <p>HP: <%= getMonsterStats(monster, "HP") %></p>
+            <p>MP: <%= getMonsterStats(monster, "MP") %></p>
+            <p>Atk: <%= getMonsterStats(monster, "Atk") %></p>
+            <p>Def: <%= getMonsterStats(monster, "Def") %></p>
+            <p>Agility: <%= getMonsterStats(monster, "Agi") %></p>
+            <p>Matk: <%= getMonsterStats(monster, "Matk") %></p>
+            <p>Mdef: <%= getMonsterStats(monster, "Mdef") %></p>
+            <p>Magi: <%= getMonsterStats(monster, "Magi") %></p>
+            <p>Exp: <%= getMonsterStats(monster, "Exp") %></p>
+            <p>Nightmare: <%= getMonsterStats(monster, "Nightmare") %></p>
+            <p>Shinycraze: <%= getMonsterStats(monster, "Shinycraze") %></p>
+            <p>Party: <%= getMonsterStats(monster, "Party") %></p>
+            <p>Loot: <%= getMonsterStats(monster, "Loot") %></p>
             <p>Mischief: <%= monster.mischief %></p>
-            <p>Rarity: <%= monster.rarity %></p>
+            <p>Rarity: <%= getMonsterStats(monster, "Rarity") %></p>
             <p>Type: <%= monster.monstertype.name %></p>
             <p>Element: <%= monster.element.name %></p>
             <% if monster.user.userinfo.miniavatar.to_s != "" %>
