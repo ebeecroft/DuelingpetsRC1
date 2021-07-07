@@ -9,32 +9,54 @@
    <p><%= image_tag(displayGreeter("Economy").art_url(:thumb)) %></p>
    <p class="textindent"><%= textFormater("Multi", displayGreeter("Economy").message, "All").html_safe %></p>
    <br>
-   <p>Source points: <%= getEconomyChanges("Source") %></p>
-   <p>Tax points: <%= getEconomyChanges("Tax") %></p>
-   <p>Sink points: <%= getEconomyChanges("Sink") %></p>
-   <p>Transfer points: <%= getEconomyChanges("Transfer") %></p>
-   <p>Economy value: <%= getEconomyvalue %></p>
+   <p>Overall</p>
+   <p>Treasury: <%= getAllEcontypes("Treasury", "All") %>, Content: <%= getAllEcontypes("Content", "All") %>, Funds: <%= getAllEcontypes("Funds", "All") %>, Purchases: <%= getAllEcontypes("Purchase", "All") %>, Communications: <%= getAllEcontypes("Communication", "All") %>, Communities: <%= getAllEcontypes("Community", "All") %>, Cleanup: <%= getAllEcontypes("Cleanup", "All") %>, Itemshelf: <%= getAllEcontypes("Itemshelf", "All") %>, Petden: <%= getAllEcontypes("Petden", "All") %></p>
    <br>
-   <p>User points: <%= getPouchcontents("User") %></p>
-   <p>Bot points: <%= getPouchcontents("Bot") %></p>
-   <p>Treasury points: <%= getTreasurypoints %></p>
-   <p>Contest points: <%= getContestpoints %></p>
-   <p>User population: <%= getPouchcontents("Userpop") %></p>
-   <p>Bot population: <%= getPouchcontents("Botpop") %></p>
+   <p>Dragonhoard</p>
+   <p>Treasury</p>
+   <p>2 hours: <%= getAllEcontypes("Treasury", "2hours") %>, 6 hours: <%= getAllEcontypes("Treasury", "6hours") %>, 10 hours: <%= getAllEcontypes("Treasury", "10hours") %>, 14 hours: <%= getAllEcontypes("Treasury", "14hours") %>, 16 hours: <%= getAllEcontypes("Treasury", "16hours") %></p>
    <br>
-   <p>Hoard's worth: <%= getHoardvalue %></p>
-   <p>World's worth: <%= getWorldvalue %></p>
-   <% if getHoardchange != getHoardvalue %>
-      <p>Hoard's change: <%= getHoardchange %></p>
-   <% end %>
-   <% if getWorldchange != getWorldvalue %>
-      <p>World's change: <%= getWorldchange %></p>
-   <% end %>
+   <p>Petdens</p>
+   <p>2 hours: <%= getAllEcontypes("Petden", "2hours") %>, 6 hours: <%= getAllEcontypes("Petden", "6hours") %>, 10 hours: <%= getAllEcontypes("Petden", "10hours") %>, 14 hours: <%= getAllEcontypes("Petden", "14hours") %>, 16 hours: <%= getAllEcontypes("Petden", "16hours") %></p>
    <br>
-   <p>Content generated: <%= getEcontypes("Content") %></p>
-   <p>Hoard fees: <%= getEcontypes("Treasury") %></p>
-   <p>Community feedback: <%= getEcontypes("Community") %></p>
-   <p>User purchases: <%= getEcontypes("Purchase") %></p>
-   <p>Content cleanup: <%= getEcontypes("Cleanup") %></p>
-   <p>Emergency funds: <%= getEcontypes("Funds") %></p>
+   <p>Itemshelves</p>
+   <p>2 hours: <%= getAllEcontypes("Itemshelf", "2hours") %>, 6 hours: <%= getAllEcontypes("Itemshelf", "6hours") %>, 10 hours: <%= getAllEcontypes("Itemshelf", "10hours") %>, 14 hours: <%= getAllEcontypes("Itemshelf", "14hours") %>, 16 hours: <%= getAllEcontypes("Itemshelf", "16hours") %></p>
+   <br>
+   <p>User section</p>
+   <p>Contents</p>
+   <p>2 hours: <%= getAllEcontypes("Content", "2hours") %>, 6 hours: <%= getAllEcontypes("Content", "6hours") %>, 10 hours: <%= getAllEcontypes("Content", "10hours") %>, 14 hours: <%= getAllEcontypes("Content", "14hours") %>, 16 hours: <%= getAllEcontypes("Content", "16hours") %></p>
+   <br>
+   <p>Purchases</p>
+   <p>2 hours: <%= getAllEcontypes("Purchase", "2hours") %>, 6 hours: <%= getAllEcontypes("Purchase", "6hours") %>, 10 hours: <%= getAllEcontypes("Purchase", "10hours") %>, 14 hours: <%= getAllEcontypes("Purchase", "14hours") %>, 16 hours: <%= getAllEcontypes("Purchase", "16hours") %></p>
+   <br>
+   <p>Communications</p>
+   <p>2 hours: <%= getAllEcontypes("Communication", "2hours") %>, 6 hours: <%= getAllEcontypes("Communication", "6hours") %>, 10 hours: <%= getAllEcontypes("Communication", "10hours") %>, 14 hours: <%= getAllEcontypes("Communication", "14hours") %>, 16 hours: <%= getAllEcontypes("Communication", "16hours") %></p>
+   <br>
+   <p>Communities</p>
+   <p>2 hours: <%= getAllEcontypes("Community", "2hours") %>, 6 hours: <%= getAllEcontypes("Community", "6hours") %>, 10 hours: <%= getAllEcontypes("Community", "10hours") %>, 14 hours: <%= getAllEcontypes("Community", "14hours") %>, 16 hours: <%= getAllEcontypes("Community", "16hours") %></p>
+   <br>
+   <p>Cleanup</p>
+   <p>2 hours: <%= getAllEcontypes("Cleanup", "2hours") %>, 6 hours: <%= getAllEcontypes("Cleanup", "6hours") %>, 10 hours: <%= getAllEcontypes("Cleanup", "10hours") %>, 14 hours: <%= getAllEcontypes("Cleanup", "14hours") %>, 16 hours: <%= getAllEcontypes("Cleanup", "16hours") %></p>
+   <br>
+   <p>Emergency Funding</p>
+   <p>2 hours: <%= getAllEcontypes("Funds", "2hours") %>, 6 hours: <%= getAllEcontypes("Funds", "6hours") %>, 10 hours: <%= getAllEcontypes("Funds", "10hours") %>, 14 hours: <%= getAllEcontypes("Funds", "14hours") %>, 16 hours: <%= getAllEcontypes("Funds", "16hours") %></p>
+   <br>
+   <p>Hoard Economy</p>
+   <p>Source points: <%= getHoardChanges("Source", "All", "Points") %>, Sink points: <%= getHoardChanges("Sink", "All", "Points") %>, Economy value: <%= getHoardChanges("Change", "All", "Points") %></p>
+   <p>Source emeralds: <%= getHoardChanges("Source", "All", "Emeralds") %>, Sink emeralds: <%= getHoardChanges("Sink", "All", "Emeralds") %>, Economy value: <%= getHoardChanges("Change", "All", "Emeralds") %></p>
+   <p>Treasury: <%= getHoardChanges("Treasury", "All", "Points") %></p>
+   <p>Contest points: <%= getHoardChanges("Treasury", "All", "Contest") %></p>
+   <p>Emeralds: <%= getHoardChanges("Treasury", "All", "Emeralds") %></p>
+   <p>Dreyore Newbie: <%= getHoardChanges("Treasury", "All", "DreyoreN") %>, Dreyore Monster: <%= getHoardChanges("Treasury", "All", "DreyoreM") %></p>
+   <p>Warepoints: <%= getHoardChanges("Treasury", "All", "Warepoints") %>, Wareemeralds: <%= getHoardChanges("Treasury", "All", "Wareemeralds") %></p>
+   <br>
+   <p>User Economy</p>
+   <p>Source points: <%= getEconomyChanges("Source", "All", "Points") %>, Sink points: <%= getEconomyChanges("Sink", "All", "Points") %>, Economy value: <%= getEconomyChanges("Change", "All", "Points") %></p>
+   <p>Source emeralds: <%= getEconomyChanges("Source", "All", "Emeralds") %>, Sink emeralds: <%= getEconomyChanges("Sink", "All", "Emeralds") %>, Economy value: <%= getEconomyChanges("Change", "All", "Emeralds") %></p>
+   <p>Population users: <%= getEconomyChanges("Population", "All", "Users") %>, demos: <%= getEconomyChanges("Population", "All", "Demos") %>, inactive: <%= getEconomyChanges("Population", "All", "Inactive") %>, staff: <%= getEconomyChanges("Population", "All", "Staff") %>, bots: <%= getEconomyChanges("Population", "All", "Bots") %></p>
+   <p>Points users: <%= getEconomyChanges("CurrencyP", "All", "Users") %>, demos: <%= getEconomyChanges("CurrencyP", "All", "Demos") %>, Inactive: <%= getEconomyChanges("CurrencyP", "All", "Inactive") %>, staff: <%= getEconomyChanges("CurrencyP", "All", "Staff") %>, bots: <%= getEconomyChanges("CurrencyP", "All", "Bots") %></p>
+   <p>Emeralds users: <%= getEconomyChanges("CurrencyE", "All", "Users") %>, demos: <%= getEconomyChanges("CurrencyE", "All", "Demos") %>, inactive: <%= getEconomyChanges("CurrencyE", "All", "Inactive") %>, staff: <%= getEconomyChanges("CurrencyE", "All", "Staff") %>, bots: <%= getEconomyChanges("CurrencyE", "All", "Bots") %></p>
+   <p>Dreyore in the world: <%= getEconomyChanges("Dreyore", "All", "None") %></p>
+   <br>
+   <p class="formlinks"><%= link_to "Back", root_path %></p>   
 </div>

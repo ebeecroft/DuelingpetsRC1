@@ -462,7 +462,7 @@ module CusersHelper
       def removeTransactions
          allTransactions = Economy.order("created_on desc")
          if(allTransactions.count > 0)
-            oldTrans = allTransactions.select{|transaction| (currentTime - transaction.created_on) > 12.hours}
+            oldTrans = allTransactions.select{|transaction| (currentTime - transaction.created_on) > 1.day}
             oldTrans.each do |transaction|
                @economytransaction = transaction
                @economytransaction.destroy

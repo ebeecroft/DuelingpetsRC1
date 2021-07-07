@@ -6,7 +6,7 @@ module EconomiesHelper
          if(type == "Id")
             value = params[:id]
          elsif(type == "Economy")
-            value = params.require(:economy).permit(:name, :econtype, :content_type, :amount)
+            #value = params.require(:economy).permit(:name, :econtype, :content_type, :amount)
          elsif(type == "Page")
             value = params[:page]
          else

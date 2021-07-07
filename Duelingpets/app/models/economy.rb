@@ -7,7 +7,7 @@ class Economy < ApplicationRecord
    VALID_AMOUNT_REGEX = /\A[-]?[0-9!]+\z/i
 
    #Validates the economy information upon submission
-   validates :name, presence: true, format: {with: VALID_NAME_REGEX}
+   validates :econattr, presence: true, format: {with: VALID_NAME_REGEX}
    validates :econtype, presence: true, format: {with: VALID_NAME_REGEX}
    validates :content_type, presence: true, format: {with: VALID_NAME_REGEX}
    validates :amount, presence: true, format: {with: VALID_AMOUNT_REGEX}

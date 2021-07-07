@@ -394,12 +394,12 @@ module StartHelper
          else
             logoutExpiredUsers
             if(type == "home" || type == "aboutus" || type == "hubworld" || type == "privacy" || type == "sitemap" || type == "rules")
-               removeTransactions
+               #removeTransactions
                if(type == "aboutus")
                   displayGreeter("Aboutus")
                end
             elsif(type == "contact" || type == "verify" || type == "verify2")
-               removeTransactions
+               #removeTransactions
                displayGreeter("Contact") #Change later
                if(type == "verify")
                   color_value = getStartParams("Color")

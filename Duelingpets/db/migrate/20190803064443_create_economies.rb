@@ -1,7 +1,7 @@
 class CreateEconomies < ActiveRecord::Migration[5.2]
   def change
     create_table :economies do |t|
-      t.string :name
+      t.string :econattr
       t.string :econtype
       t.string :content_type
       t.integer :amount

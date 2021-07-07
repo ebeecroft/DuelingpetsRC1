@@ -432,7 +432,7 @@ ActiveRecord::Schema.define(version: 2021_03_21_034706) do
   end
 
   create_table "economies", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "name"
+    t.string "econattr"
     t.string "econtype"
     t.string "content_type"
     t.integer "amount"
