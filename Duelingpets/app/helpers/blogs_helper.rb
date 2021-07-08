@@ -30,9 +30,9 @@ module BlogsHelper
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
          if(type != "Tax")
-            newTransaction.attribute = "Communication"
+            newTransaction.econattr = "Communication"
          else
-            newTransaction.attribute = "Treasury"
+            newTransaction.econattr = "Treasury"
          end
          #Content type can be either Blog or Adblog
          newTransaction.content_type = contentType
@@ -561,7 +561,7 @@ module BlogsHelper
                               @blog = blogFound
                               @blog.save
                               ContentMailer.content_approved(@blog, "Blog", points).deliver_later(wait: 5.minutes)
-                              economyTransaction("Source", points, @blog.user.id)
+                              economyTransaction("Source", points, @blog.user.id, "Points", "Blog")
                               flash[:success] = "#{blogFound.user.vname}'s blog #{blogFound.title} was approved."
                               redirect_to blogs_review_path
                               #Come back to this later.

@@ -23,9 +23,9 @@ module BookworldsHelper
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
          if(type != "Tax")
-            newTransaction.attribute = "Content"
+            newTransaction.econattr = "Purchase"
          else
-            newTransaction.attribute = "Treasury"
+            newTransaction.econattr = "Treasury"
          end
          newTransaction.content_type = "Bookworld"
          newTransaction.econtype = type
@@ -105,14 +105,12 @@ module BookworldsHelper
          if(bookworldFound)
             removeTransactions
             @bookworld = bookworldFound
-
-            #Come back to this when subsheets is added
             books = bookworldFound.books
             @books = Kaminari.paginate_array(books).page(getBookworldParams("Page")).per(10)
             if(type == "destroy")
                logged_in = current_user
                if(logged_in && ((logged_in.id == bookworldFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                  #Gives the user points back for selling their gallery
+                  #Gives the user points back for selling their bookworld
                   points = (bookworldValue(bookworldFound) * 0.30).round
                   bookworldFound.user.pouch.amount += points
                   @pouch = bookworldFound.user.pouch

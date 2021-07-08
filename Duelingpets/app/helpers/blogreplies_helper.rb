@@ -17,14 +17,14 @@ module BlogrepliesHelper
          end
          return value
       end
-      
+
       def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
          if(type != "Tax")
-            newTransaction.attribute = "Communication"
+            newTransaction.econattr = "Communication"
          else
-            newTransaction.attribute = "Treasury"
+            newTransaction.econattr = "Treasury"
          end
          newTransaction.content_type = "Blogreply"
          newTransaction.econtype = type
@@ -56,9 +56,9 @@ module BlogrepliesHelper
                replyFound.reviewed = false
 
                #Determines the type of bookgroup the user belongs to
-               #allGroups = Bookgroup.order("created_on desc")
-               #allowedGroups = allGroups.select{|bookgroup| bookgroup.id <= getWritingGroup(logged_in, "Id")}
-               #@group = allowedGroups
+               allGroups = Bookgroup.order("created_on desc")
+               allowedGroups = allGroups.select{|bookgroup| bookgroup.id <= getWritingGroup(logged_in, "Id")}
+               @group = allowedGroups
                @blogreply = replyFound
                @blog = blog.find_by_id(replyFound.blog.id)
                if(type == "update")
@@ -70,20 +70,27 @@ module BlogrepliesHelper
                      render "edit"
                   end
                elsif(type == "destroy")
-                  if(logged_in.pouch.privilege != "Admin")
+                  cleanup = Fieldcost.find_by_name("Blogreplycleanup")
+                  if(replyFound.user.pouch.amount - cleanup.amount >= 0)
                      #Removes the content and decrements the owner's pouch
-                     cleanup = Fieldcost.find_by_name("Blogreplycleanup")
                      replyFound.user.pouch.amount -= cleanup.amount
                      @pouch = replyFound.user.pouch
                      @pouch.save
-                     economyTransaction("Sink", cleanup.amount, replyFound.user_id, "Points")
-                  end
-                  @blogreply.destroy
-                  flash[:success] = "Reply was successfully removed."
-                  if(logged_in.pouch.privilege == "Admin")
-                     redirect_to replies_path
+                     economyTransaction("Sink", cleanup.amount, replyFound.user.id, "Points")
+                     flash[:success] = "Reply was successfully removed."
+                     @blogreply.destroy
+                     if(logged_in.pouch.privilege == "Admin")
+                        redirect_to replies_path
+                     else
+                        redirect_to user_blog_path(replyFound.blog.user, replyFound.blog)
+                     end
                   else
-                     redirect_to user_blog_path(replyFound.blog.user, replyFound.blog)
+                     flash[:error] = "#{@blogreply.user.vname}'s has insufficient points to remove the reply!"
+                     if(logged_in.pouch.privilege == "Admin")
+                        redirect_to replies_path
+                     else
+                        redirect_to user_blog_path(replyFound.blog.user, replyFound.blog)
+                     end
                   end
                end
             else
@@ -132,9 +139,9 @@ module BlogrepliesHelper
                         end
 
                         #Determines the type of bookgroup the user belongs to
-                        #allGroups = Bookgroup.order("created_on desc")
-                        #allowedGroups = allGroups.select{|bookgroup| bookgroup.id <= getWritingGroup(logged_in, "Id")}
-                        #@group = allowedGroups
+                        allGroups = Bookgroup.order("created_on desc")
+                        allowedGroups = allGroups.select{|bookgroup| bookgroup.id <= getWritingGroup(logged_in, "Id")}
+                        @group = allowedGroups
                         @blog = blogFound
                         @blogreply = newReply
 

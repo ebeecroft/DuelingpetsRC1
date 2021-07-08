@@ -23,9 +23,9 @@ module CreaturesHelper
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
          if(type != "Tax")
-            newTransaction.attribute = "Content"
+            newTransaction.econattr = "Content"
          else
-            newTransaction.attribute = "Treasury"
+            newTransaction.econattr = "Treasury"
          end
          newTransaction.content_type = "Creature"
          newTransaction.econtype = type
@@ -341,10 +341,8 @@ module CreaturesHelper
                if(logged_in)
                   creatureFound = Creature.find_by_id(getCreatureParams("CreatureId"))
                   if(creatureFound)
-                     pouchFound = Pouch.find_by_user_id(logged_in.id)
                      if((logged_in.pouch.privilege == "Admin") || ((logged_in.pouch.privilege == "Keymaster") || (logged_in.pouch.privilege == "Reviewer")))
                         if(type == "approve")
-                           #Might revise this section later
                            creatureFound.reviewed = true
                            creatureFound.reviewed_on = currentTime
                            basecost = creatureFound.creaturetype.basecost

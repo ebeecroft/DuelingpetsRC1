@@ -21,9 +21,9 @@ module BooksHelper
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
          if(type != "Tax")
-            newTransaction.attribute = "Content"
+            newTransaction.econattr = "Purchase"
          else
-            newTransaction.attribute = "Treasury"
+            newTransaction.econattr = "Treasury"
          end
          newTransaction.content_type = "Book"
          newTransaction.econtype = type
@@ -39,13 +39,13 @@ module BooksHelper
          @economytransaction = newTransaction
          @economytransaction.save
       end
-      
+
       def getChapterCounts(book)
          allChapters = Chapter.all
          chapters = allChapters.select{|chapter| chapter.review && chapter.book_id == book.id}
          return chapters.count
       end
-      
+
       def bookValue(bookFound)
          chapter = Fieldcost.find_by_name("Chapter")
          allChapters = Chapter.all

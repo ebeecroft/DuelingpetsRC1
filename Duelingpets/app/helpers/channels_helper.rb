@@ -24,9 +24,9 @@ module ChannelsHelper
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
          if(type != "Tax")
-            newTransaction.attribute = "Content"
+            newTransaction.econattr = "Purchase"
          else
-            newTransaction.attribute = "Treasury"
+            newTransaction.econattr = "Treasury"
          end
          newTransaction.content_type = "Channel"
          newTransaction.econtype = type
@@ -42,8 +42,9 @@ module ChannelsHelper
          @economytransaction = newTransaction
          @economytransaction.save
       end
-      
+
       def channelValue(channelFound)
+         #Will need revisions later for emeralds
          channel = Fieldcost.find_by_name("Channel")
          mainplaylist = Fieldcost.find_by_name("Mainplaylist")   
          subplaylist = Fieldcost.find_by_name("Subplaylist")

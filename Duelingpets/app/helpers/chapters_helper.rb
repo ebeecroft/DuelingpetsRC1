@@ -23,14 +23,24 @@ module ChaptersHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Adds the chapter points to the economy
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.econattr = "Content"
+         else
+            newTransaction.econattr = "Treasury"
+         end
          newTransaction.content_type = "Chapter"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -93,31 +103,40 @@ module ChaptersHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == chapterFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Rebuilds the current chapter format
-                     chapterNumber = @chapter.gchapter_id
-                     bookFound = Book.find_by_id(@chapter.book_id)
-                     allChapters = bookFound.chapters.all
-                     fixChapters = allChapters.select{|chapter| chapter.gchapter_id > chapterNumber}
-                     if(fixChapters.count > 0)
-                        fixChapters.each do |chapter|
-                           chapter.gchapter_id -= 1
-                           @temp = chapter
-                           @temp.save
-                        end
-                     end
-
-                     #Removes the content and decrements the owner's pouch
                      cleanup = Fieldcost.find_by_name("Chaptercleanup")
-                     chapterFound.user.pouch.amount -= cleanup.amount
-                     @pouch = artFound.user.pouch
-                     @pouch.save
-                     economyTransaction("Tax", cleanup.amount, chapterFound.user.id)
-                     @chapter.destroy
-                     flash[:success] = "Chapter #{chapterFound.title} was successfully removed."
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to chapters_path
+                     if(chapterFound.user.pouch.amount - cleanup.amount >= 0)
+                        #Rebuilds the current chapter format
+                        chapterNumber = @chapter.gchapter_id
+                        bookFound = Book.find_by_id(@chapter.book_id)
+                        allChapters = bookFound.chapters.all
+                        fixChapters = allChapters.select{|chapter| chapter.gchapter_id > chapterNumber}
+                        if(fixChapters.count > 0)
+                           fixChapters.each do |chapter|
+                              chapter.gchapter_id -= 1
+                              @temp = chapter
+                              @temp.save
+                           end
+                        end
+                     
+                        #Removes the content and decrements the owner's pouch
+                        chapterFound.user.pouch.amount -= cleanup.amount
+                        @pouch = chapterFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Sink", cleanup.amount, chapterFound.user.id, "Points")
+                        flash[:success] = "#{@chapter.title} was successfully removed."
+                        @chapter.destroy
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to chapters_path
+                        else
+                           redirect_to bookworld_book_path(chapterFound.book.bookworld, chapterFound.book)
+                        end
                      else
-                        redirect_to bookworld_book_path(chapterFound.book.bookworld, chapterFound.book)
+                        flash[:error] = "#{@chapter.user.vname}'s has insufficient points to remove the chapter!"
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to chapters_path
+                        else
+                           redirect_to bookworld_book_path(chapterFound.book.bookworld, chapterFound.book)
+                        end
                      end
                   else
                      redirect_to root_path
@@ -265,39 +284,33 @@ module ChaptersHelper
                   chapterFound = Chapter.find_by_id(getChapterParams("ChapterId"))
                   if(chapterFound)
                      pouchFound = Pouch.find_by_user_id(logged_in.id)
-                     if((logged_in.pouch.privilege == "Admin") || ((pouchFound.privilege == "Keymaster") || (pouchFound.privilege == "Reviewer")))
+                     if((logged_in.pouch.privilege == "Admin") || ((logged_in.pouch.privilege == "Keymaster") || (logged_in.pouch.privilege == "Reviewer")))
                         if(type == "approve")
                            chapterFound.reviewed = true
                            chapterFound.reviewed_on = currentTime
                            updateBookworld(chapterFound.book)
-
-                           #Saves the chapter
-                           chapterpoints = Fieldcost.find_by_name("Chapter")
-                           pointsForChapter = chapterpoints.amount
+                           points = 0
+                           if(!chapterFound.pointsreceived)
+                              pointsForChapter = Fieldcost.find_by_name("Chapter")
+                              pouch = Pouch.find_by_user_id(@chapter.user_id)
+                              pouch.amount += pointsForChapter.amount
+                              @pouch = pouch
+                              @pouch.save
+                              economyTransaction("Source", pointsForChapter.amount, @chapter.user.id, "Points")
+                              points = pointsForChapter.amount
+                              chapterFound.pointsreceived = true
+                           end
                            @chapter = chapterFound
                            @chapter.save
-                           pouch = Pouch.find_by_user_id(@chapter.user_id)
-                           pouch.amount += pointsForChapter
-                           @pouch = pouch
-                           @pouch.save
-                           economyTransaction("Source", pointsForChapter, @chapter.user.id)
-
-                           ContentMailer.content_approved(@chapter, "Chapter", pointsForChapters).deliver_now
-                           #allWatches = Watch.all
-                           #watchers = allWatches.select{|watch| (((watch.watchtype.name == "Arts" || watch.watchtype.name == "Blogarts") || (watch.watchtype.name == "Artsounds" || watch.watchtype.name == "Artmovies")) || (watch.watchtype.name == "Maincontent" || watch.watchtype.name == "All")) && watch.from_user.id != @art.user_id}
-                           #if(watchers.count > 0)
-                           #   watchers.each do |watch|
-                           #      UserMailer.new_art(@art, watch).deliver
-                           #   end
-                           #end
-                           value = "#{@chapter.user.vname}'s chapter #{@chapter.title} was approved."
+                           ContentMailer.content_approved(@chapter, "Chapter", points).deliver_now
+                           flash[:success] = "#{@chapter.user.vname}'s chapter #{@chapter.title} was approved."
+                           redirect_to chapters_review_path
                         else
-                           @sound = soundFound
+                           @chapter = chapterFound
                            ContentMailer.content_denied(@chapter, "Chapter").deliver_now
-                           value = "#{@chapter.user.vname}'s chapter #{@chapter.title} was denied."
+                           flash[:success] = "#{@chapter.user.vname}'s chapter #{@chapter.title} was denied."
+                           redirect_to chapters_review_path
                         end
-                        flash[:success] = value
-                        redirect_to chapters_review_path
                      else
                         redirect_to root_path
                      end

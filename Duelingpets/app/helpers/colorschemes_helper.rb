@@ -8,7 +8,6 @@ module ColorschemesHelper
          elsif(type == "ColorId")
             value = params[:color_id]
          elsif(type == "Colorscheme")
-            #Remove activate from edit eventually
             value = params.require(:colorscheme).permit(:name, :description, :nightcolor, :backgroundcolor, 
             :headercolor, :subheader1color, :subheader2color, :subheader3color, :textcolor,
             :editbuttoncolor, :editbuttonbackgcolor,
@@ -31,9 +30,9 @@ module ColorschemesHelper
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
          if(type != "Tax")
-            newTransaction.attribute = "Content"
+            newTransaction.econattr = "Content"
          else
-            newTransaction.attribute = "Treasury"
+            newTransaction.econattr = "Treasury"
          end
          newTransaction.content_type = "Colorscheme"
          newTransaction.econtype = type
@@ -48,21 +47,6 @@ module ColorschemesHelper
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
-      end
-
-      #Is back button necessary?
-      def backButton
-         somevalue = params[:user_id]
-         if(somevalue)
-            userFound = User.find_by_vname(params[:user_id])
-            if(userFound)
-               user_path(userFound)
-            else
-               raise "Invalid user!"
-            end
-         else
-            root_path
-         end
       end
 
       def displayColorOwner
@@ -117,15 +101,15 @@ module ColorschemesHelper
                   end
                elsif(type == "destroy")
                   if(!colorschemeFound.democolor && colorschemeFound.id != 1)
-                     allInfos = Userinfo.all
-                     infosToChange = allInfos.select{|userinfo| userinfo.colorscheme_id == @colorscheme.id}
-                     infosToChange.each do |userinfo|
-                        userinfo.colorscheme_id = 1
-                        @userinfo = userinfo
-                        @userinfo.save
-                     end
                      cleanup = Fieldcost.find_by_name("Colorschemecleanup")
                      if(colorschemeFound.user.pouch.amount - cleanup.amount >= 0)
+                        allInfos = Userinfo.all
+                        infosToChange = allInfos.select{|userinfo| userinfo.colorscheme_id == @colorscheme.id}
+                        infosToChange.each do |userinfo|
+                           userinfo.colorscheme_id = 1
+                           @userinfo = userinfo
+                           @userinfo.save
+                        end
                         #Removes the content and decrements the owner's pouch
                         colorschemeFound.user.pouch.amount -= cleanup.amount
                         @pouch = colorschemeFound.user.pouch
