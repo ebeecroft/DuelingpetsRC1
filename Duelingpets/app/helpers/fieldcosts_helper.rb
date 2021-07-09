@@ -22,7 +22,7 @@ module FieldcostsHelper
       def economyTransaction(type, points, field, currency)
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
-         newTransaction.attribute = "Fieldcost"
+         newTransaction.econattr = "Fieldcost"
          newTransaction.content_type = field.name
          newTransaction.econtype = type
          newTransaction.amount = points

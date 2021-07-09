@@ -25,9 +25,9 @@ module ItemsHelper
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
          if(type != "Tax")
-            newTransaction.attribute = "Content"
+            newTransaction.econattr = "Content"
          else
-            newTransaction.attribute = "Treasury"
+            newTransaction.econattr = "Treasury"
          end
          newTransaction.content_type = "Item"
          newTransaction.econtype = type
@@ -327,10 +327,8 @@ module ItemsHelper
                if(logged_in)
                   itemFound = Item.find_by_id(getItemParams("ItemId"))
                   if(itemFound)
-                     pouchFound = Pouch.find_by_user_id(logged_in.id)
                      if((logged_in.pouch.privilege == "Admin") || ((logged_in.pouch.privilege == "Keymaster") || (logged_in.pouch.privilege == "Reviewer")))
                         if(type == "approve")
-                           #Might revise this section later
                            itemFound.reviewed = true
                            itemFound.reviewed_on = currentTime
                            basecost = itemFound.itemtype.basecost

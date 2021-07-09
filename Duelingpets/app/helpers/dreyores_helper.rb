@@ -22,7 +22,7 @@ module DreyoresHelper
       def economyTransaction(type, points, dreyore, currency)
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
-         newTransaction.attribute = "Dreyore"
+         newTransaction.econattr = "Dreyore"
          newTransaction.content_type = dreyore.name
          newTransaction.econtype = type
          newTransaction.amount = points

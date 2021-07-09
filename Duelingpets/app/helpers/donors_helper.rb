@@ -21,9 +21,9 @@ module DonorsHelper
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
          if(type != "Tax")
-            newTransaction.attribute = "Donation"
+            newTransaction.econattr = "Donation"
          else
-            newTransaction.attribute = "Treasury"
+            newTransaction.econattr = "Treasury"
          end
          newTransaction.content_type = "Donor"
          newTransaction.econtype = type
