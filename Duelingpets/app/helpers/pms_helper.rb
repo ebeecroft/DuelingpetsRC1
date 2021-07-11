@@ -24,9 +24,9 @@ module PmsHelper
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
          if(type != "Tax")
-            newTransaction.attribute = "Communication"
+            newTransaction.econattr = "Communication"
          else
-            newTransaction.attribute = "Treasury"
+            newTransaction.econattr = "Treasury"
          end
          newTransaction.content_type = "PM"
          newTransaction.econtype = type

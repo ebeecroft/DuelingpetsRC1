@@ -24,9 +24,9 @@ module JukeboxesHelper
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
          if(type != "Tax")
-            newTransaction.attribute = "Content"
+            newTransaction.econattr = "Purchase"
          else
-            newTransaction.attribute = "Treasury"
+            newTransaction.econattr = "Treasury"
          end
          newTransaction.content_type = "Jukebox"
          newTransaction.econtype = type
@@ -151,8 +151,6 @@ module JukeboxesHelper
                #visitTimer(type, blogFound)
                #cleanupOldVisits
                @jukebox = jukeboxFound
-
-               #Come back to this when subsheets is added
                mainsheets = jukeboxFound.mainsheets
                @mainsheets = Kaminari.paginate_array(mainsheets).page(getJukeboxParams("Page")).per(10)
                allSheets = Subsheet.all
@@ -164,12 +162,12 @@ module JukeboxesHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == jukeboxFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Gives the user points back for selling their channel
+                     #Gives the user points back for selling their jukebox
                      points = (jukeboxValue(jukeboxFound) * 0.30).round
                      jukeboxFound.user.pouch.amount += points
                      @pouch = jukeboxFound.user.pouch
                      @pouch.save
-                     economyTransaction("Source", points, jukeboxFound.user_id, "Points")
+                     economyTransaction("Source", points, jukeboxFound.user_id, "Points") #Part of this will be emeralds and points
                      @jukebox.destroy
                      flash[:success] = "#{@jukebox.name} was successfully removed."
                      if(logged_in.pouch.privilege == "Admin")

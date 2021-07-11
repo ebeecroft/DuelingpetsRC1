@@ -16,15 +16,25 @@ module ReferralsHelper
          end
          return value
       end
-      
-      def economyTransaction(type, points, userid)
-         #Adds the art points to the economy
+
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.econattr = "Follower"
+         else
+            newTransaction.econattr = "Treasury"
+         end
          newTransaction.content_type = "Referral"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -85,16 +95,15 @@ module ReferralsHelper
                            if(errorFlag != 1 && errorFlag != 2)
                               #Stores the referral
                               @referral.save
-                              referralcost = Fieldcost.find_by_name("Referral")
+                              referralPoints = Fieldcost.find_by_name("Referral")
                               pouch = Pouch.find_by_id(@referral.referred_by_id)
-                              pointsForReferral = referralcost.amount
-                              pouch.amount += pointsForReferral
+                              pouch.amount += referralPoints.amount
                               @pouch = pouch
                               @pouch.save
-                              economyTransaction("Source", pointsForReferral, pouch.user.id)
+                              economyTransaction("Source", referralPoints.amount, pouch.user.id, "Points")
 
                               #Emails the user about the new referral
-                              ContentMailer.content_created(@referral, "Referral", pointsForReferral).deliver_now
+                              ContentMailer.content_created(@referral, "Referral", referralPoints.amount).deliver_now
                               flash[:success] = "#{@referral.referred_by.vname} successfully referred someone!"
                               redirect_to user_path(@user)
                            else
@@ -159,16 +168,15 @@ module ReferralsHelper
 
                      #Stores the referral
                      @referral.save
-                     referralcost = Fieldcost.find_by_name("Referral")
+                     referralPoints = Fieldcost.find_by_name("Referral")
                      pouch = Pouch.find_by_id(@referral.referred_by_id)
-                     pointsForReferral = referralcost.amount
-                     pouch.amount += pointsForReferral
+                     pouch.amount += referralPoints.amount
                      @pouch = pouch
                      @pouch.save
-                     economyTransaction("Source", pointsForReferral, pouch.user.id)
+                     economyTransaction("Source", referralPoints.amount, pouch.user.id, "Points")
 
                      #Emails the user about the new referral
-                     ContentMailer.content_created(@referral, "Referral", pointsForReferral).deliver_now
+                     ContentMailer.content_created(@referral, "Referral", referralPoints.amount).deliver_now
                      flash[:success] = "#{@referral.referred_by.vname} successfully referred someone!"
                      redirect_to user_path(@user)
                   else

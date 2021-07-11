@@ -18,6 +18,29 @@ module PartnersHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid, currency)
+         newTransaction = Economy.new(params[:economy])
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.econattr = "Purchase"
+         else
+            newTransaction.econattr = "Treasury"
+         end
+         newTransaction.content_type = "Partner"
+         newTransaction.econtype = type
+         newTransaction.amount = points
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def indexCommons
          userFound = User.find_by_vname(getPartnerParams("User"))
@@ -67,12 +90,27 @@ module PartnersHelper
                   #Eventually consider adding a sink to this
                   user = User.find_by_vname(partnerFound.user.vname)
                   if(user.partners.count == 1 || !partnerFound.activepet)
-                     @partner.destroy
-                     flash[:success] = "#{@partner.name} was successfully removed."
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to partners_path
+                     cleanup = (partnerFound.adoptcost * 0.30).round
+                     if(partnerFound.user.pouch.amount - cleanup >= 0)
+                        #Removes the content and decrements the owner's pouch
+                        partnerFound.user.pouch.amount -= cleanup
+                        @pouch = partnerFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Sink", cleanup, partnerFound.user.id, "Points")
+                        flash[:success] = "#{@partner.name} was successfully removed."
+                        @partner.destroy
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to partners_path
+                        else
+                           redirect_to partners_mypartners_path(partnerFound.user)
+                        end
                      else
-                        redirect_to partners_mypartners_path(partnerFound.user)
+                        flash[:error] = "#{@partner.user.vname}'s has insufficient points to remove the partner!"
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to partners_path
+                        else
+                           redirect_to partners_mypartners_path(partnerFound.user)
+                        end
                      end
                   else
                      flash[:error] = "Can't delete the mainpet!"
@@ -197,7 +235,7 @@ module PartnersHelper
                                  @equip.save
 
                                  #Builds the partners fight
-                                 newFight = Fight.new(params[:fight])
+                                 newFight = Fight.new(params[:fight]) #Does this code still work?
                                  newFight.partner_id = newPartner.id
                                  @fight = newFight
                                  @fight.save
@@ -208,15 +246,15 @@ module PartnersHelper
                                     logged_in.pouch.emeraldamount -= @partner.creature.emeraldcost
                                     @pouch = logged_in.pouch
                                     @pouch.save
-                                    economyTransaction("Sink", @partner.adoptcost, @partner.user_id)
-                                    economyTransaction("Sink", @partner.creature.emeraldcost, @partner.user_id)
+                                    economyTransaction("Sink", @partner.adoptcost, @partner.user_id, "Points")
+                                    economyTransaction("Sink", @partner.creature.emeraldcost, @partner.user_id, "Emeralds")
 
                                     #Give the creator the points for the sell of the pet
                                     creator = @partner.creature.user.pouch
                                     creator.amount += @partner.adoptcost
                                     creator.emeraldamount += @partner.creature.emeraldcost
-                                    economyTransaction("Source", @partner.adoptcost, @partner.creature.user_id)
-                                    economyTransaction("Source", @partner.creature.emeraldcost, @partner.creature.user_id)
+                                    economyTransaction("Source", @partner.adoptcost, @partner.creature.user_id, "Points")
+                                    economyTransaction("Source", @partner.creature.emeraldcost, @partner.creature.user_id, "Emeralds")
                                     @creator = creator
                                     @creator.save
                                  end

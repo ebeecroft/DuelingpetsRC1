@@ -42,7 +42,6 @@ module ArtsHelper
          @economytransaction = newTransaction
          @economytransaction.save
       end
-      
 
       def updateGallery(subfolder)
          subfolder.updated_on = currentTime

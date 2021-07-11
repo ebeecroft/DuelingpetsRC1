@@ -25,9 +25,9 @@ module OcsHelper
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
          if(type != "Tax")
-            newTransaction.attribute = "Content"
+            newTransaction.econattr = "Content"
          else
-            newTransaction.attribute = "Treasury"
+            newTransaction.econattr = "Treasury"
          end
          newTransaction.content_type = "OC"
          newTransaction.econtype = type
@@ -117,7 +117,7 @@ module OcsHelper
                         @pouch.save
                         economyTransaction("Sink", cleanup.amount, ocFound.user.id, "Points")
                         flash[:success] = "#{@oc.title} was successfully removed."
-                        @mainsheet.destroy
+                        @oc.destroy
                         if(logged_in.pouch.privilege == "Admin")
                            redirect_to ocs_list_path
                         else

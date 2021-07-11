@@ -20,14 +20,24 @@ module MoviesHelper
          return value
       end
       
-      def economyTransaction(type, points, userid)
-         #Adds the art points to the economy
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.econattr = "Content"
+         else
+            newTransaction.econattr = "Treasury"
+         end
          newTransaction.content_type = "Movie"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -89,20 +99,27 @@ module MoviesHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == movieFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     if(logged_in.pouch.privilege != "Admin")
+                     cleanup = Fieldcost.find_by_name("Moviecleanup")
+                     if(movieFound.user.pouch.amount - cleanup.amount >= 0)
                         #Removes the content and decrements the owner's pouch
-                        cleanup = Fieldcost.find_by_name("Moviecleanup")
                         movieFound.user.pouch.amount -= cleanup.amount
                         @pouch = movieFound.user.pouch
                         @pouch.save
-                        economyTransaction("Tax", cleanup.amount, movieFound.user.id)
-                     end
-                     @art.destroy
-                     flash[:success] = "#{movieFound.title} was successfully removed."
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to movies_path
+                        economyTransaction("Sink", cleanup.amount, movieFound.user.id, "Points")
+                        flash[:success] = "#{@movie.title} was successfully removed."
+                        @movie.destroy
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to movies_path
+                        else
+                           redirect_to mainplaylist_subplaylist_path(movieFound.subplaylist.mainplaylist, movieFound.subplaylist)
+                        end
                      else
-                        redirect_to mainplaylist_subplaylist_path(movieFound.subplaylist.mainplaylist, movieFound.subplaylist)
+                        flash[:error] = "#{@movie.user.vname}'s has insufficient points to remove the movie!"
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to movies_path
+                        else
+                           redirect_to mainplaylist_subplaylist_path(movieFound.subplaylist.mainplaylist, movieFound.subplaylist)
+                        end
                      end
                   else
                      redirect_to root_path
@@ -240,8 +257,7 @@ module MoviesHelper
                if(logged_in)
                   movieFound = Movie.find_by_id(getMovieParams("MovieId"))
                   if(movieFound)
-                     pouchFound = Pouch.find_by_user_id(logged_in.id)
-                     if((logged_in.pouch.privilege == "Admin") || ((pouchFound.privilege == "Keymaster") || (pouchFound.privilege == "Reviewer")))
+                     if((logged_in.pouch.privilege == "Admin") || ((logged_in.pouch.privilege == "Keymaster") || (logged_in.pouch.privilege == "Reviewer")))
                         if(type == "approve")
                            movieFound.reviewed = true
                            movieFound.reviewed_on = currentTime
@@ -256,15 +272,8 @@ module MoviesHelper
                            pouch.amount += pointsForMovie
                            @pouch = pouch
                            @pouch.save
-                           economyTransaction("Source", pointsForMovie, movieFound.user.id)
+                           economyTransaction("Source", pointsForMovie, movieFound.user.id, "Points")
                            ContentMailer.content_approved(@movie, "Movie", pointsForMovie).deliver_now
-                           #allWatches = Watch.all
-                           #watchers = allWatches.select{|watch| (((watch.watchtype.name == "Arts" || watch.watchtype.name == "Blogarts") || (watch.watchtype.name == "Artsounds" || watch.watchtype.name == "Artmovies")) || (watch.watchtype.name == "Maincontent" || watch.watchtype.name == "All")) && watch.from_user.id != @art.user_id}
-                           #if(watchers.count > 0)
-                           #   watchers.each do |watch|
-                           #      UserMailer.new_art(@art, watch).deliver
-                           #   end
-                           #end
                            flash[:success] = "#{@movie.user.vname}'s movie #{@movie.title} was approved."
                            redirect_to movies_review_path
                         else
