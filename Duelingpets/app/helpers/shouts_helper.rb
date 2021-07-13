@@ -23,9 +23,9 @@ module ShoutsHelper
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
          if(type != "Tax")
-            newTransaction.attribute = "Communication"
+            newTransaction.econattr = "Communication"
          else
-            newTransaction.attribute = "Treasury"
+            newTransaction.econattr = "Treasury"
          end
          newTransaction.content_type = "Shout"
          newTransaction.econtype = type
@@ -201,7 +201,7 @@ module ShoutsHelper
                            #Determines if the player can pay for it
                            price = Fieldcost.find_by_name("Shout")
                            rate = Ratecost.find_by_name("Purchaserate")
-                           tax = (price * rate.amount)
+                           tax = (price.amount * rate.amount)
                            if(shoutFound.user.pouch.amount - price.amount >= 0)
                               shoutFound.user.pouch.amount -= price.amount
                               @pouch = shoutFound.user.pouch

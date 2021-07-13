@@ -16,11 +16,15 @@ module WpetdensHelper
          end
          return value
       end
-      
+
       def economyTransaction(type, points, petden, currency)
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
-         newTransaction.attribute = "Petden"
+         if(type != "Tax")
+            newTransaction.econattr = "Petden"
+         else
+            newTransaction.econattr = "Treasury"
+         end
          newTransaction.content_type = petden.name
          newTransaction.econtype = type
          newTransaction.amount = points

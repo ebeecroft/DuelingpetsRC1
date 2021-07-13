@@ -16,15 +16,25 @@ module SuggestionsHelper
          end
          return value
       end
-      
-      def economyTransaction(type, points, userid)
-         #Adds the art points to the economy
+
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.econattr = "Idea"
+         else
+            newTransaction.econattr = "Treasury"
+         end
          newTransaction.content_type = "Suggestion"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -57,9 +67,30 @@ module SuggestionsHelper
                      render "edit"
                   end
                elsif(type == "destroy")
-                  @suggestion.destroy
-                  flash[:success] = "#{@suggestion.name} was successfully removed."
-                  redirect_to suggestions_path
+                  cleanup = Fieldcost.find_by_name("Suggestioncleanup")
+                  if(suggestionFound.user.pouch.amount - cleanup.amount >= 0)
+                     #Removes the content and decrements the owner's pouch
+                     suggestionFound.user.pouch.amount -= cleanup.amount
+                     @pouch = suggestionFound.user.pouch
+                     @pouch.save
+                     economyTransaction("Sink", cleanup.amount, suggestionFound.user.id, "Points")
+                     flash[:success] = "#{@suggestion.name} was successfully removed."
+                     @suggestion.destroy
+                     if(logged_in.pouch.privilege == "Admin")
+                        redirect_to suggestions_path
+                     else
+                        redirect_to suggestions_path
+                        #redirect_to mainplaylist_subplaylist_path(movieFound.subplaylist.mainplaylist, movieFound.subplaylist)
+                     end
+                  else
+                     flash[:error] = "#{@suggestion.user.vname}'s has insufficient points to remove the suggestion!"
+                     if(logged_in.pouch.privilege == "Admin")
+                        redirect_to suggestions_path
+                     else
+                        redirect_to suggestions_path
+                        #redirect_to mainplaylist_subplaylist_path(movieFound.subplaylist.mainplaylist, movieFound.subplaylist)
+                     end
+                  end
                end
             else
                redirect_to root_path
@@ -122,7 +153,7 @@ module SuggestionsHelper
                               logged_in.pouch.amount += suggestion.amount
                               @pouch = logged_in.pouch
                               @pouch.save
-                              economyTransaction("Source", suggestion.amount, newSuggestion.user_id)
+                              economyTransaction("Source", suggestion.amount, newSuggestion.user_id, "Points")
                               ContentMailer.content_created(@suggestion, "Suggestion", suggetion.amount).deliver_now
                               flash[:success] = "Suggestion #{@suggestion.title} was successfully created."
                               redirect_to suggestions_path

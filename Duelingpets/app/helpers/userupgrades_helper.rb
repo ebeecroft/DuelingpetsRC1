@@ -15,15 +15,25 @@ module UserupgradesHelper
          end
          return value
       end
-      
-      def economyTransaction(type, points, userid)
-         #Adds the art points to the economy
+
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.econattr = "Purchase"
+         else
+            newTransaction.econattr = "Treasury"
+         end
          newTransaction.content_type = "Upgrade"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -117,15 +127,21 @@ module UserupgradesHelper
          if((logged_in && pouchFound) && (logged_in.id == pouchFound.user_id))
             price = getUpgrades(buytype, "Cost", pouchFound, upgrade)
             message = "#{buytype}"
-            if(price != 0 && (pouchFound.amount - price > -1))
+            if(price != 0 && (pouchFound.amount - price >= 0))
                #Prints out the object that was purchased
+               tax = (price * 0.05).round
                pouchFound.amount -= price
                message1 = "#{buytype}"
                level = getUpgrades(buytype, "Purchase", pouchFound, upgrade)
                message2 = "#{level}"
-               economyTransaction("Sink", price, logged_in.id)
                @pouch = pouchFound
                @pouch.save
+               hoard = Dragonhoard.find_by_id(1)
+               hoard.profit += tax
+               @hoard = hoard
+               @hoard.save
+               economyTransaction("Sink", price - tax, logged_in.id, "Points") #Might have emeralds later
+               economyTransaction("Tax", tax, logged_in.id, "Points")
                flash[:success] = "Your " + message1 + " level is now: " + message2
                redirect_to user_path(@pouch.user.vname)
             else

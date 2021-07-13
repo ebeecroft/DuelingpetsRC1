@@ -37,9 +37,9 @@ module WarehousesHelper
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
          if(type != "Tax")
-            newTransaction.attribute = "Purchase"
+            newTransaction.econattr = "Purchase"
          else
-            newTransaction.attribute = "Treasury"
+            newTransaction.econattr = "Treasury"
          end
          newTransaction.content_type = contentType
          newTransaction.econtype = type
@@ -203,6 +203,11 @@ module WarehousesHelper
                            @dragonhoard = hoard
                            @dragonhoard.save
                            @warehouse.save
+                           glitchy = User.find_by_vname("Glitchy")
+                           economyTransaction("Sink", dpoints, "Warehouse", glitchy.id, "Points")
+                           economyTransaction("Sink", demeralds, "Warehouse", glitchy.id, "Emeralds")
+                           economyTransaction("Source", (dpoints * 0.60).round, "Hoard", glitchy.id, "Points")
+                           economyTransaction("Source", (demeralds * 0.30).round, "Hoard", glitcy.id, "Emeralds")
                            flash[:success] = "#{dpoints} points and #{demeralds} emeralds have been transfered to the hoard!"
                         else
                            flash[:error] = "Point or Emerald donations can't exceed the warehouse's treasury!"

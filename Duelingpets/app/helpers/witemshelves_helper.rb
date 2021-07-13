@@ -16,11 +16,15 @@ module WitemshelvesHelper
          end
          return value
       end
-      
+
       def economyTransaction(type, points, itemshelf, currency)
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
-         newTransaction.attribute = "Itemshelf"
+         if(type != "Tax")
+            newTransaction.econattr = "Itemshelf"
+         else
+            newTransaction.econattr = "Treasury"
+         end
          newTransaction.content_type = itemshelf.name
          newTransaction.econtype = type
          newTransaction.amount = points
@@ -50,7 +54,6 @@ module WitemshelvesHelper
             elsif(type == "new" || type == "create")
                logged_in = current_user
                if(logged_in && logged_in.pouch.privilege == "Glitchy")
-                  #Might be updated later
                   warehouseFound = Warehouse.find_by_id(1)
                   newShelf = warehouseFound.witemshelves.new
                   if(type == "create")

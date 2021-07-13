@@ -16,6 +16,29 @@ module UsersHelper
          end
          return value
       end
+      
+      def economyTransaction(type, points, userid, currency)
+         newTransaction = Economy.new(params[:economy])
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.econattr = "Upgrades"
+         else
+            newTransaction.econattr = "Treasury"
+         end
+         newTransaction.content_type = "User"
+         newTransaction.econtype = type
+         newTransaction.amount = points
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
+         newTransaction.created_on = currentTime
+         @economytransaction = newTransaction
+         @economytransaction.save
+      end
 
       def getCurLimit(type, user, result)
          upgrade = Userupgrade.find_by_name(type)
@@ -385,6 +408,7 @@ module UsersHelper
                         if(userFound.pouch.dreyoreamount == 0 && userFound.pouch.firstdreyore)
                            userFound.pouch.firstdreyore = false
                         end
+                        economyTransaction("Source", points, userFound.id, "Points")
                         @pouch = userFound.pouch
                         @pouch.save
                      else
@@ -397,6 +421,7 @@ module UsersHelper
                         if(userFound.pouch.dreyoreamount == 0 && userFound.pouch.firstdreyore)
                            userFound.pouch.firstdreyore = false
                         end
+                        economyTransaction("Source", points, userFound.id, "Points")
                         @pouch = userFound.pouch
                         @pouch.save
                      end
@@ -555,10 +580,10 @@ module UsersHelper
                      if((upgradechoice.to_i == 1 && level < cupgrade.freecap) || (upgradechoice.to_i == 2 && memlevel < cupgrade.membercap))
                         cost = cupgrade.price * level
                         if(@user.pouch.amount - cost >= 0)
-                           #Remember to come back to add economy transactions
                            @user.pouch.amount -= cost
                            @pouch = @user.pouch
                            @pouch.save
+                           economyTransaction("Sink", cost, @user.id, "Points")
                            #Maybe add a way for the dragonhoard to retrieve these points
                            @pouchslot = @user.pouch.pouchslot
                            @pouchslot.save

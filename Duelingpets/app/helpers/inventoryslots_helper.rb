@@ -127,7 +127,7 @@ module InventoryslotsHelper
                      if(type == "create")
                         price = Fieldcost.find_by_name("Inventoryslot")
                         rate = Ratecost.find_by_name("Purchaserate")
-                        tax = (price.amount * rate.amount)
+                        tax = (price.amount * rate.amount).round
                         if(logged_in.pouch.amount - price.amount >= 0)
                            if(@inventoryslot.save)
                               logged_in.pouch.amount -= price.amount

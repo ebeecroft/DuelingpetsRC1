@@ -19,15 +19,25 @@ module SoundsHelper
          end
          return value
       end
-      
-      def economyTransaction(type, points, userid)
-         #Adds the art points to the economy
+
+      def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
-         newTransaction.econtype = "Content"
+         #Determines the type of attribute to return
+         if(type != "Tax")
+            newTransaction.econattr = "Content"
+         else
+            newTransaction.econattr = "Treasury"
+         end
          newTransaction.content_type = "Sound"
-         newTransaction.name = type
+         newTransaction.econtype = type
          newTransaction.amount = points
-         newTransaction.user_id = userid
+         #Currency can be either Points, Emeralds or Skildons
+         newTransaction.currency = currency
+         if(type != "Tax")
+            newTransaction.user_id = userid
+         else
+            newTransaction.dragonhoard_id = 1
+         end
          newTransaction.created_on = currentTime
          @economytransaction = newTransaction
          @economytransaction.save
@@ -89,21 +99,27 @@ module SoundsHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == soundFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Eventually consider adding a sink to this
-                     @sound.destroy
-                     if(logged_in.pouch.privilege != "Admin")
+                     cleanup = Fieldcost.find_by_name("Soundcleanup")
+                     if(soundFound.user.pouch.amount - cleanup.amount >= 0)
                         #Removes the content and decrements the owner's pouch
-                        cleanup = Fieldcost.find_by_name("Soundcleanup")
                         soundFound.user.pouch.amount -= cleanup.amount
                         @pouch = soundFound.user.pouch
                         @pouch.save
-                        economyTransaction("Tax", cleanup.amount, soundFound.user.id)
-                     end
-                     flash[:success] = "#{soundFound.title} was successfully removed."
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to sounds_path
+                        economyTransaction("Sink", cleanup.amount, soundFound.user.id, "Points")
+                        flash[:success] = "#{@sound.title} was successfully removed."
+                        @sound.destroy
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to sounds_path
+                        else
+                           redirect_to mainsheet_subsheet_path(soundFound.subsheet.mainsheet, soundFound.subsheet)
+                        end
                      else
-                        redirect_to mainsheet_subsheet_path(soundFound.subsheet.mainsheet, soundFound.subsheet)
+                        flash[:error] = "#{@sound.user.vname}'s has insufficient points to remove the sound!"
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to sounds_path
+                        else
+                           redirect_to mainsheet_subsheet_path(soundFound.subsheet.mainsheet, soundFound.subsheet)
+                        end
                      end
                   else
                      redirect_to root_path
@@ -241,8 +257,7 @@ module SoundsHelper
                if(logged_in)
                   soundFound = Sound.find_by_id(getSoundParams("SoundId"))
                   if(soundFound)
-                     pouchFound = Pouch.find_by_user_id(logged_in.id)
-                     if((logged_in.pouch.privilege == "Admin") || ((pouchFound.privilege == "Keymaster") || (pouchFound.privilege == "Reviewer")))
+                     if((logged_in.pouch.privilege == "Admin") || ((logged_in.pouch.privilege == "Keymaster") || (logged_in.pouch.privilege == "Reviewer")))
                         if(type == "approve")
                            soundFound.reviewed = true
                            soundFound.reviewed_on = currentTime
@@ -257,15 +272,8 @@ module SoundsHelper
                            pouch.amount += pointsForSound
                            @pouch = pouch
                            @pouch.save
-                           economyTransaction("Source", pointsForSound, soundFound.user.id)
+                           economyTransaction("Source", pointsForSound, soundFound.user.id, "Points")
                            ContentMailer.content_approved(@sound, "Sound", pointsForSound).deliver_now
-                           #allWatches = Watch.all
-                           #watchers = allWatches.select{|watch| (((watch.watchtype.name == "Arts" || watch.watchtype.name == "Blogarts") || (watch.watchtype.name == "Artsounds" || watch.watchtype.name == "Artmovies")) || (watch.watchtype.name == "Maincontent" || watch.watchtype.name == "All")) && watch.from_user.id != @art.user_id}
-                           #if(watchers.count > 0)
-                           #   watchers.each do |watch|
-                           #      UserMailer.new_art(@art, watch).deliver
-                           #   end
-                           #end
                            flash[:success] = "#{@sound.user.vname}'s sound #{@sound.title} was approved."
                            redirect_to sounds_review_path
                         else
