@@ -7,7 +7,7 @@ module GameinfosHelper
             value = params[:id]
          elsif(type == "Gameinfo")
             value = params.require(:gameinfo).permit(:difficulty_id, :lives_enabled, :ageing_enabled,
-            :startgame, :gamecompleted)
+            :startgame)
          elsif(type == "Page")
             value = params[:page]
          else
@@ -21,16 +21,35 @@ module GameinfosHelper
          if(infoFound)
             logged_in = current_user
             if(logged_in && ((logged_in.id == infoFound.user_id) || logged_in.pouch.privilege == "Admin"))
-               infoFound.activated_on = currentTime
-               #Add difficulty to this later
-               @gameinfo = infoFound
-               if(type == "update")
-                  if(@gameinfo.update_attributes(getInfoParams("Gameinfo")))
-                     flash[:success] = "Gameinfo for #{@gameinfo.user.vname} was successfully updated."
-                     redirect_to @gameinfo.user
-                  else
-                     render "edit"
+               if(!infoFound.startgame)
+                  difficulties = Difficulty.order("created_on desc")
+                  @difficulties = difficulties
+                  @gameinfo = infoFound
+                  if(type == "update")
+                     if(@gameinfo.startgame)
+                        infoFound.activated_on = currentTime
+                     end
+                     if(@gameinfo.update_attributes(getInfoParams("Gameinfo")))
+                        if(@gameinfo.startgame)
+                           pouch = Pouch.find_by_user_id(@gameinfo.user.id)
+                           difficulty = Difficulty.find_by_id(@gameinfo.difficulty_id)
+                           if(!difficulty.gainpoints)
+                              pouch.amount -= difficulty.pointdebt
+                           else
+                              pouch.amount += difficulty.pointdebt
+                           end
+                           @pouch = pouch
+                           @pouch.save
+                        end
+                        flash[:success] = "Gameinfo for #{@gameinfo.user.vname} was successfully updated."
+                        redirect_to user_path(@gameinfo.user)
+                     else
+                        render "edit"
+                     end
                   end
+               else
+                  flash[:error] = "The game has already been started, difficulty can't be changed!"
+                  redirect_to user_path(infoFound.user)
                end
             else
                redirect_to root_path

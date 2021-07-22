@@ -23,10 +23,12 @@ module ChannelsHelper
       def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
-         if(type != "Tax")
+         if(type == "Sink")
             newTransaction.econattr = "Purchase"
-         else
+         elsif(type == "Tax")
             newTransaction.econattr = "Treasury"
+         elsif(type == "Source")
+            newTransaction.econattr = "Fund"
          end
          newTransaction.content_type = "Channel"
          newTransaction.econtype = type
@@ -165,18 +167,28 @@ module ChannelsHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == channelFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Gives the user points back for selling their channel
-                     points = (channelValue(channelFound) * 0.30).round
-                     channelFound.user.pouch.amount += points
-                     @pouch = channelFound.user.pouch
-                     @pouch.save
-                     economyTransaction("Source", points, channelFound.user.id, "Points")
-                     @channel.destroy
-                     flash[:success] = "#{@channel.name} was successfully removed."
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to channels_list_path
+                     if(channelFound.user.gameinfo.startgame)
+                        #Gives the user points back for selling their channel
+                        points = (channelValue(channelFound) * 0.30).round
+                        channelFound.user.pouch.amount += points
+                        @pouch = channelFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Source", points, channelFound.user.id, "Points")
+                        @channel.destroy
+                        flash[:success] = "#{@channel.name} was successfully removed."
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to channels_list_path
+                        else
+                           redirect_to user_channels_path(channelFound.user)
+                        end
                      else
-                        redirect_to user_channels_path(channelFound.user)
+                        if(logged_in.pouch.privilege == "Admin")
+                           flash[:error] = "The director has not activated the game yet!"
+                           redirect_to channels_list_path
+                        else
+                           flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                           redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                        end
                      end
                   else
                      redirect_to root_path
@@ -250,20 +262,25 @@ module ChannelsHelper
                            rate = Ratecost.find_by_name("Purchaserate")
                            tax = (price.amount * rate.amount)
                            if(logged_in.pouch.amount - price.amount >= 0)
-                              if(@channel.save)
-                                 logged_in.pouch.amount -= price.amount
-                                 @pouch = logged_in.pouch
-                                 @pouch.save
-                                 hoard = Dragonhoard.find_by_id(1)
-                                 hoard.profit += tax
-                                 @hoard = hoard
-                                 @hoard.save
-                                 economyTransaction("Sink", price.amount - tax, logged_in.id, "Points")
-                                 economyTransaction("Tax", tax, logged_in.id, "Points")
-                                 flash[:success] = "#{@channel.name} was successfully created."
-                                 redirect_to user_channel_path(@user, @channel)
+                              if(logged_in.gameinfo.startgame)
+                                 if(@channel.save)
+                                    logged_in.pouch.amount -= price.amount
+                                    @pouch = logged_in.pouch
+                                    @pouch.save
+                                    hoard = Dragonhoard.find_by_id(1)
+                                    hoard.profit += tax
+                                    @hoard = hoard
+                                    @hoard.save
+                                    economyTransaction("Sink", price.amount - tax, logged_in.id, "Points")
+                                    economyTransaction("Tax", tax, logged_in.id, "Points")
+                                    flash[:success] = "#{@channel.name} was successfully created."
+                                    redirect_to user_channel_path(@user, @channel)
+                                 else
+                                    render "new"
+                                 end
                               else
-                                 render "new"
+                                 flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                                 redirect_to edit_gameinfo_path(logged_in.gameinfo)
                               end
                            else
                               flash[:error] = "Insufficient funds to create a channel!"

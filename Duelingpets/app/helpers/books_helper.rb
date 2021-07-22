@@ -20,10 +20,12 @@ module BooksHelper
       def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
-         if(type != "Tax")
+         if(type == "Sink")
             newTransaction.econattr = "Purchase"
-         else
+         elsif(type == "Tax")
             newTransaction.econattr = "Treasury"
+         elsif(type == "Source")
+            newTransaction.econattr = "Fund"
          end
          newTransaction.content_type = "Book"
          newTransaction.econtype = type
@@ -110,18 +112,28 @@ module BooksHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == bookFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Gives the user points back for selling their book
-                     points = (bookValue(bookFound) * 0.30).round
-                     bookFound.user.pouch += points
-                     @pouch = bookFound.user.pouch
-                     @pouch.save
-                     economyTransaction("Source", points, bookFound.user.id, "Points")
-                     @book.destroy
-                     flash[:success] = "#{bookFound.title} was successfully removed."
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to books_path
+                     if(logged_in.gameinfo.startgame)
+                        #Gives the user points back for selling their book
+                        points = (bookValue(bookFound) * 0.30).round
+                        bookFound.user.pouch += points
+                        @pouch = bookFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Source", points, bookFound.user.id, "Points")
+                        @book.destroy
+                        flash[:success] = "#{bookFound.title} was successfully removed."
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to books_path
+                        else
+                           redirect_to user_bookworld_path(bookFound.bookworld.user, book.bookworld)
+                        end
                      else
-                        redirect_to user_bookworld_path(bookFound.bookworld.user, book.bookworld)
+                        if(logged_in.pouch.privilege == "Admin")
+                           flash[:error] = "The writer has not activated the game yet!"
+                           redirect_to books_path
+                        else
+                           flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                           redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                        end
                      end
                   else
                      redirect_to root_path
@@ -187,33 +199,38 @@ module BooksHelper
                         if(worldOwner || bookworldFound.open_world)
                            bookcost = (logged_in.pouch.amount - bookworldFound.price)
                            if(worldOwner || (!worldOwner && bookcost >= 0))
-                              if(@book.save)
-                                 if(!worldOwner)
-                                    #Decrement the buyer's pouch
-                                    logged_in.pouch.amount -= bookworldFound.price
-                                    @pouch = logged_in.pouch
-                                    @pouch.save
-                                    rate = Ratecost.find_by_name("Purchaserate")
-                                    tax = (bookworldFound.price * rate.amount)
-                                    hoard = Dragonhoard.find_by_id(1)
-                                    hoard.profit += tax
-                                    @hoard = hoard
-                                    @hoard.save
-                                    economyTransaction("Sink", bookworldFound.price - tax, newBook.user.id, "Points")
-                                    economyTransaction("Tax", tax, newBook.user.id, "Points")
+                              if(book.user.gameinfo.startgame)
+                                 if(@book.save)
+                                    if(!worldOwner)
+                                       #Decrement the buyer's pouch
+                                       logged_in.pouch.amount -= bookworldFound.price
+                                       @pouch = logged_in.pouch
+                                       @pouch.save
+                                       rate = Ratecost.find_by_name("Purchaserate")
+                                       tax = (bookworldFound.price * rate.amount)
+                                       hoard = Dragonhoard.find_by_id(1)
+                                       hoard.profit += tax
+                                       @hoard = hoard
+                                       @hoard.save
+                                       economyTransaction("Sink", bookworldFound.price - tax, newBook.user.id, "Points")
+                                       economyTransaction("Tax", tax, newBook.user.id, "Points")
 
-                                    #Increment the worldOwner's pouch
-                                    points = bookworldFound.price - tax
-                                    bookworldFound.user.pouch.amount += points
-                                    @pouch2 = bookworldFound.user.pouch
-                                    @pouch2.save
-                                    economyTransaction("Source", points, bookworldFound.user.id, "Points")
+                                       #Increment the worldOwner's pouch
+                                       points = bookworldFound.price - tax
+                                       bookworldFound.user.pouch.amount += points
+                                       @pouch2 = bookworldFound.user.pouch
+                                       @pouch2.save
+                                       economyTransaction("Source", points, bookworldFound.user.id, "Points")
+                                    end
+                                    updateBookworld(@book.bookworld)
+                                    flash[:success] = "#{@book.title} was successfully created."
+                                    redirect_to bookworld_book_path(@bookworld, @book)
+                                 else
+                                    render "new"
                                  end
-                                 updateBookworld(@book.bookworld)
-                                 flash[:success] = "#{@book.title} was successfully created."
-                                 redirect_to bookworld_book_path(@bookworld, @book)
                               else
-                                 render "new"
+                                 flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                                 redirect_to edit_gameinfo_path(logged_in.gameinfo)
                               end
                            else
                               flash[:error] = "Insufficient funds to create a book!"

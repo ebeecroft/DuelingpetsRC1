@@ -9,7 +9,7 @@ module BlogrepliesHelper
             value = params[:blogreply_id]
          elsif(type == "Reply")
             #Maybe add bookgroup later?
-            value = params.require(:blogreply).permit(:message, :blog_id)
+            value = params.require(:blogreply).permit(:message, :blog_id, :bookgroup_id)
          elsif(type == "Page")
             value = params[:page]
          else
@@ -72,17 +72,27 @@ module BlogrepliesHelper
                elsif(type == "destroy")
                   cleanup = Fieldcost.find_by_name("Blogreplycleanup")
                   if(replyFound.user.pouch.amount - cleanup.amount >= 0)
-                     #Removes the content and decrements the owner's pouch
-                     replyFound.user.pouch.amount -= cleanup.amount
-                     @pouch = replyFound.user.pouch
-                     @pouch.save
-                     economyTransaction("Sink", cleanup.amount, replyFound.user.id, "Points")
-                     flash[:success] = "Reply was successfully removed."
-                     @blogreply.destroy
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to replies_path
+                     if(replyFound.user.gameinfo.startgame)
+                        #Removes the content and decrements the owner's pouch
+                        replyFound.user.pouch.amount -= cleanup.amount
+                        @pouch = replyFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Sink", cleanup.amount, replyFound.user.id, "Points")
+                        flash[:success] = "Reply was successfully removed."
+                        @blogreply.destroy
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to replies_path
+                        else
+                           redirect_to user_blog_path(replyFound.blog.user, replyFound.blog)
+                        end
                      else
-                        redirect_to user_blog_path(replyFound.blog.user, replyFound.blog)
+                        if(logged_in.pouch.privilege == "Admin")
+                           flash[:error] = "The user has not activated the game yet!"
+                           redirect_to replies_path
+                        else
+                           flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                           redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                        end
                      end
                   else
                      flash[:error] = "#{@blogreply.user.vname}'s has insufficient points to remove the reply!"
@@ -130,31 +140,36 @@ module BlogrepliesHelper
                   blogFound = Blog.find_by_id(getReplyParams("Blog"))
                   if(logged_in && blogFound)
                      if(logged_in.id == blogFound.user_id)
-                        newReply = blogFound.replies.new
-                        if(type == "create")
-                           newReply = blogFound.blogreplies.new(getReplyParams("Reply"))
-                           newReply.created_on = currentTime
-                           newReply.updated_on = currentTime
-                           newReply.user_id = logged_in.id
-                        end
-
-                        #Determines the type of bookgroup the user belongs to
-                        allGroups = Bookgroup.order("created_on desc")
-                        allowedGroups = allGroups.select{|bookgroup| bookgroup.id <= getWritingGroup(logged_in, "Id")}
-                        @group = allowedGroups
-                        @blog = blogFound
-                        @blogreply = newReply
-
-                        if(type == "create")
-                           if(@blogreply.save)
-                              updateBlog(@blogreply.blog)
-                              url = "http://www.duelingpets.net/blogreplies/review"
-                              CommunityMailer.content_comments(@blogreply, "Blogreply", "Review", 0, url).deliver_now
-                              flash[:success] = "Reply was successfully created."
-                              redirect_to user_blog_path(@blog.user, @blog)
-                           else
-                              render "new"
+                        if(logged_in.gameinfo.startgame)
+                           newReply = blogFound.replies.new
+                           if(type == "create")
+                              newReply = blogFound.blogreplies.new(getReplyParams("Reply"))
+                              newReply.created_on = currentTime
+                              newReply.updated_on = currentTime
+                              newReply.user_id = logged_in.id
                            end
+
+                           #Determines the type of bookgroup the user belongs to
+                           allGroups = Bookgroup.order("created_on desc")
+                           allowedGroups = allGroups.select{|bookgroup| bookgroup.id <= getWritingGroup(logged_in, "Id")}
+                           @group = allowedGroups
+                           @blog = blogFound
+                           @blogreply = newReply
+
+                           if(type == "create")
+                              if(@blogreply.save)
+                                 updateBlog(@blogreply.blog)
+                                 url = "http://www.duelingpets.net/blogreplies/review"
+                                 CommunityMailer.content_comments(@blogreply, "Blogreply", "Review", 0, url).deliver_now
+                                 flash[:success] = "Reply was successfully created."
+                                 redirect_to user_blog_path(@blog.user, @blog)
+                              else
+                                 render "new"
+                              end
+                           end
+                        else
+                           flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                           redirect_to edit_gameinfo_path(logged_in.gameinfo)
                         end
                      else
                         redirect_to root_path
@@ -201,37 +216,42 @@ module BlogrepliesHelper
                      pouchFound = Pouch.find_by_user_id(replyFound.user.id)
                      if((logged_in.pouch.privilege == "Admin") || ((logged_in.pouch.privilege == "Keymaster") || (logged_in.pouch.privilege == "Reviewer")))
                         if(type == "approve")
-                           replyFound.reviewed = true
-                           replyFound.reviewed_on = currentTime
-                           updateBlog(replyFound.blog)
-                           if(!replyFound.purchased)
-                              price = Fieldcost.find_by_name("Blogreply")
-                              rate = Ratecost.find_by_name("Purchaserate")
-                              tax = (price.amount * rate.amount).round
-                              if(pouch.amount - price.amount >= 0)
-                                 pouch.amount -= price.amount
-                                 @pouch = pouch
-                                 @pouch.save
-                                 hoard = Dragonhoard.find_by_id(1)
-                                 hoard.profit += tax
-                                 @hoard = hoard
-                                 @hoard.save
-                                 economyTransaction("Sink", price.amount - tax, replyFound.user_id, "Points")
-                                 economyTransaction("Tax", tax, replyFound.user_id, "Points")
-                                 replyFound.purchased = true
+                           if(replyFound.user.gameinfo.startgame)
+                              replyFound.reviewed = true
+                              replyFound.reviewed_on = currentTime
+                              updateBlog(replyFound.blog)
+                              if(!replyFound.purchased)
+                                 price = Fieldcost.find_by_name("Blogreply")
+                                 rate = Ratecost.find_by_name("Purchaserate")
+                                 tax = (price.amount * rate.amount).round
+                                 if(pouch.amount - price.amount >= 0)
+                                    pouch.amount -= price.amount
+                                    @pouch = pouch
+                                    @pouch.save
+                                    hoard = Dragonhoard.find_by_id(1)
+                                    hoard.profit += tax
+                                    @hoard = hoard
+                                    @hoard.save
+                                    economyTransaction("Sink", price.amount - tax, replyFound.user_id, "Points")
+                                    economyTransaction("Tax", tax, replyFound.user_id, "Points")
+                                    replyFound.purchased = true
+                                    @blogreply = replyFound
+                                    @blogreply.save
+                                    flash[:success] = "#{replyFound.user.vname}'s comment was approved."
+                                    CommunityMailer.content_comments(@blogreply, "Blogreply", "Approved", price.amount, "None").deliver_now
+                                 else
+                                    flash[:error] = "#{replyFound.user.vname}'s funds are too low to create a comment!"
+                                 end
+                                 redirect_to blogreplies_review_path
+                              else
                                  @blogreply = replyFound
                                  @blogreply.save
                                  flash[:success] = "#{replyFound.user.vname}'s comment was approved."
-                                 CommunityMailer.content_comments(@blogreply, "Blogreply", "Approved", price.amount, "None").deliver_now
-                              else
-                                 flash[:error] = "#{replyFound.user.vname}'s funds are too low to create a comment!"
+                                 CommunityMailer.content_comments(@blogreply, "Blogreply", "Approved", 0, "None").deliver_now
+                                 redirect_to blogreplies_review_path
                               end
-                              redirect_to blogreplies_review_path
                            else
-                              @blogreply = replyFound
-                              @blogreply.save
-                              flash[:success] = "#{replyFound.user.vname}'s comment was approved."
-                              CommunityMailer.content_comments(@blogreply, "Blogreply", "Approved", 0, "None").deliver_now
+                              flash[:error] = "The user hasn't started the game yet!"
                               redirect_to blogreplies_review_path
                            end
                         else

@@ -99,26 +99,36 @@ module ArtsHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == artFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     cleanup = Fieldcost.find_by_name("Artcleanup")
-                     if(artFound.user.pouch.amount - cleanup.amount >= 0)
-                        #Removes the content and decrements the owner's pouch
-                        artFound.user.pouch.amount -= cleanup.amount
-                        @pouch = artFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", cleanup.amount, artFound.user.id, "Points")
-                        flash[:success] = "#{@art.title} was successfully removed."
-                        @art.destroy
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to arts_path
+                     if(artFound.user.gameinfo.startgame)
+                        cleanup = Fieldcost.find_by_name("Artcleanup")
+                        if(artFound.user.pouch.amount - cleanup.amount >= 0)
+                           #Removes the content and decrements the owner's pouch
+                           artFound.user.pouch.amount -= cleanup.amount
+                           @pouch = artFound.user.pouch
+                           @pouch.save
+                           economyTransaction("Sink", cleanup.amount, artFound.user.id, "Points")
+                           flash[:success] = "#{@art.title} was successfully removed."
+                           @art.destroy
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to arts_path
+                           else
+                              redirect_to mainfolder_subfolder_path(artFound.subfolder.mainfolder, artFound.subfolder)
+                           end
                         else
-                           redirect_to mainfolder_subfolder_path(artFound.subfolder.mainfolder, artFound.subfolder)
+                           flash[:error] = "#{@art.user.vname}'s has insufficient points to remove the artwork!"
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to arts_path
+                           else
+                              redirect_to mainfolder_subfolder_path(artFound.subfolder.mainfolder, artFound.subfolder)
+                           end
                         end
                      else
-                        flash[:error] = "#{@art.user.vname}'s has insufficient points to remove the artwork!"
                         if(logged_in.pouch.privilege == "Admin")
+                           flash[:error] = "The artist has not activated the game yet!"
                            redirect_to arts_path
                         else
-                           redirect_to mainfolder_subfolder_path(artFound.subfolder.mainfolder, artFound.subfolder)
+                           flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                           redirect_to edit_gameinfo_path(logged_in.gameinfo)
                         end
                      end
                   else
@@ -164,36 +174,41 @@ module ArtsHelper
                      if(logged_in.id == subfolderFound.user_id || (subfolderFound.collab_mode &&
                         checkBookgroupStatus(subfolderFound.mainfolder.gallery)))
                         if(!subfolderFound.fave_folder)
-                           newArt = subfolderFound.arts.new
-                           if(type == "create")
-                              newArt = subfolderFound.arts.new(getArtParams("Art"))
-                              newArt.created_on = currentTime
-                              newArt.updated_on = currentTime
-                              newArt.user_id = logged_in.id
-                           end
-
-                           #Determines the type of bookgroup the user belongs to
-                           allGroups = Bookgroup.order("created_on desc")
-                           allowedGroups = allGroups.select{|bookgroup| bookgroup.id <= getWritingGroup(logged_in, "Id")}
-                           @group = allowedGroups
-                           @subfolder = subfolderFound
-                           @art = newArt
-
-                           if(type == "create")
-                              if(@art.save)
-                                 arttag = Arttag.new(params[:arttag])
-                                 arttag.art_id = @art.id
-                                 arttag.tag1_id = 1
-                                 @arttag = arttag
-                                 @arttag.save
-                                 updateGallery(@art.subfolder)
-                                 url = "http://www.duelingpets.net/arts/review"
-                                 ContentMailer.content_review(@art, "Art", url).deliver_now
-                                 flash[:success] = "#{@art.title} was successfully created."
-                                 redirect_to subfolder_art_path(@subfolder, @art)
-                              else
-                                 render "new"
+                           if(logged_in.gameinfo.startgame)
+                              newArt = subfolderFound.arts.new
+                              if(type == "create")
+                                 newArt = subfolderFound.arts.new(getArtParams("Art"))
+                                 newArt.created_on = currentTime
+                                 newArt.updated_on = currentTime
+                                 newArt.user_id = logged_in.id
                               end
+
+                              #Determines the type of bookgroup the user belongs to
+                              allGroups = Bookgroup.order("created_on desc")
+                              allowedGroups = allGroups.select{|bookgroup| bookgroup.id <= getWritingGroup(logged_in, "Id")}
+                              @group = allowedGroups
+                              @subfolder = subfolderFound
+                              @art = newArt
+
+                              if(type == "create")
+                                 if(@art.save)
+                                    arttag = Arttag.new(params[:arttag])
+                                    arttag.art_id = @art.id
+                                    arttag.tag1_id = 1
+                                    @arttag = arttag
+                                    @arttag.save
+                                    updateGallery(@art.subfolder)
+                                    url = "http://www.duelingpets.net/arts/review"
+                                    ContentMailer.content_review(@art, "Art", url).deliver_now
+                                    flash[:success] = "#{@art.title} was successfully created."
+                                    redirect_to subfolder_art_path(@subfolder, @art)
+                                 else
+                                    render "new"
+                                 end
+                              end
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
                            end
                         else
                            flash[:error] = "Favorite folders don't support art!"
@@ -259,23 +274,28 @@ module ArtsHelper
                   if(artFound)
                      if((logged_in.pouch.privilege == "Admin") || ((logged_in.pouch.privilege == "Keymaster") || (logged_in.pouch.privilege == "Reviewer")))
                         if(type == "approve")
-                           artFound.reviewed = true
-                           artFound.reviewed_on = currentTime
-                           updateGallery(artFound.subfolder)
+                           if(artFound.user.gameinfo.startgame)
+                              artFound.reviewed = true
+                              artFound.reviewed_on = currentTime
+                              updateGallery(artFound.subfolder)
 
-                           #Adds the points to the user's pouch
-                           artpoints = Fieldcost.find_by_name("Art")
-                           pointsForArt = artpoints.amount
-                           @art = artFound
-                           @art.save
-                           pouch = Pouch.find_by_user_id(@art.user_id)
-                           pouch.amount += pointsForArt
-                           @pouch = pouch
-                           @pouch.save
-                           economyTransaction("Source", pointsForArt, artFound.user.id, "Points")
-                           ContentMailer.content_approved(@art, "Art", pointsForArt).deliver_now
-                           flash[:success] = "#{@art.user.vname}'s art #{@art.title} was approved."
-                           redirect_to arts_review_path
+                              #Adds the points to the user's pouch
+                              artpoints = Fieldcost.find_by_name("Art")
+                              pointsForArt = artpoints.amount
+                              @art = artFound
+                              @art.save
+                              pouch = Pouch.find_by_user_id(@art.user_id)
+                              pouch.amount += pointsForArt
+                              @pouch = pouch
+                              @pouch.save
+                              economyTransaction("Source", pointsForArt, artFound.user.id, "Points")
+                              ContentMailer.content_approved(@art, "Art", pointsForArt).deliver_now
+                              flash[:success] = "#{@art.user.vname}'s art #{@art.title} was approved."
+                              redirect_to arts_review_path
+                           else
+                              flash[:error] = "The artist hasn't started the game yet!"
+                              redirect_to arts_review_path
+                           end
                         else
                            @art = artFound
                            ContentMailer.content_denied(@art, "Art").deliver_now

@@ -180,16 +180,26 @@ module CreaturesHelper
                      #Removes the content and decrements the owner's pouch
                      price = creatureFound.cost * 0.60
                      if(creatureFound.user.pouch.amount - price >= 0)
-                        creatureFound.user.pouch.amount -= price
-                        @pouch = creatureFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", price, creatureFound.user.id, "Points")
-                        @creature.destroy
-                        flash[:success] = "#{@creature.name} was successfully removed."
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to creatures_list_path
+                        if(creatureFound.user.gameinfo.startgame)
+                           creatureFound.user.pouch.amount -= price
+                           @pouch = creatureFound.user.pouch
+                           @pouch.save
+                           economyTransaction("Sink", price, creatureFound.user.id, "Points")
+                           @creature.destroy
+                           flash[:success] = "#{@creature.name} was successfully removed."
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to creatures_list_path
+                           else
+                              redirect_to user_creatures_path(creatureFound.user)
+                           end
                         else
-                           redirect_to user_creatures_path(creatureFound.user)
+                           if(logged_in.pouch.privilege == "Admin")
+                              flash[:error] = "The creator has not activated the game yet!"
+                              redirect_to creatures_list_path
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         end
                      else
                         flash[:error] = "#{@creature.user.vname}'s has insufficient points to remove the creature!"
@@ -352,20 +362,30 @@ module CreaturesHelper
                            pouch = Pouch.find_by_user_id(creatureFound.user_id)
                            #Add dreyterrium cost later
                            if(pouch.amount - price >= 0)
-                              @creature = creatureFound
-                              @creature.save
-                              pouch.amount -= price
-                              @pouch = pouch
-                              @pouch.save
-                              hoard = Dragonhoard.find_by_id(1)
-                              hoard.profit += tax
-                              @hoard = hoard
-                              @hoard.save
-                              economyTransaction("Sink", price - tax, creatureFound.user.id, "Points")
-                              economyTransaction("Tax", tax, creatureFound.user.id, "Points")
-                              ContentMailer.content_approved(@creature, "Creature", price).deliver_now
-                              flash[:success] = "#{@creature.user.vname}'s creature #{@creature.name} was approved."
-                              redirect_to creatures_review_path
+                              if(creatureFound.user.gameinfo.startgame)
+                                 @creature = creatureFound
+                                 @creature.save
+                                 pouch.amount -= price
+                                 @pouch = pouch
+                                 @pouch.save
+                                 hoard = Dragonhoard.find_by_id(1)
+                                 hoard.profit += tax
+                                 @hoard = hoard
+                                 @hoard.save
+                                 economyTransaction("Sink", price - tax, creatureFound.user.id, "Points")
+                                 economyTransaction("Tax", tax, creatureFound.user.id, "Points")
+                                 ContentMailer.content_approved(@creature, "Creature", price).deliver_now
+                                 flash[:success] = "#{@creature.user.vname}'s creature #{@creature.name} was approved."
+                                 redirect_to creatures_review_path
+                              else
+                                 if(logged_in.pouch.privilege == "Admin")
+                                    flash[:error] = "The creator has not activated the game yet!"
+                                    redirect_to creatures_review_path
+                                 else
+                                    flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                                    redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                                 end
+                              end
                            else
                               flash[:error] = "Insufficient funds to create a creature!"
                               redirect_to creatures_review_path

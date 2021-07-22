@@ -66,6 +66,7 @@
    <% if current_user && (current_user.id == @user.id || current_user.pouch.privilege == "Admin") %>
       <br>
       <p><%= button_to 'Add Avatar and Edit Browser', edit_userinfo_path(@user.userinfo), method: :get, class: "button submitbutton" %></p>
+      <p><%= button_to 'Edit Gameinfo', edit_gameinfo_path(@user.gameinfo), method: :get, class: "button submitbutton" %></p>
    <% end %>
    <br>
    <p class="textindent"><%= textFormater("Multi", @user.userinfo.info, "All").html_safe %></p>

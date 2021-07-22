@@ -361,10 +361,12 @@ ActiveRecord::Schema.define(version: 2021_03_21_034706) do
 
   create_table "difficulties", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
+    t.text "description"
     t.integer "pointdebt", default: 0
     t.integer "pointloan", default: 0
     t.integer "emeralddebt", default: 0
     t.integer "emeraldloan", default: 0
+    t.boolean "gainpoints", default: false
     t.datetime "created_on"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

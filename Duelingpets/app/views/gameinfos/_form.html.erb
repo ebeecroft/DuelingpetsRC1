@@ -12,8 +12,8 @@
      </div>
   <% end %>
   <div class="pageformat">
-    <%= form.label :difficulty_id %>
-    <%= form.number_field :difficulty_id %>
+    <%= form.label :difficulty_id, "Select Difficulty" %>
+    <%= form.collection_select(:difficulty_id, @difficulties, :id, :name) %>
   </div>
   <br>
   <div class="pageformat">
@@ -32,11 +32,6 @@
   </div>
   <br>
   <div class="pageformat">
-    <%= form.label :gamecompleted %>
-    <%= form.check_box :gamecompleted %>
-  </div>
-  <br>
-  <div class="pageformat">
-    <%= form.submit class: "button submitbutton" %>
+    <%= form.submit class: "button submitbutton", data: { confirm: 'Once startgame has been checked, you will not be able to change your difficulty level. Are you sure about this?' } %>
   </div>
 <% end %>

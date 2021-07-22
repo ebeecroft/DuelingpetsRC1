@@ -103,24 +103,34 @@ module ColorschemesHelper
                   if(!colorschemeFound.democolor && colorschemeFound.id != 1)
                      cleanup = Fieldcost.find_by_name("Colorschemecleanup")
                      if(colorschemeFound.user.pouch.amount - cleanup.amount >= 0)
-                        allInfos = Userinfo.all
-                        infosToChange = allInfos.select{|userinfo| userinfo.colorscheme_id == @colorscheme.id}
-                        infosToChange.each do |userinfo|
-                           userinfo.colorscheme_id = 1
-                           @userinfo = userinfo
-                           @userinfo.save
-                        end
-                        #Removes the content and decrements the owner's pouch
-                        colorschemeFound.user.pouch.amount -= cleanup.amount
-                        @pouch = colorschemeFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", cleanup.amount, colorschemeFound.user.id, "Points")
-                        flash[:success] = "#{@colorscheme.name} was successfully removed."
-                        @colorscheme.destroy
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to colorschemes_list_path
+                        if(colorschemeFound.user.gameinfo.startgame)
+                           allInfos = Userinfo.all
+                           infosToChange = allInfos.select{|userinfo| userinfo.colorscheme_id == @colorscheme.id}
+                           infosToChange.each do |userinfo|
+                              userinfo.colorscheme_id = 1
+                              @userinfo = userinfo
+                              @userinfo.save
+                           end
+                           #Removes the content and decrements the owner's pouch
+                           colorschemeFound.user.pouch.amount -= cleanup.amount
+                           @pouch = colorschemeFound.user.pouch
+                           @pouch.save
+                           economyTransaction("Sink", cleanup.amount, colorschemeFound.user.id, "Points")
+                           flash[:success] = "#{@colorscheme.name} was successfully removed."
+                           @colorscheme.destroy
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to colorschemes_list_path
+                           else
+                              redirect_to user_colorschemes_path(colorschemeFound.user)
+                           end
                         else
-                           redirect_to user_colorschemes_path(colorschemeFound.user)
+                           if(logged_in.pouch.privilege == "Admin")
+                              flash[:error] = "The user has not activated the game yet!"
+                              redirect_to colorschemes_list_path
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         end
                      else
                         flash[:error] = "#{@colorscheme.user.vname}'s has insufficient points to remove the colorscheme!"
@@ -226,21 +236,26 @@ module ColorschemesHelper
                         rate = Ratecost.find_by_name("Purchaserate")
                         tax = (price.amount * rate.amount)
                         if(logged_in.pouch.amount - price.amount >= 0)
-                           if(@colorscheme.save)
-                              logged_in.pouch.amount -= price.amount
-                              @pouch = logged_in.pouch
-                              @pouch.save
-                              hoard = Dragonhoard.find_by_id(1)
-                              hoard.profit += tax
-                              @hoard = hoard
-                              @hoard.save
-                              economyTransaction("Sink", price.amount - tax, logged_in.id, "Points")
-                              economyTransaction("Tax", tax, logged_in.id, "Points")
-                              ContentMailer.content_created(@colorscheme, "Colorscheme", price.amount).deliver_later(wait: 5.minutes)
-                              flash[:success] = "#{@colorscheme.name} was successfully created."
-                              redirect_to colorschemes_path
+                           if(logged_in.gameinfo.startgame)
+                              if(@colorscheme.save)
+                                 logged_in.pouch.amount -= price.amount
+                                 @pouch = logged_in.pouch
+                                 @pouch.save
+                                 hoard = Dragonhoard.find_by_id(1)
+                                 hoard.profit += tax
+                                 @hoard = hoard
+                                 @hoard.save
+                                 economyTransaction("Sink", price.amount - tax, logged_in.id, "Points")
+                                 economyTransaction("Tax", tax, logged_in.id, "Points")
+                                 ContentMailer.content_created(@colorscheme, "Colorscheme", price.amount).deliver_later(wait: 5.minutes)
+                                 flash[:success] = "#{@colorscheme.name} was successfully created."
+                                 redirect_to colorschemes_path
+                              else
+                                 render "new"
+                              end
                            else
-                              render "new"
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
                            end
                         else
                            flash[:error] = "Insufficient funds to create a colorscheme!"
