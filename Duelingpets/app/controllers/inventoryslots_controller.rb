@@ -25,8 +25,4 @@ class InventoryslotsController < ApplicationController
    def destroy
       mode "destroy"
    end
-
-   def purchase
-      mode "purchase"
-   end
 end

@@ -164,16 +164,26 @@ module ItemsHelper
                      #Removes the content and decrements the owner's pouch
                      price = itemFound.cost * 0.60
                      if(itemFound.user.pouch.amount - price >= 0)
-                        itemFound.user.pouch.amount -= price
-                        @pouch = itemFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", price, itemFound.user.id, "Points")
-                        @item.destroy
-                        flash[:success] = "#{itemFound.name} was successfully removed."
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to items_list_path
+                        if(itemFound.user.gameinfo.startgame)
+                           itemFound.user.pouch.amount -= price
+                           @pouch = itemFound.user.pouch
+                           @pouch.save
+                           economyTransaction("Sink", price, itemFound.user.id, "Points")
+                           @item.destroy
+                           flash[:success] = "#{itemFound.name} was successfully removed."
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to items_list_path
+                           else
+                              redirect_to user_items_path(itemFound.user)
+                           end
                         else
-                           redirect_to user_items_path(itemFound.user)
+                           if(logged_in.pouch.privilege == "Admin")
+                              flash[:error] = "The creator has not activated the game yet!"
+                              redirect_to items_list_path
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         end
                      else
                         flash[:error] = "#{@item.user.vname}'s has insufficient points to remove the item!"
@@ -338,20 +348,25 @@ module ItemsHelper
                            pouch = Pouch.find_by_user_id(itemFound.user_id)
                            #Add dreyterrium cost later
                            if(pouch.amount - price >= 0)
-                              @item = itemFound
-                              @item.save
-                              pouch.amount -= price
-                              @pouch = pouch
-                              @pouch.save
-                              hoard = Dragonhoard.find_by_id(1)
-                              hoard.profit += tax
-                              @hoard = hoard
-                              @hoard.save
-                              economyTransaction("Sink", price - tax, itemFound.user.id, "Points")
-                              economyTransaction("Tax", tax, itemFound.user.id, "Points")
-                              ContentMailer.content_approved(@item, "Item", price).deliver_now
-                              flash[:success] = "#{@item.user.vname}'s item #{@item.name} was approved."
-                              redirect_to items_review_path
+                              if(itemFound.user.gameinfo.startgame)
+                                 @item = itemFound
+                                 @item.save
+                                 pouch.amount -= price
+                                 @pouch = pouch
+                                 @pouch.save
+                                 hoard = Dragonhoard.find_by_id(1)
+                                 hoard.profit += tax
+                                 @hoard = hoard
+                                 @hoard.save
+                                 economyTransaction("Sink", price - tax, itemFound.user.id, "Points")
+                                 economyTransaction("Tax", tax, itemFound.user.id, "Points")
+                                 ContentMailer.content_approved(@item, "Item", price).deliver_now
+                                 flash[:success] = "#{@item.user.vname}'s item #{@item.name} was approved."
+                                 redirect_to items_review_path
+                              else
+                                 flash[:error] = "The creator has not activated the game yet!"
+                                 redirect_to items_review_path
+                              end
                            else
                               flash[:error] = "Insufficient funds to create an item!"
                               redirect_to user_path(logged_in.id)
@@ -379,12 +394,17 @@ module ItemsHelper
                   if(slotindex.to_s != "" && !invslot.to_s != "")
                      slot = Inventoryslot.find_by_id(invslot)
                      if(slot.inventory.user_id == logged_in.id)
-                        #Finds the item the player is trying to get rid of
-                        itemnum = getItemName(slotindex, slot, "Item")
-                        @slotindex = slotindex
-                        @item = itemnum
-                        @invslot = slot
-                        @points = (@item.cost * 0.20).round
+                        if(logged_in.gameinfo.startgame)
+                           #Finds the item the player is trying to get rid of
+                           itemnum = getItemName(slotindex, slot, "Item")
+                           @slotindex = slotindex
+                           @item = itemnum
+                           @invslot = slot
+                           @points = (@item.cost * 0.20).round
+                        else
+                           flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                           redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                        end
                      else
                         redirect_to root_path
                      end
@@ -402,24 +422,34 @@ module ItemsHelper
                   if(slot.inventory.user_id == logged_in.id)
                      itemcost = getItemName(slotindex, slot, "Points")
                      if(type == "yesitem")
-                        itemname = getItemName(slotindex, slot, "Name")
-                        updateInventory(slotindex, slot, "Discard")
-                        @inventoryslot = slot
-                        @inventoryslot.save
-                        logged_in.pouch.amount += (itemcost * 0.20)
-                        @pouch = logged_in.pouch
-                        @pouch.save
-                        flash[:success] = "Item #{itemname} was succesfully sold!"
-                        redirect_to user_inventory_path(@inventoryslot.inventory.user, @inventoryslot.inventory)
-                     else
-                        price = ((itemcost * 0.20) * 4)
-                        if(logged_in.pouch.amount - price >= 0)
-                           logged_in.pouch.amount -= price
+                        if(logged_in.gameinfo.startgame)
+                           itemname = getItemName(slotindex, slot, "Name")
+                           updateInventory(slotindex, slot, "Discard")
+                           @inventoryslot = slot
+                           @inventoryslot.save
+                           logged_in.pouch.amount += (itemcost * 0.20).round
                            @pouch = logged_in.pouch
                            @pouch.save
+                           flash[:success] = "Item #{itemname} was succesfully sold!"
+                           redirect_to user_inventory_path(@inventoryslot.inventory.user, @inventoryslot.inventory)
+                        else
+                           flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                           redirect_to edit_gameinfo_path(logged_in.gameinfo)
                         end
-                        flash[:success] = "No worries youngen, come back when your ready. As you leave the junk dealer you notice your pouch is slightly lighter than it was before."
-                        redirect_to user_path(slot.inventory.user)
+                     else
+                        if(logged_in.gameinfo.startgame)
+                           price = ((itemcost * 0.20) * 4)
+                           if(logged_in.pouch.amount - price >= 0)
+                              logged_in.pouch.amount -= price
+                              @pouch = logged_in.pouch
+                              @pouch.save
+                           end
+                           flash[:success] = "No worries youngen, come back when your ready. As you leave the junk dealer you notice your pouch is slightly lighter than it was before."
+                           redirect_to user_path(slot.inventory.user)
+                        else
+                           flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                           redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                        end
                      end
                   else
                      redirect_to root_path

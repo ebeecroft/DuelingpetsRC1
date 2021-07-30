@@ -79,23 +79,22 @@ module DonorsHelper
                            newDonor.updated_on = currentTime
                            newDonor.user_id = logged_in.id
                            @donor = newDonor
-                           if(@donor.valid?)
+                           @donationbox = donationboxFound
+                           if(@donor.valid? && @donationbox.valid?)
                               capacityCheck = (@donor.amount <= @donor.capacity)
-                              donationCheck = (logged_in.pouch.amount - @donor.amount >= 0)
+                              donationCheck = (logged_in.pouch.amount > 0 && logged_in.pouch.amount - @donor.amount >= 0)
                               boxCheck = (donationboxFound.progress + @donor.amount <= donationboxFound.capacity)
-                              pointsAvailable = (logged_in.pouch.amount > 0)
-                              if((capacityCheck && donationCheck) && (boxCheck && pointsAvailable))
-                                 if(@donor.save)
-                                    points = donationboxFound.progress + @donor.amount
-                                    donationboxFound.progress = points
-                                    reachedGoal = (donationboxFound.progress >= donationboxFound.goal && !donationboxFound.hitgoal)
-                                    if(reachedGoal)
-                                       donationboxFound.hitgoal = true
-                                       profit = donationboxFound.progress - donationboxFound.goal
-                                       CommunityMailer.donations(@donor, "Goal", profit, 0, points).deliver_now
-                                    end
-                                    @donationbox = donationboxFound
-                                    if(@donationbox.valid?)
+                              if((capacityCheck && donationCheck) && boxCheck)
+                                 if(logged_in.gameinfo.startgame && donationboxFound.user.gameinfo.startgame)
+                                    if(@donor.save)
+                                       points = donationboxFound.progress + @donor.amount
+                                       donationboxFound.progress = points
+                                       reachedGoal = (donationboxFound.progress >= donationboxFound.goal && !donationboxFound.hitgoal)
+                                       if(reachedGoal)
+                                          donationboxFound.hitgoal = true
+                                          profit = donationboxFound.progress - donationboxFound.goal
+                                          CommunityMailer.donations(@donor, "Goal", profit, 0, points).deliver_now
+                                       end
                                        @donationbox.save
                                        logged_in.pouch.amount -= @donor.amount
                                        @pouch = logged_in.pouch
@@ -105,19 +104,32 @@ module DonorsHelper
                                        CommunityMailer.donations(@donor, "Donated", @donor.amount, 0, 0).deliver_now
                                        redirect_to user_path(@donationbox.user)
                                     else
-                                       flash[:error] = "This case should never happen!"
-                                       @donor.destroy
                                        @donationbox = donationboxFound
                                        render "new"
                                     end
                                  else
-                                    @donationbox = donationboxFound
-                                    render "new"
+                                    if(!logged_in.gameinfo.startgame)
+                                       flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                                       redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                                    else
+                                       flash[:error] = "The user has not activated the game yet!"
+                                       redirect_to user_path(logged_in)
+                                    end
                                  end
                               else
-                                 redirect_to root_path
+                                 #Returns the specific error message to the user
+                                 if(!donationCheck)
+                                    message = "#{@donor.user.vname}'s doesn't have that many points to donate!"
+                                 elsif(!capacityCheck)
+                                    message = "You exceeded the donation limit of #{@donor.capacity} points!"
+                                 else
+                                    message = "The donationbox can't store that many points!"
+                                 end
+                                 flash[:error] = message
+                                 redirect_to user_path(logged_in)
                               end
                            else
+                              flash[:error] = "Donationbox or Donor information was invalid!"
                               redirect_to root_path
                            end
                         end
@@ -126,17 +138,7 @@ module DonorsHelper
                         redirect_to user_path(donationboxFound.user)
                      end
                   else
-                     message = ""
-                     boxValue = @donationbox.progress + @donor.amount
-                     if(@donor.amount > @donor.capacity)
-                        message = "You exceeded the donor capacity of #{@donor.capacity} points!"
-                     elsif(boxValue > @donationbox.capacity)
-                        message = "You exceeded the donationbox capacity of #{@donationbox.capacity} points!"
-                     else
-                        message = "You don't have that amount of points to donate!"
-                     end
-                     flash[:error] = message
-                     redirect_to user_path(@donationbox.user)
+                     redirect_to root_path
                   end
                end
             elsif(type == "mydonors")

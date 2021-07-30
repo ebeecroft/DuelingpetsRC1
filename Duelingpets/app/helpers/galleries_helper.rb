@@ -23,10 +23,12 @@ module GalleriesHelper
       def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
-         if(type != "Tax")
+         if(type == "Sink")
             newTransaction.econattr = "Purchase"
-         else
+         elsif(type == "Tax")
             newTransaction.econattr = "Treasury"
+         elsif(type == "Source")
+            newTransaction.econattr = "Fund"
          end
          newTransaction.content_type = "Gallery"
          newTransaction.econtype = type
@@ -151,8 +153,6 @@ module GalleriesHelper
                #visitTimer(type, blogFound)
                #cleanupOldVisits
                @gallery = galleryFound
-
-               #Come back to this when subsheets is added
                mainfolders = galleryFound.mainfolders
                @mainfolders = Kaminari.paginate_array(mainfolders).page(getGalleryParams("Page")).per(10)
                allFolders = Subfolder.all
@@ -164,18 +164,28 @@ module GalleriesHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == galleryFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Gives the user points back for selling their gallery
-                     points = (galleryValue(galleryFound) * 0.30).round
-                     galleryFound.user.pouch.amount += points
-                     @pouch = galleryFound.user.pouch
-                     @pouch.save
-                     economyTransaction("Source", points, galleryFound.user_id, "Points")
-                     @gallery.destroy
-                     flash[:success] = "#{@gallery.name} was successfully removed."
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to galleries_list_path
+                     if(galleryFound.user.gameinfo.startgame)
+                        #Gives the user points back for selling their gallery
+                        points = (galleryValue(galleryFound) * 0.30).round
+                        galleryFound.user.pouch.amount += points
+                        @pouch = galleryFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Source", points, galleryFound.user_id, "Points")
+                        @gallery.destroy
+                        flash[:success] = "#{@gallery.name} was successfully removed."
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to galleries_list_path
+                        else
+                           redirect_to user_galleries_path(galleryFound.user)
+                        end
                      else
-                        redirect_to user_galleries_path(galleryFound.user)
+                        if(logged_in.pouch.privilege == "Admin")
+                           flash[:error] = "The artist has not activated the game yet!"
+                           redirect_to galleries_list_path
+                        else
+                           flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                           redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                        end
                      end
                   else
                      redirect_to root_path
@@ -250,20 +260,25 @@ module GalleriesHelper
                            rate = Ratecost.find_by_name("Purchaserate")
                            tax = (price.amount * rate.amount)
                            if(logged_in.pouch.amount - price.amount >= 0)
-                              if(@gallery.save)
-                                 logged_in.pouch.amount -= price.amount
-                                 @pouch = logged_in.pouch
-                                 @pouch.save
-                                 hoard = Dragonhoard.find_by_id(1)
-                                 hoard.profit += tax
-                                 @hoard = hoard
-                                 @hoard.save
-                                 economyTransaction("Sink", price.amount - tax, logged_in.id, "Points")
-                                 economyTransaction("Tax", tax, logged_in.id, "Points")
-                                 flash[:success] = "#{@gallery.name} was successfully created."
-                                 redirect_to user_gallery_path(@user, @gallery)
+                              if(logged_in.gameinfo.startgame)
+                                 if(@gallery.save)
+                                    logged_in.pouch.amount -= price.amount
+                                    @pouch = logged_in.pouch
+                                    @pouch.save
+                                    hoard = Dragonhoard.find_by_id(1)
+                                    hoard.profit += tax
+                                    @hoard = hoard
+                                    @hoard.save
+                                    economyTransaction("Sink", price.amount - tax, logged_in.id, "Points")
+                                    economyTransaction("Tax", tax, logged_in.id, "Points")
+                                    flash[:success] = "#{@gallery.name} was successfully created."
+                                    redirect_to user_gallery_path(@user, @gallery)
+                                 else
+                                    render "new"
+                                 end
                               else
-                                 render "new"
+                                 flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                                 redirect_to edit_gameinfo_path(logged_in.gameinfo)
                               end
                            else
                               flash[:error] = "Insufficient funds to create gallery!"

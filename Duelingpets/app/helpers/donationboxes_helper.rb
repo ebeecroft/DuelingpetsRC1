@@ -50,11 +50,21 @@ module DonationboxesHelper
                @user = User.find_by_vname(donationboxFound.user.vname)
                if(type == "update")
                   if(donationboxFound.goal <= donationboxFound.capacity)
-                     if(@donationbox.update_attributes(getDonationboxParams("Donationbox")))
-                        flash[:success] = "#{@donationbox.user.vname}'s donationbox was successfully updated."
-                        redirect_to user_path(@donationbox.user)
+                     if(donationboxFound.user.gameinfo.startgame)
+                        if(@donationbox.update_attributes(getDonationboxParams("Donationbox")))
+                           flash[:success] = "#{@donationbox.user.vname}'s donationbox was successfully updated."
+                           redirect_to user_path(@donationbox.user)
+                        else
+                           render "edit"
+                        end
                      else
-                        render "edit"
+                        if(logged_in.pouch.privilege == "Admin")
+                           flash[:error] = "The user has not activated the game yet!"
+                           redirect_to donationboxes_path
+                        else
+                           flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                           redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                        end
                      end
                   else
                      flash[:error] = "Donation goal can't exceed capacity of #{@donationbox.capacity} points!"
@@ -106,59 +116,78 @@ module DonationboxesHelper
                if((logged_in && donationboxFound) && ((logged_in.id == donationboxFound.user_id) || logged_in.pouch.privilege == "Admin"))
                   errorFlag = -1
                   if(type == "retrieve" && donationboxFound.hitgoal)
-                     errorFlag = 0
-                     #Calculate the tax
-                     points = donationboxFound.progress
-                     donationtax = Ratecost.find_by_name("Donationrate")
-                     taxinc = donationtax.amount
-                     results = `public/Resources/Code/dbox/calc #{points} #{taxinc}`
+                     if(donationboxFound.user.gameinfo.startgame)
+                        errorFlag = 0
+                        #Calculate the tax
+                        points = donationboxFound.progress
+                        donationtax = Ratecost.find_by_name("Donationrate")
+                        taxinc = donationtax.amount
+                        results = `public/Resources/Code/dbox/calc #{points} #{taxinc}`
 
-                     string_array = results.split(",")
-                     pointsTax, taxRate = string_array.map{|str| str.to_f}
+                        string_array = results.split(",")
+                        pointsTax, taxRate = string_array.map{|str| str.to_f}
 
-                     #Send the points to the user's pouch
-                     pouch = Pouch.find_by_user_id(donationboxFound.user.id)
-                     netPoints = donationboxFound.progress - pointsTax
-                     economyTransaction("Source", netPoints, "Donationbox", pouch.user.id, "Points")
-                     economyTransaction("Tax", pointsTax, "Donationbox", "None", "Points")
-                     CommunityMailer.donations(donationboxFound, "Retrieve", netPoints, taxRate, pointsTax).deliver_now
-                     pouch.amount += netPoints
-                     @pouch = pouch
-                     @pouch.save
-                     hoard = Dragonhoard.find_by_id(1)
-                     hoard.profit += pointsTax
-                     @hoard = hoard
-                     @hoard.save
-                  elsif(type == "refund" && (logged_in.pouch.privilege == "Admin" || !donationboxFound.hitgoal))
-                     errorFlag = 0
-                     allDonors = Donor.all
-                     boxDonors = allDonors.select{|donor| donor.donationbox_id == boxFound.id}
-                     activeDonors = boxDonors.select{|donor| donor.created_on > boxFound.initialized_on}
-                     #Gives back the original users donations
-                     activeDonors.each do |donor|
-                        donor.user.pouch.amount += donor.amount
-                        donationboxFound.progress -= donor.amount
-                        CommunityMailer.donations(donor, "Refund", donor.amount, 0, 0).deliver_now
-                        economyTransaction("Source", donor.amount, "Donor", donor.user.id, "Points")
-                        @tempbox = donationboxFound
-                        @tempbox.save
-                        @pouch = donor.user.pouch
+                        #Send the points to the user's pouch
+                        pouch = Pouch.find_by_user_id(donationboxFound.user.id)
+                        netPoints = donationboxFound.progress - pointsTax
+                        economyTransaction("Source", netPoints, "Donationbox", pouch.user.id, "Points")
+                        economyTransaction("Tax", pointsTax, "Donationbox", "None", "Points")
+                        CommunityMailer.donations(donationboxFound, "Retrieve", netPoints, taxRate, pointsTax).deliver_now
+                        pouch.amount += netPoints
+                        @pouch = pouch
                         @pouch.save
-                        @donor = donor
-                        @donor.destroy
+                        hoard = Dragonhoard.find_by_id(1)
+                        hoard.profit += pointsTax
+                        @hoard = hoard
+                        @hoard.save
+                    else
+                       errorFlag = -2
+                    end
+                  elsif(type == "refund" && (logged_in.pouch.privilege == "Admin" || !donationboxFound.hitgoal))
+                     if(donationbox.user.gameinfo.startgame)
+                        errorFlag = 0
+                        allDonors = Donor.all
+                        boxDonors = allDonors.select{|donor| donor.donationbox_id == donationboxFound.id}
+                        activeDonors = boxDonors.select{|donor| donor.created_on > donationboxFound.initialized_on}
+                        #Gives back the original users donations
+                        activeDonors.each do |donor|
+                           donor.user.pouch.amount += donor.amount
+                           donationboxFound.progress -= donor.amount
+                           CommunityMailer.donations(donor, "Refund", donor.amount, 0, 0).deliver_now
+                           economyTransaction("Source", donor.amount, "Donor", donor.user.id, "Points")
+                           @tempbox = donationboxFound
+                           @tempbox.save
+                           @pouch = donor.user.pouch
+                           @pouch.save
+                           @donor = donor
+                           @donor.destroy
+                        end
+                     else
+                        errorFlag = -2
                      end
                   end
 
-                  if(errorFlag != -1)
+                  if(errorFlag == 0)
                      donationboxFound.goal = 0
                      donationboxFound.progress = 0
                      donationboxFound.hitgoal = false
                      donationboxFound.box_open = false
+                     @user = donationboxFound.user
+                     @donationbox = donationboxFound
+                     @donationbox.save
+                     redirect_to user_path(@donationbox.user)
+                  elsif(errorFlag == -2)
+                     if(logged_in.pouch.privilege == "Admin")
+                        flash[:error] = "The user has not activated the game yet!"
+                        redirect_to donationboxes_path
+                     else
+                        flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                        redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                     end
+                  else
+                     flash[:error] = "Well that is not supposed to happen! Glitchy are you messing with the code again?"
+                     redirect_to root_path
                   end
-                  @user = donationboxFound.user
-                  @donationbox = donationboxFound
-                  @donationbox.save
-                  redirect_to user_path(@donationbox.user)
                else
                   redirect_to root_path
                end

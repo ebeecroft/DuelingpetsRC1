@@ -378,13 +378,8 @@ module CreaturesHelper
                                  flash[:success] = "#{@creature.user.vname}'s creature #{@creature.name} was approved."
                                  redirect_to creatures_review_path
                               else
-                                 if(logged_in.pouch.privilege == "Admin")
-                                    flash[:error] = "The creator has not activated the game yet!"
-                                    redirect_to creatures_review_path
-                                 else
-                                    flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
-                                    redirect_to edit_gameinfo_path(logged_in.gameinfo)
-                                 end
+                                 flash[:error] = "The creator has not activated the game yet!"
+                                 redirect_to creatures_review_path
                               end
                            else
                               flash[:error] = "Insufficient funds to create a creature!"

@@ -89,7 +89,6 @@ module ElementsHelper
                @element = elementFound
                @user = User.find_by_vname(elementFound.user.vname)
                if(type == "update")
-                  #Update element stats should only happen if not reviewed
                   if(@element.update_attributes(getElementParams("Element")))
                      flash[:success] = "Element #{@element.name} was successfully updated."
                      redirect_to user_element_path(@element.user, @element)
@@ -119,16 +118,26 @@ module ElementsHelper
                      #Removes the content and decrements the owner's pouch
                      price = Fieldcost.find_by_name("Element")
                      if(elementFound.user.pouch.amount - price.amount >= 0)
-                        elementFound.user.pouch.amount -= price.amount #Remember to come back later to change to emeralds
-                        @pouch = elementFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", price.amount, elementFound.user.id, "Points")
-                        @element.destroy
-                        flash[:success] = "#{@element.name} was successfully removed."
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to elements_list_path
+                        if(elementFound.user.gameinfo.startgame)
+                           elementFound.user.pouch.amount -= price.amount #Remember to come back later to change to emeralds
+                           @pouch = elementFound.user.pouch
+                           @pouch.save
+                           economyTransaction("Sink", price.amount, elementFound.user.id, "Points")
+                           @element.destroy
+                           flash[:success] = "#{@element.name} was successfully removed."
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to elements_list_path
+                           else
+                              redirect_to user_elements_path(elementFound.user)
+                           end
                         else
-                           redirect_to user_elements_path(elementFound.user)
+                           if(logged_in.pouch.privilege == "Admin")
+                              flash[:error] = "The creator has not activated the game yet!"
+                              redirect_to elements_list_path
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         end
                      else
                         flash[:error] = "#{@element.user.vname}'s has insufficient points to remove the element!"
@@ -275,7 +284,6 @@ module ElementsHelper
                if(logged_in)
                   elementFound = Element.find_by_id(getElementParams("ElementId"))
                   if(elementFound)
-                     pouchFound = Pouch.find_by_user_id(elementFound.user.id)
                      if((logged_in.pouch.privilege == "Admin") || ((logged_in.pouch.privilege == "Keymaster") || (logged_in.pouch.privilege == "Reviewer")))
                         if(type == "approve")
                            elementFound.reviewed = true
@@ -283,21 +291,26 @@ module ElementsHelper
                            price = Fieldcost.find_by_name("Element")
                            rate = Ratecost.find_by_name("Purchaserate")
                            tax = (price.amount * rate.amount)
-                           if(pouch.amount - price.amount >= 0)
-                              @element = elementFound
-                              @element.save
-                              pouch.amount -= element.amount #Need to change to emeralds later
-                              @pouch = pouch
-                              @pouch.save
-                              hoard = Dragonhoard.find_by_id(1)
-                              hoard.profit += tax
-                              @hoard = hoard
-                              @hoard.save
-                              economyTransaction("Sink", price.amount - tax, elementFound.user.id, "Points")
-                              economyTransaction("Tax", tax, elementFound.user.id, "Points")
-                              ContentMailer.content_approved(@element, "Element", element.amount).deliver_now
-                              flash[:success] = "#{@element.user.vname}'s element #{@element.name} was approved."
-                              redirect_to elements_review_path
+                           if(elementFound.user.pouch.amount - price.amount >= 0)
+                              if(elementFound.user.gameinfo.startgame)
+                                 @element = elementFound
+                                 @element.save
+                                 elementFound.user.pouch.amount -= price.amount #Need to change to emeralds later
+                                 @pouch = elementFound.user.pouch
+                                 @pouch.save
+                                 hoard = Dragonhoard.find_by_id(1)
+                                 hoard.profit += tax
+                                 @hoard = hoard
+                                 @hoard.save
+                                 economyTransaction("Sink", price.amount - tax, elementFound.user.id, "Points")
+                                 economyTransaction("Tax", tax, elementFound.user.id, "Points")
+                                 ContentMailer.content_approved(@element, "Element", element.amount).deliver_now
+                                 flash[:success] = "#{@element.user.vname}'s element #{@element.name} was approved."
+                                 redirect_to elements_review_path
+                              else
+                                 flash[:error] = "The creator has not activated the game yet!"
+                                 redirect_to elements_review_path
+                              end
                            else
                               flash[:error] = "Owner has insufficient funds to create an element!"
                               redirect_to elements_review_path

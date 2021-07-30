@@ -528,16 +528,26 @@ module EquipslotsHelper
                      #Removes the equip and decrements the owner's pouch
                      price = Fieldcost.find_by_name("Equipslotcleanup")
                      if(slotFound.user.pouch.amount - price.amount >= 0)
-                        slotFound.user.pouch.amount -= price.amount
-                        @pouch = slotFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", price.amount, slotFound.equip.partner.user.id, "Points")
-                        @equip.destroy
-                        flash[:success] = "Equip slot #{slotFound.name} was successfully removed."
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to equips_path
+                        if(slotFound.user.gameinfo.startgame)
+                           slotFound.user.pouch.amount -= price.amount
+                           @pouch = slotFound.user.pouch
+                           @pouch.save
+                           economyTransaction("Sink", price.amount, slotFound.equip.partner.user.id, "Points")
+                           @equip.destroy
+                           flash[:success] = "Equip slot #{slotFound.name} was successfully removed."
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to equips_path
+                           else
+                              redirect_to partner_equip_path(@equip.partner, @equip)
+                           end
                         else
-                           redirect_to partner_equip_path(@equip.partner, @equip)
+                           if(logged_in.pouch.privilege == "Admin")
+                              flash[:error] = "The director has not activated the game yet!"
+                              redirect_to equips_path
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         end
                      else
                         flash[:error] = "#{@equipslot.equip.partner.user.vname}'s has insufficient points to remove the equipslot!"
@@ -597,20 +607,25 @@ module EquipslotsHelper
                         rate = Ratecost.find_by_name("Purchaserate")
                         tax = (price.amount * rate.amount)
                         if(logged_in.pouch.amount - price.amount >= 0)
-                           if(@equipslot.save)
-                              logged_in.pouch.amount -= price.amount
-                              @pouch = logged_in.pouch
-                              @pouch.save
-                              hoard = Dragonhoard.find_by_id(1)
-                              hoard.profit += tax
-                              @hoard = hoard
-                              @hoard.save
-                              economyTransaction("Sink", price.amount - tax, equipFound.user.id, "Points")
-                              economyTransaction("Tax", tax, equipFound.user.id, "Points")
-                              flash[:success] = "#{@equipslot.name} was successfully created."
-                              redirect_to partner_equip_path(@equip.partner, @equip)
+                           if(logged_in.gameinfo.startgame)
+                              if(@equipslot.save)
+                                 logged_in.pouch.amount -= price.amount
+                                 @pouch = logged_in.pouch
+                                 @pouch.save
+                                 hoard = Dragonhoard.find_by_id(1)
+                                 hoard.profit += tax
+                                 @hoard = hoard
+                                 @hoard.save
+                                 economyTransaction("Sink", price.amount - tax, equipFound.user.id, "Points")
+                                 economyTransaction("Tax", tax, equipFound.user.id, "Points")
+                                 flash[:success] = "#{@equipslot.name} was successfully created."
+                                 redirect_to partner_equip_path(@equip.partner, @equip)
+                              else
+                                 render "new"
+                              end
                            else
-                              render "new"
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
                            end
                         else
                            flash[:error] = "Insufficient funds to create an equipslot!"
@@ -645,11 +660,16 @@ module EquipslotsHelper
                   slotindex = params[:equipslot][:slotindex_id]
                   if(logged_in.id == invslot.inventory.user_id)
                      if(slotindex.to_i > 0 && slotindex.to_i < 15)
-                        myarray = [slotindex, invslot]
-                        if(action.name == "Discard")
-                           redirect_to items_junkdealer_path(myarray)
+                        if(logged_in.gameinfo.startgame)
+                           myarray = [slotindex, invslot]
+                           if(action.name == "Discard")
+                              redirect_to items_junkdealer_path(myarray)
+                           else
+                              redirect_to equipslots_equippet_path(myarray)
+                           end
                         else
-                           redirect_to equipslots_equippet_path(myarray)
+                           flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                           redirect_to edit_gameinfo_path(logged_in.gameinfo)
                         end
                      else
                         redirect_to root_path
@@ -666,17 +686,22 @@ module EquipslotsHelper
                   if(slotindex.to_s != "" && !invslot.to_s != "")
                      slot = Inventoryslot.find_by_id(invslot)
                      if(slot.inventory.user_id == logged_in.id)
-                        #Finds the item the player is trying to get rid of
-                        itemnum = getItemName(slotindex, slot, "Item")
-                        @slotindex = slotindex
-                        @invslot = slot
-                        @item = itemnum
-                        allActions = Itemaction.all
-                        actions = allActions.select{|action| (getItemName(slotindex, slot, "Equip") && action.name == "Equip") || (getItemName(slotindex, slot, "Itemtype") == "Food" && action.name == "Feed")}
-                        @actiongroup = actions
-                        allPartners = Partner.all
-                        mypartners = allPartners.select{|partner| partner.user_id == logged_in.id}
-                        @pets = mypartners
+                        if(logged_in.gameinfo.startgame)
+                           #Finds the item the player is trying to get rid of
+                           itemnum = getItemName(slotindex, slot, "Item")
+                           @slotindex = slotindex
+                           @invslot = slot
+                           @item = itemnum
+                           allActions = Itemaction.all
+                           actions = allActions.select{|action| (getItemName(slotindex, slot, "Equip") && action.name == "Equip") || (getItemName(slotindex, slot, "Itemtype") == "Food" && action.name == "Feed")}
+                           @actiongroup = actions
+                           allPartners = Partner.all
+                           mypartners = allPartners.select{|partner| partner.user_id == logged_in.id}
+                           @pets = mypartners
+                        else
+                           flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                           redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                        end
                      else
                         redirect_to root_path
                      end
@@ -704,31 +729,39 @@ module EquipslotsHelper
                         else
                            raise "Invalid item selection!"
                         end
-                        if(givePetFood)
-                           #raise "My acition.name is: #{action.name}"
-                           #updateInventory(slotindex, slot, action.name)
-                           invUp(slotindex, slot, action.name)
-                           @partner = partner
-                           @partner.save
-                           @slot = slot
-                           @slot.save
-                           flash[:success] = "Pet was successfully fed!"
+                        if(logged_in.gameinfo.startgame)
+                           if(givePetFood)
+                              invUp(slotindex, slot, action.name)
+                              @partner = partner
+                              @partner.save
+                              @slot = slot
+                              @slot.save
+                              flash[:success] = "Pet was successfully fed!"
+                           end
+                           redirect_to user_path(partner.user)
+                        else
+                           flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                           redirect_to edit_gameinfo_path(logged_in.gameinfo)
                         end
-                        redirect_to user_path(partner.user)
                      else
                         allEquipslots = partner.equip.equipslots.all
                         if(allEquipslots.count > 0)
-                           activeslot = allEquipslots.select{|slot| slot.activeslot}
-                           curslot = activeslot.first
-                           equipslot = Equipslot.find_by_id(curslot.id)
-                           equipItem(slotindex, slot, equipslot)
-                           flash[:success] = "Pet equipped a #{getItemName(slotindex, slot, "Name")}!"
-                           updateInventory(slotindex, slot, action.name)
-                           @equipslot = equipslot
-                           @equipslot.save
-                           @slot = slot
-                           @slot.save
-                           redirect_to user_path(partner.user)
+                           if(logged_in.gameinfo.startgame)
+                              activeslot = allEquipslots.select{|slot| slot.activeslot}
+                              curslot = activeslot.first
+                              equipslot = Equipslot.find_by_id(curslot.id)
+                              equipItem(slotindex, slot, equipslot)
+                              flash[:success] = "Pet equipped a #{getItemName(slotindex, slot, "Name")}!"
+                              updateInventory(slotindex, slot, action.name)
+                              @equipslot = equipslot
+                              @equipslot.save
+                              @slot = slot
+                              @slot.save
+                              redirect_to user_path(partner.user)
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         else
                            flash[:error] = "Pet has no equipslots available!"
                            redirect_to root_path

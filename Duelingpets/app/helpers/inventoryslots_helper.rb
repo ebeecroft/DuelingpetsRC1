@@ -63,16 +63,26 @@ module InventoryslotsHelper
                      #Removes the inventory and decrements the owner's pouch
                      price = Fieldcost.find_by_name("Inventoryslotcleanup")
                      if(slotFound.user.pouch.amount - price.amount >= 0)
-                        slotFound.user.pouch.amount -= price.amount
-                        @pouch = slotFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", price.amount, slotFound.inventory.user.id, "Points")
-                        @inventoryslot.destroy
-                        flash[:success] = "Inventory slot #{slotFound.name} was successfully removed."
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to inventoryslots_path
+                        if(slotFound.user.gameinfo.startgame)
+                           slotFound.user.pouch.amount -= price.amount
+                           @pouch = slotFound.user.pouch
+                           @pouch.save
+                           economyTransaction("Sink", price.amount, slotFound.inventory.user.id, "Points")
+                           @inventoryslot.destroy
+                           flash[:success] = "Inventory slot #{slotFound.name} was successfully removed."
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to inventoryslots_path
+                           else
+                              redirect_to user_inventory_path(@inventory.user, @inventory)
+                           end
                         else
-                           redirect_to user_inventory_path(@inventory.user, @inventory)
+                           if(logged_in.pouch.privilege == "Admin")
+                              flash[:error] = "The user has not activated the game yet!"
+                              redirect_to inventoryslots_path
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         end
                      else
                         flash[:error] = "#{@inventoryslot.inventory.user.vname}'s has insufficient points to remove the inventoryslot!"
@@ -129,20 +139,25 @@ module InventoryslotsHelper
                         rate = Ratecost.find_by_name("Purchaserate")
                         tax = (price.amount * rate.amount).round
                         if(logged_in.pouch.amount - price.amount >= 0)
-                           if(@inventoryslot.save)
-                              logged_in.pouch.amount -= price.amount
-                              @pouch = logged_in.pouch
-                              @pouch.save
-                              hoard = Dragonhoard.find_by_id(1)
-                              hoard.profit += tax
-                              @hoard = hoard
-                              @hoard.save
-                              economyTransaction("Sink", price.amount - tax, inventoryFound.user.id, "Points")
-                              economyTransaction("Tax", tax, inventoryFound.user.id, "Points")
-                              flash[:success] = "#{@inventoryslot.name} was successfully created."
-                              redirect_to user_inventory_path(@inventory.user, @inventory)
+                           if(logged_in.gameinfo.startgame)
+                              if(@inventoryslot.save)
+                                 logged_in.pouch.amount -= price.amount
+                                 @pouch = logged_in.pouch
+                                 @pouch.save
+                                 hoard = Dragonhoard.find_by_id(1)
+                                 hoard.profit += tax
+                                 @hoard = hoard
+                                 @hoard.save
+                                 economyTransaction("Sink", price.amount - tax, inventoryFound.user.id, "Points")
+                                 economyTransaction("Tax", tax, inventoryFound.user.id, "Points")
+                                 flash[:success] = "#{@inventoryslot.name} was successfully created."
+                                 redirect_to user_inventory_path(@inventory.user, @inventory)
+                              else
+                                 render "new"
+                              end
                            else
-                              render "new"
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
                            end
                         else
                            flash[:error] = "Insufficient funds to create an inventoryslot!"
@@ -168,40 +183,6 @@ module InventoryslotsHelper
                   else
                      editCommons(type)
                   end
-               end
-            elsif(type == "purchase")
-               logged_in = current_user
-               itemFound = Item.find_by_id(getInventoryslotParams("ItemId"))
-               slotFound = Inventoryslot.find_by_id(getInventoryslotParams("SlotId"))
-               if(logged_in && itemFound && slotFound && slotFound.inventory_id == logged_in.inventory.id)
-                  #Store item only if there is space
-                  noRoom = storeitem(slotFound, itemFound)
-                  if(!noRoom)
-                     affordItem = ((logged_in.pouch.amount - itemFound.cost >= 0) && (logged_in.pouch.emeraldamount - itemFound.emeraldcost >= 0))
-                     if(affordItem)
-                        #Purchases the item
-                        logged_in.pouch.amount -= itemFound.cost
-                        logged_in.pouch.emeraldamount -= itemFound.emeraldcost
-                        @pouch = logged_in.pouch
-                        @pouch.save
-
-                        #Eventually make sure that owners get points later on sells!
-
-                        #Saves the item
-                        @inventoryslot = slotFound
-                        @inventoryslot.save
-                        flash[:success] = "Item #{itemFound.name} was added to the inventory!"
-                        redirect_to user_inventory_path(@inventoryslot.inventory.user, @inventoryslot.inventory)
-                     else
-                        flash[:error] = "Insufficient funds to purchase a #{itemFound.name}!"
-                        redirect_to user_path(logged_in.id)
-                     end
-                  else
-                     flash[:error] = "No room to store #{itemFound.name}!"
-                     redirect_to root_path
-                  end
-               else
-                  redirect_to root_path
                end
             end
          end
