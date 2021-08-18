@@ -23,10 +23,12 @@ module JukeboxesHelper
       def economyTransaction(type, points, userid, currency)
          newTransaction = Economy.new(params[:economy])
          #Determines the type of attribute to return
-         if(type != "Tax")
+         if(type == "Sink")
             newTransaction.econattr = "Purchase"
-         else
+         elsif(type == "Tax")
             newTransaction.econattr = "Treasury"
+         elsif(type == "Source")
+            newTransaction.econattr = "Fund"
          end
          newTransaction.content_type = "Jukebox"
          newTransaction.econtype = type
@@ -162,18 +164,28 @@ module JukeboxesHelper
                if(type == "destroy")
                   logged_in = current_user
                   if(logged_in && ((logged_in.id == jukeboxFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                     #Gives the user points back for selling their jukebox
-                     points = (jukeboxValue(jukeboxFound) * 0.30).round
-                     jukeboxFound.user.pouch.amount += points
-                     @pouch = jukeboxFound.user.pouch
-                     @pouch.save
-                     economyTransaction("Source", points, jukeboxFound.user_id, "Points") #Part of this will be emeralds and points
-                     @jukebox.destroy
-                     flash[:success] = "#{@jukebox.name} was successfully removed."
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to jukeboxes_list_path
+                     if(jukeboxFound.user.gameinfo.startgame)
+                        #Gives the user points back for selling their jukebox
+                        points = (jukeboxValue(jukeboxFound) * 0.30).round
+                        jukeboxFound.user.pouch.amount += points
+                        @pouch = jukeboxFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Source", points, jukeboxFound.user_id, "Points") #Part of this will be emeralds and points
+                        @jukebox.destroy
+                        flash[:success] = "#{@jukebox.name} was successfully removed."
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to jukeboxes_list_path
+                        else
+                           redirect_to user_jukeboxes_path(jukeboxFound.user)
+                        end
                      else
-                        redirect_to user_jukeboxes_path(jukeboxFound.user)
+                        if(logged_in.pouch.privilege == "Admin")
+                           flash[:error] = "The composer has not activated the game yet!"
+                           redirect_to jukeboxes_list_path
+                        else
+                           flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                           redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                        end
                      end
                   else
                      redirect_to root_path
@@ -247,20 +259,25 @@ module JukeboxesHelper
                            rate = Ratecost.find_by_name("Purchaserate")
                            tax = (price.amount * rate.amount)
                            if(logged_in.pouch.amount - price.amount >= 0)
-                              if(@jukebox.save)
-                                 logged_in.pouch.amount -= price.amount
-                                 @pouch = logged_in.pouch
-                                 @pouch.save
-                                 hoard = Dragonhoard.find_by_id(1)
-                                 hoard.profit += tax
-                                 @hoard = hoard
-                                 @hoard.save
-                                 economyTransaction("Sink", price.amount - tax, logged_in.id, "Points")
-                                 economyTransaction("Tax", tax, logged_in.id, "Points")
-                                 flash[:success] = "#{@jukebox.name} was successfully created."
-                                 redirect_to user_jukebox_path(@user, @jukebox)
+                              if(logged_in.gameinfo.startgame)
+                                 if(@jukebox.save)
+                                    logged_in.pouch.amount -= price.amount
+                                    @pouch = logged_in.pouch
+                                    @pouch.save
+                                    hoard = Dragonhoard.find_by_id(1)
+                                    hoard.profit += tax
+                                    @hoard = hoard
+                                    @hoard.save
+                                    economyTransaction("Sink", price.amount - tax, logged_in.id, "Points")
+                                    economyTransaction("Tax", tax, logged_in.id, "Points")
+                                    flash[:success] = "#{@jukebox.name} was successfully created."
+                                    redirect_to user_jukebox_path(@user, @jukebox)
+                                 else
+                                    render "new"
+                                 end
                               else
-                                 render "new"
+                                 flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                                 redirect_to edit_gameinfo_path(logged_in.gameinfo)
                               end
                            else
                               flash[:error] = "Insufficient funds to create jukebox!"

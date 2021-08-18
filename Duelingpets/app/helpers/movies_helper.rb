@@ -101,17 +101,27 @@ module MoviesHelper
                   if(logged_in && ((logged_in.id == movieFound.user_id) || logged_in.pouch.privilege == "Admin"))
                      cleanup = Fieldcost.find_by_name("Moviecleanup")
                      if(movieFound.user.pouch.amount - cleanup.amount >= 0)
-                        #Removes the content and decrements the owner's pouch
-                        movieFound.user.pouch.amount -= cleanup.amount
-                        @pouch = movieFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", cleanup.amount, movieFound.user.id, "Points")
-                        flash[:success] = "#{@movie.title} was successfully removed."
-                        @movie.destroy
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to movies_path
+                        if(movieFound.user.gameinfo.startgame)
+                           #Removes the content and decrements the owner's pouch
+                           movieFound.user.pouch.amount -= cleanup.amount
+                           @pouch = movieFound.user.pouch
+                           @pouch.save
+                           economyTransaction("Sink", cleanup.amount, movieFound.user.id, "Points")
+                           flash[:success] = "#{@movie.title} was successfully removed."
+                           @movie.destroy
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to movies_path
+                           else
+                              redirect_to mainplaylist_subplaylist_path(movieFound.subplaylist.mainplaylist, movieFound.subplaylist)
+                           end
                         else
-                           redirect_to mainplaylist_subplaylist_path(movieFound.subplaylist.mainplaylist, movieFound.subplaylist)
+                           if(logged_in.pouch.privilege == "Admin")
+                              flash[:error] = "The director has not activated the game yet!"
+                              redirect_to movies_path
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         end
                      else
                         flash[:error] = "#{@movie.user.vname}'s has insufficient points to remove the movie!"
@@ -259,23 +269,28 @@ module MoviesHelper
                   if(movieFound)
                      if((logged_in.pouch.privilege == "Admin") || ((logged_in.pouch.privilege == "Keymaster") || (logged_in.pouch.privilege == "Reviewer")))
                         if(type == "approve")
-                           movieFound.reviewed = true
-                           movieFound.reviewed_on = currentTime
-                           updateChannel(movieFound.subplaylist)
+                           if(movieFound.user.gameinfo.startgame)
+                              movieFound.reviewed = true
+                              movieFound.reviewed_on = currentTime
+                              updateChannel(movieFound.subplaylist)
 
-                           #Adds the points to the user's pouch
-                           moviepoints = Fieldcost.find_by_name("Movie")
-                           pointsForMovie = moviepoints.amount
-                           @movie = movieFound
-                           @movie.save
-                           pouch = Pouch.find_by_user_id(@movie.user_id)
-                           pouch.amount += pointsForMovie
-                           @pouch = pouch
-                           @pouch.save
-                           economyTransaction("Source", pointsForMovie, movieFound.user.id, "Points")
-                           ContentMailer.content_approved(@movie, "Movie", pointsForMovie).deliver_now
-                           flash[:success] = "#{@movie.user.vname}'s movie #{@movie.title} was approved."
-                           redirect_to movies_review_path
+                              #Adds the points to the user's pouch
+                              moviepoints = Fieldcost.find_by_name("Movie")
+                              pointsForMovie = moviepoints.amount
+                              @movie = movieFound
+                              @movie.save
+                              pouch = Pouch.find_by_user_id(@movie.user_id)
+                              pouch.amount += pointsForMovie
+                              @pouch = pouch
+                              @pouch.save
+                              economyTransaction("Source", pointsForMovie, movieFound.user.id, "Points")
+                              ContentMailer.content_approved(@movie, "Movie", pointsForMovie).deliver_now
+                              flash[:success] = "#{@movie.user.vname}'s movie #{@movie.title} was approved."
+                              redirect_to movies_review_path
+                           else
+                              flash[:error] = "The director has not activated the game yet!"
+                              redirect_to movies_review_path
+                           end
                         else
                            @movie = movieFound
                            ContentMailer.content_denied(@movie, "Movie").deliver_now

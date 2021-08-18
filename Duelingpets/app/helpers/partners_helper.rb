@@ -87,22 +87,33 @@ module PartnersHelper
             if(type == "destroy")
                logged_in = current_user
                if(logged_in && ((logged_in.id == partnerFound.user_id) || logged_in.pouch.privilege == "Admin"))
-                  #Eventually consider adding a sink to this
                   user = User.find_by_vname(partnerFound.user.vname)
                   if(user.partners.count == 1 || !partnerFound.activepet)
                      cleanup = (partnerFound.adoptcost * 0.30).round
                      if(partnerFound.user.pouch.amount - cleanup >= 0)
-                        #Removes the content and decrements the owner's pouch
-                        partnerFound.user.pouch.amount -= cleanup
-                        @pouch = partnerFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", cleanup, partnerFound.user.id, "Points")
-                        flash[:success] = "#{@partner.name} was successfully removed."
-                        @partner.destroy
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to partners_path
+                        if(partnerFound.user.gameinfo.startgame)
+                           #Removes the content and decrements the owner's pouch
+                           if(user.partners.count > 1)
+                              partnerFound.user.pouch.amount -= cleanup
+                              @pouch = partnerFound.user.pouch
+                              @pouch.save
+                              economyTransaction("Sink", cleanup, partnerFound.user.id, "Points")
+                              flash[:success] = "#{@partner.name} was successfully removed."
+                           end
+                           @partner.destroy
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to partners_path
+                           else
+                              redirect_to partners_mypartners_path(partnerFound.user)
+                           end
                         else
-                           redirect_to partners_mypartners_path(partnerFound.user)
+                           if(logged_in.pouch.privilege == "Admin")
+                              flash[:error] = "The owner has not activated the game yet!"
+                              redirect_to partners_path
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         end
                      else
                         flash[:error] = "#{@partner.user.vname}'s has insufficient points to remove the partner!"
@@ -227,41 +238,46 @@ module PartnersHelper
                         if(type == "create")
                            validPurchase = ((((logged_in.pouch.amount - @partner.adoptcost >= 0) && (logged_in.pouch.emeraldamount - @partner.creature.emeraldcost >= 0)) && logged_in.partners.count != 0) || (@partner.creature.starter && logged_in.partners.count == 0))
                            if(validPurchase)
-                              if(@partner.save)
-                                 #Builds the partners equipbag
-                                 newEquip = Equip.new(params[:equip])
-                                 newEquip.partner_id = newPartner.id
-                                 @equip = newEquip
-                                 @equip.save
+                              if(logged_in.gameinfo.startgame)
+                                 if(@partner.save)
+                                    #Builds the partners equipbag
+                                    newEquip = Equip.new(params[:equip])
+                                    newEquip.partner_id = newPartner.id
+                                    @equip = newEquip
+                                    @equip.save
 
-                                 #Builds the partners fight
-                                 newFight = Fight.new(params[:fight]) #Does this code still work?
-                                 newFight.partner_id = newPartner.id
-                                 @fight = newFight
-                                 @fight.save
+                                    #Builds the partners fight
+                                    newFight = Fight.new(params[:fight]) #Does this code still work?
+                                    newFight.partner_id = newPartner.id
+                                    @fight = newFight
+                                    @fight.save
 
-                                 if(logged_in.partners.count > 0)
-                                    #This may originally come from the warehouse
-                                    logged_in.pouch.amount -= @partner.adoptcost
-                                    logged_in.pouch.emeraldamount -= @partner.creature.emeraldcost
-                                    @pouch = logged_in.pouch
-                                    @pouch.save
-                                    economyTransaction("Sink", @partner.adoptcost, @partner.user_id, "Points")
-                                    economyTransaction("Sink", @partner.creature.emeraldcost, @partner.user_id, "Emeralds")
+                                    if(logged_in.partners.count > 0)
+                                       #This may originally come from the warehouse
+                                       logged_in.pouch.amount -= @partner.adoptcost
+                                       logged_in.pouch.emeraldamount -= @partner.creature.emeraldcost
+                                       @pouch = logged_in.pouch
+                                       @pouch.save
+                                       economyTransaction("Sink", @partner.adoptcost, @partner.user_id, "Points")
+                                       economyTransaction("Sink", @partner.creature.emeraldcost, @partner.user_id, "Emeralds")
 
-                                    #Give the creator the points for the sell of the pet
-                                    creator = @partner.creature.user.pouch
-                                    creator.amount += @partner.adoptcost
-                                    creator.emeraldamount += @partner.creature.emeraldcost
-                                    economyTransaction("Source", @partner.adoptcost, @partner.creature.user_id, "Points")
-                                    economyTransaction("Source", @partner.creature.emeraldcost, @partner.creature.user_id, "Emeralds")
-                                    @creator = creator
-                                    @creator.save
+                                       #Give the creator the points for the sell of the pet
+                                       creator = @partner.creature.user.pouch
+                                       creator.amount += @partner.adoptcost
+                                       creator.emeraldamount += @partner.creature.emeraldcost
+                                       economyTransaction("Source", @partner.adoptcost, @partner.creature.user_id, "Points")
+                                       economyTransaction("Source", @partner.creature.emeraldcost, @partner.creature.user_id, "Emeralds")
+                                       @creator = creator
+                                       @creator.save
+                                    end
+                                    flash[:success] = "#{@partner.name} was successfully created."
+                                    redirect_to user_partner_path(@user, @partner)
+                                 else
+                                    render "new"
                                  end
-                                 flash[:success] = "#{@partner.name} was successfully created."
-                                 redirect_to user_partner_path(@user, @partner)
                               else
-                                 render "new"
+                                 flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                                 redirect_to edit_gameinfo_path(logged_in.gameinfo)
                               end
                            else
                               flash[:error] = "Insufficient funds to adopt a creature!"

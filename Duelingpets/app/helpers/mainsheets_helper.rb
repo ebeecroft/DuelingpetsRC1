@@ -85,8 +85,6 @@ module MainsheetsHelper
                #visitTimer(type, blogFound)
                #cleanupOldVisits
                @mainsheet = mainsheetFound
-
-               #Come back to this when subsheets is added
                subsheets = mainsheetFound.subsheets
                @subsheets = Kaminari.paginate_array(subsheets).page(getMainsheetParams("Page")).per(10)
                if(type == "destroy")
@@ -94,17 +92,27 @@ module MainsheetsHelper
                   if(logged_in && ((logged_in.id == mainsheetFound.user_id) || logged_in.pouch.privilege == "Admin"))
                      cleanup = Fieldcost.find_by_name("Mainsheetcleanup")
                      if(mainsheetFound.user.pouch.amount - cleanup.amount >= 0)
-                        #Removes the content and decrements the owner's pouch
-                        mainsheetFound.user.pouch.amount -= cleanup.amount
-                        @pouch = mainsheetFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", cleanup.amount, mainsheetFound.user.id, "Points")
-                        flash[:success] = "#{@mainsheet.title} was successfully removed."
-                        @mainsheet.destroy
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to mainsheets_path
+                        if(mainsheetFound.user.gameinfo.startgame)
+                           #Removes the content and decrements the owner's pouch
+                           mainsheetFound.user.pouch.amount -= cleanup.amount
+                           @pouch = mainsheetFound.user.pouch
+                           @pouch.save
+                           economyTransaction("Sink", cleanup.amount, mainsheetFound.user.id, "Points")
+                           flash[:success] = "#{@mainsheet.title} was successfully removed."
+                           @mainsheet.destroy
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to mainsheets_path
+                           else
+                             redirect_to user_jukebox_path(mainsheetFound.jukebox.user, mainsheetFound.jukebox)
+                           end
                         else
-                           redirect_to user_jukebox_path(mainsheetFound.jukebox.user, mainsheetFound.jukebox)
+                           if(logged_in.pouch.privilege == "Admin")
+                              flash[:error] = "The composer has not activated the game yet!"
+                              redirect_to mainsheets_path
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         end
                      else
                         flash[:error] = "#{@mainsheet.user.vname}'s has insufficient points to remove the mainsheet!"
@@ -171,21 +179,26 @@ module MainsheetsHelper
                            rate = Ratecost.find_by_name("Purchaserate")
                            tax = (price.amount * rate.amount)
                            if(logged_in.pouch.amount - price.amount >= 0)
-                              if(@mainsheet.save)
-                                 logged_in.pouch.amount -= price.amount
-                                 @pouch = logged_in.pouch
-                                 @pouch.save
-                                 hoard = Dragonhoard.find_by_id(1)
-                                 hoard.profit += tax
-                                 @hoard = hoard
-                                 @hoard.save
-                                 economyTransaction("Sink", price.amount - tax, mainsheetFound.user.id, "Points")
-                                 economyTransaction("Tax", tax, mainsheetFound.user.id, "Points")
-                                 updateJukebox(@mainsheet.jukebox)
-                                 flash[:success] = "#{@mainsheet.title} was successfully created."
-                                 redirect_to jukebox_mainsheet_path(@jukebox, @mainsheet)
+                              if(logged_in.gameinfo.startgame)
+                                 if(@mainsheet.save)
+                                    logged_in.pouch.amount -= price.amount
+                                    @pouch = logged_in.pouch
+                                    @pouch.save
+                                    hoard = Dragonhoard.find_by_id(1)
+                                    hoard.profit += tax
+                                    @hoard = hoard
+                                    @hoard.save
+                                    economyTransaction("Sink", price.amount - tax, mainsheetFound.user.id, "Points")
+                                    economyTransaction("Tax", tax, mainsheetFound.user.id, "Points")
+                                    updateJukebox(@mainsheet.jukebox)
+                                    flash[:success] = "#{@mainsheet.title} was successfully created."
+                                    redirect_to jukebox_mainsheet_path(@jukebox, @mainsheet)
+                                 else
+                                    render "new"
+                                 end
                               else
-                                 render "new"
+                                 flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                                 redirect_to edit_gameinfo_path(logged_in.gameinfo)
                               end
                            else
                               flash[:error] = "Insufficient funds to create a mainsheet!"

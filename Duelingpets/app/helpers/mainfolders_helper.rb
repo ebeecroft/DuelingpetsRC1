@@ -94,17 +94,27 @@ module MainfoldersHelper
                   if(logged_in && ((logged_in.id == mainfolderFound.user_id) || logged_in.pouch.privilege == "Admin"))
                      cleanup = Fieldcost.find_by_name("Mainfoldercleanup")
                      if(mainfolderFound.user.pouch.amount - cleanup.amount >= 0)
-                        #Removes the content and decrements the owner's pouch
-                        mainfolderFound.user.pouch.amount -= cleanup.amount
-                        @pouch = mainfolderFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", cleanup.amount, mainfolderFound.user.id, "Points")
-                        flash[:success] = "#{@mainfolder.title} was successfully removed."
-                        @mainfolder.destroy
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to mainfolders_path
+                        if(mainfolderFound.user.gameinfo.startgame)
+                           #Removes the content and decrements the owner's pouch
+                           mainfolderFound.user.pouch.amount -= cleanup.amount
+                           @pouch = mainfolderFound.user.pouch
+                           @pouch.save
+                           economyTransaction("Sink", cleanup.amount, mainfolderFound.user.id, "Points")
+                           flash[:success] = "#{@mainfolder.title} was successfully removed."
+                           @mainfolder.destroy
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to mainfolders_path
+                           else
+                              redirect_to user_gallery_path(mainfolderFound.gallery.user, mainfolderFound.gallery)
+                           end
                         else
-                           redirect_to user_gallery_path(mainfolderFound.gallery.user, mainfolderFound.gallery)
+                           if(logged_in.pouch.privilege == "Admin")
+                              flash[:error] = "The artist has not activated the game yet!"
+                              redirect_to mainfolders_path
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         end
                      else
                         flash[:error] = "#{@mainfolder.user.vname}'s has insufficient points to remove the mainfolder!"
@@ -171,21 +181,26 @@ module MainfoldersHelper
                            rate = Ratecost.find_by_name("Purchaserate")
                            tax = (price.amount * rate.amount)
                            if(logged_in.pouch.amount - price.amount >= 0)
-                              if(@mainfolder.save)
-                                 logged_in.pouch.amount -= price.amount
-                                 @pouch = logged_in.pouch
-                                 @pouch.save
-                                 hoard = Dragonhoard.find_by_id(1)
-                                 hoard.profit += tax
-                                 @hoard = hoard
-                                 @hoard.save
-                                 economyTransaction("Sink", price.amount - tax, mainfolderFound.user.id, "Points")
-                                 economyTransaction("Tax", tax, mainfolderFound.user.id, "Points")
-                                 updateGallery(@mainfolder.gallery)
-                                 flash[:success] = "#{@mainfolder.title} was successfully created."
-                                 redirect_to gallery_mainfolder_path(@gallery, @mainfolder)
+                              if(logged_in.gameinfo.startgame)
+                                 if(@mainfolder.save)
+                                    logged_in.pouch.amount -= price.amount
+                                    @pouch = logged_in.pouch
+                                    @pouch.save
+                                    hoard = Dragonhoard.find_by_id(1)
+                                    hoard.profit += tax
+                                    @hoard = hoard
+                                    @hoard.save
+                                    economyTransaction("Sink", price.amount - tax, mainfolderFound.user.id, "Points")
+                                    economyTransaction("Tax", tax, mainfolderFound.user.id, "Points")
+                                    updateGallery(@mainfolder.gallery)
+                                    flash[:success] = "#{@mainfolder.title} was successfully created."
+                                    redirect_to gallery_mainfolder_path(@gallery, @mainfolder)
+                                 else
+                                    render "new"
+                                 end
                               else
-                                 render "new"
+                                 flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                                 redirect_to edit_gameinfo_path(logged_in.gameinfo)
                               end
                            else
                               flash[:error] = "Insufficient funds to create a mainfolder!"

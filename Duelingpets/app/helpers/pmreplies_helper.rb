@@ -66,22 +66,32 @@ module PmrepliesHelper
             else
                if(type == "destroy")
                   logged_in = current_user
-                  if(logged_in && ((logged_in.id == pmreplyFound.user_id) || logged_in.pouch.privilege == "Admin"))
+                  if(logged_in && (logged_in.pouch.privilege == "Admin" || (logged_in.id == pmreply.pmbox.user_id || logged_in.id == pmreplyFound.user_id)))
                      cleanup = Fieldcost.find_by_name("PMreplycleanup")
                      if(pmreplyFound.user.pouch.amount - cleanup.amount >= 0)
-                        #Removes the content and decrements the owner's pouch
-                        pmreplyFound.user.pouch.amount -= cleanup.amount
-                        @pouch = pmreplyFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", cleanup.amount, pmreplyFound.user.id, "Points")
-                        flash[:success] = "PMreply was successfully removed."
-                        @pmreply = pmreplyFound
-                        @pm = Pm.find_by_id(pmreplyFound.pm.id)
-                        @pmreply.destroy
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to pmreplies_path
+                        if(pmreplyFound.user.gameinfo.startgame)
+                           #Removes the content and decrements the owner's pouch
+                           pmreplyFound.user.pouch.amount -= cleanup.amount
+                           @pouch = pmreplyFound.user.pouch
+                           @pouch.save
+                           economyTransaction("Sink", cleanup.amount, pmreplyFound.user.id, "Points")
+                           flash[:success] = "PMreply was successfully removed."
+                           @pmreply = pmreplyFound
+                           @pm = Pm.find_by_id(pmreplyFound.pm.id)
+                           @pmreply.destroy
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to pmreplies_path
+                           else
+                              redirect_to pmbox_pm_path(@pm.pmbox, @pm)
+                           end
                         else
-                           redirect_to pmbox_pm_path(@pm.pmbox, @pm)
+                           if(logged_in.pouch.privilege == "Admin")
+                              flash[:error] = "The user has not activated the game yet!"
+                              redirect_to pmreplies_path
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         end
                      else
                         flash[:error] = "#{pmreplyFound.user.vname}'s has insufficient points to remove the pmreply!"
@@ -152,21 +162,26 @@ module PmrepliesHelper
                            rate = Ratecost.find_by_name("Purchaserate")
                            tax = (price.amount * rate.amount)
                            if(logged_in.pouch.amount - price.amount >= 0)
-                              if(@pmreply.save)
-                                 logged_in.pouch.amount -= price.amount
-                                 @pouch = logged_in.pouch
-                                 @pouch.save
-                                 hoard = Dragonhoard.find_by_id(1)
-                                 hoard.profit += tax
-                                 @hoard = hoard
-                                 @hoard.save
-                                 @pm.save
-                                 economyTransaction("Sink", price.amount - tax, logged_in.id, "Points")
-                                 economyTransaction("Tax", tax, logged_in.id, "Points")
-                                 url = "http://www.duelingpets.net/pmboxes/{@pm.pmbox_id}/pms/{@pm.id}"
-                                 CommunityMailer.messaging(@pmreply, "PMreply", url).deliver_now
-                                 flash[:success] = "PMreply was successfully created."
-                                 redirect_to pmbox_pm_path(@pm.pmbox, @pmreply.pm)
+                              if(logged_in.gameinfo.startgame)
+                                 if(@pmreply.save)
+                                    logged_in.pouch.amount -= price.amount
+                                    @pouch = logged_in.pouch
+                                    @pouch.save
+                                    hoard = Dragonhoard.find_by_id(1)
+                                    hoard.profit += tax
+                                    @hoard = hoard
+                                    @hoard.save
+                                    @pm.save
+                                    economyTransaction("Sink", price.amount - tax, logged_in.id, "Points")
+                                    economyTransaction("Tax", tax, logged_in.id, "Points")
+                                    url = "http://www.duelingpets.net/pmboxes/{@pm.pmbox_id}/pms/{@pm.id}"
+                                    CommunityMailer.messaging(@pmreply, "PMreply", url).deliver_now
+                                    flash[:success] = "PMreply was successfully created."
+                                    redirect_to pmbox_pm_path(@pm.pmbox, @pmreply.pm)
+                                 else
+                                    flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                                    redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                                 end
                               else
                                  render "new"
                               end

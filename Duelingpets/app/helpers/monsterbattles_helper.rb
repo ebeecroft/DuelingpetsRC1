@@ -165,19 +165,29 @@ module MonsterbattlesHelper
                logged_in = current_user
                if(logged_in && ((logged_in.id == monsterbattleFound.partner.user_id) || logged_in.pouch.privilege == "Admin"))
                   if(logged_in.pouch.privilege == "Admin")
-                     flash[:success] = "Battle was successfully removed!"
-                     monsterbattleFound.fight.partner
-                     partnerFound = monsterbattleFound.fight.partner
-                     partnerFound.inbattle = false
-                     @partner = partnerFound
-                     @partner.save
-                     @monsterbattle.destroy
-                     redirect_to monsterbattles_path
+                     if(monsterbattleFound.partner.user.gameinfo.startgame)
+                        flash[:success] = "Battle was successfully removed!"
+                        monsterbattleFound.fight.partner
+                        partnerFound = monsterbattleFound.fight.partner
+                        partnerFound.inbattle = false
+                        @partner = partnerFound
+                        @partner.save
+                        @monsterbattle.destroy
+                        redirect_to monsterbattles_path
+                     else
+                        flash[:error] = "The user has not activated the game yet!"
+                        redirect_to monsterbattles_path
+                     end
                   else
                      if(monsterbattleFound.battleover)
-                        flash[:success] = "Battle was successfully removed!"
-                        @monsterbattle.destroy
-                        redirect_to partner_fight_path(monsterbattleFound.fight.partner, monsterbattleFound.fight)
+                        if(logged_in.gameinfo.startgame)
+                           flash[:success] = "Battle was successfully removed!"
+                           @monsterbattle.destroy
+                           redirect_to partner_fight_path(monsterbattleFound.fight.partner, monsterbattleFound.fight)
+                        else
+                           flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                           redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                        end
                      else
                         flash[:error] = "You can't delete an active battle!"
                         redirect_to root_path
@@ -279,13 +289,18 @@ module MonsterbattlesHelper
                      @monsterbattle = newBattle
                      
                      if(!logged_in.pouch.firstdreyore)
-                        if(@monsterbattle.save)
-                           @partner.save
-                           flash[:success] = "#{@partner.name} is fighting #{@monsterbattle.monster.name}!"
-                           redirect_to fight_monsterbattle_path(@monsterbattle.fight, @monsterbattle)
+                        if(logged_in.gameinfo.startgame)
+                           if(@monsterbattle.save)
+                              @partner.save
+                              flash[:success] = "#{@partner.name} is fighting #{@monsterbattle.monster.name}!"
+                              redirect_to fight_monsterbattle_path(@monsterbattle.fight, @monsterbattle)
+                           else
+                              flash[:error] = "Battle was unable to be saved!"
+                              redirect_to root_path
+                           end
                         else
-                           flash[:error] = "Battle was unable to be saved!"
-                           redirect_to root_path
+                           flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                           redirect_to edit_gameinfo_path(logged_in.gameinfo)
                         end
                      else
                         flash[:error] = "You haven't spent your newbie ore yet!"
@@ -316,7 +331,12 @@ module MonsterbattlesHelper
                battleFound = Monsterbattle.find_by_id(params[:monsterbattle_id])
                if(logged_in && battleFound)
                   if(logged_in.id == battleFound.fight.partner.user_id)
-                     getBattleCalc(battleFound)
+                     if(logged_in.gameinfo.startgame)
+                        getBattleCalc(battleFound)
+                     else
+                        flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                        redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                     end
                   else
                      redirect_to root_path
                   end

@@ -111,17 +111,27 @@ module OcsHelper
                   if(logged_in && ((logged_in.id == ocFound.user_id) || logged_in.pouch.privilege == "Admin"))
                      cleanup = Fieldcost.find_by_name("OCcleanup")
                      if(mainsheetFound.user.pouch.amount - cleanup.amount >= 0)
-                        #Removes the content and decrements the owner's pouch
-                        ocFound.user.pouch.amount -= cleanup.amount
-                        @pouch = ocFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", cleanup.amount, ocFound.user.id, "Points")
-                        flash[:success] = "#{@oc.title} was successfully removed."
-                        @oc.destroy
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to ocs_list_path
+                        if(mainsheetFound.user.gameinfo.startgame)
+                           #Removes the content and decrements the owner's pouch
+                           ocFound.user.pouch.amount -= cleanup.amount
+                           @pouch = ocFound.user.pouch
+                           @pouch.save
+                           economyTransaction("Sink", cleanup.amount, ocFound.user.id, "Points")
+                           flash[:success] = "#{@oc.title} was successfully removed."
+                           @oc.destroy
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to ocs_list_path
+                           else
+                              redirect_to user_ocs_path(ocFound.user)
+                           end
                         else
-                           redirect_to user_ocs_path(ocFound.user)
+                           if(logged_in.pouch.privilege == "Admin")
+                              flash[:error] = "The creator has not activated the game yet!"
+                              redirect_to ocs_list_path
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         end
                      else
                         flash[:error] = "#{@oc.user.vname}'s has insufficient points to remove the oc!"
@@ -205,10 +215,7 @@ module OcsHelper
                               octag.tag1_id = 1
                               @octag = octag
                               @octag.save
-                              url = "http://www.duelingpets.net/ocs/review" #"http://localhost:3000/blogs/review"
-                              #if(type == "Production")
-                              #   url = "http://www.duelingpets.net/blogs/review"
-                              #end
+                              url = "http://www.duelingpets.net/ocs/review"
                               ContentMailer.content_review(@oc, "OC", url).deliver_now
                               flash[:success] = "#{@oc.name} was successfully created."
                               redirect_to user_oc_path(@user, @oc)
@@ -282,7 +289,6 @@ module OcsHelper
                if(logged_in)
                   ocFound = Oc.find_by_id(getOcParams("OcId"))
                   if(ocFound)
-                     pouchFound = Pouch.find_by_user_id(ocFound.user.pouch.id)
                      if((logged_in.pouch.privilege == "Admin") || ((logged_in.pouch.privilege == "Keymaster") || (logged_in.pouch.privilege == "Reviewer")))
                         if(type == "approve")
                            ocFound.reviewed = true
@@ -290,27 +296,32 @@ module OcsHelper
                            price = Fieldcost.find_by_name("OCpoints")
                            rate = Ratecost.find_by_name("Purchaserate")
                            tax = (price * rate.amount)
-                           if(pouch.amount - price >= 0)
-                              #Template for sinks
-                              if(!ocFound.pointsreceived)
-                                 pouch.amount -= price
-                                 @pouch = pouch
-                                 @pouch.save
-                                 hoard = Dragonhoard.find_by_id(1)
-                                 hoard.profit += tax
-                                 @hoard = hoard
-                                 @hoard.save
-                                 economyTransaction("Sink", price - tax, ocFound.user.id, "Points")
-                                 economyTransaction("Tax", tax, ocFound.user.id, "Points")
-                                 ocFound.pointsreceived = true
+                           if(ocFound.user.pouch.amount - price >= 0)
+                              if(ocFound.user.gameinfo.startgame)
+                                 #Template for sinks
+                                 if(!ocFound.pointsreceived)
+                                    pouch.amount -= price
+                                    @pouch = pouch
+                                    @pouch.save
+                                    hoard = Dragonhoard.find_by_id(1)
+                                    hoard.profit += tax
+                                    @hoard = hoard
+                                    @hoard.save
+                                    economyTransaction("Sink", price - tax, ocFound.user.id, "Points")
+                                    economyTransaction("Tax", tax, ocFound.user.id, "Points")
+                                    ocFound.pointsreceived = true
+                                 else
+                                    price = 0
+                                 end
+                                 @oc = ocFound
+                                 @oc.save
+                                 ContentMailer.content_approved(@monster, "OC", price).deliver_now
+                                 flash[:success] = "#{@oc.user.vname}'s oc #{@oc.name} was approved."
+                                 redirect_to ocs_review_path
                               else
-                                 price = 0
+                                 flash[:error] = "The creator has not activated the game yet!"
+                                 redirect_to ocs_review_path
                               end
-                              @oc = ocFound
-                              @oc.save
-                              ContentMailer.content_approved(@monster, "OC", price).deliver_now
-                              flash[:success] = "#{@oc.user.vname}'s oc #{@oc.name} was approved."
-                              redirect_to ocs_review_path
                            else
                               flash[:error] = "Insufficient funds to create an oc!"
                               redirect_to ocs_review_path

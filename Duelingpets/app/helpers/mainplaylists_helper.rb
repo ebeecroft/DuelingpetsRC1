@@ -85,8 +85,6 @@ module MainplaylistsHelper
                #visitTimer(type, blogFound)
                #cleanupOldVisits
                @mainplaylist = mainplaylistFound
-
-               #Come back to this when subsheets is added
                subplaylists = mainplaylistFound.subplaylists
                @subplaylists = Kaminari.paginate_array(subplaylists).page(getMainplaylistParams("Page")).per(10)               
                if(type == "destroy")
@@ -94,17 +92,27 @@ module MainplaylistsHelper
                   if(logged_in && ((logged_in.id == mainplaylistFound.user_id) || logged_in.pouch.privilege == "Admin"))
                      cleanup = Fieldcost.find_by_name("Mainplaylistcleanup")
                      if(mainplaylistFound.user.pouch.amount - cleanup.amount >= 0)
-                        #Removes the content and decrements the owner's pouch
-                        mainplaylistFound.user.pouch.amount -= cleanup.amount
-                        @pouch = mainplaylistFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", cleanup.amount, mainplaylistFound.user.id, "Points")
-                        flash[:success] = "#{@mainplaylist.title} was successfully removed."
-                        @mainplaylist.destroy
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to mainplaylists_path
+                        if(mainplaylistFound.user.gameinfo.startgame)
+                           #Removes the content and decrements the owner's pouch
+                           mainplaylistFound.user.pouch.amount -= cleanup.amount
+                           @pouch = mainplaylistFound.user.pouch
+                           @pouch.save
+                           economyTransaction("Sink", cleanup.amount, mainplaylistFound.user.id, "Points")
+                           flash[:success] = "#{@mainplaylist.title} was successfully removed."
+                           @mainplaylist.destroy
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to mainplaylists_path
+                           else
+                              redirect_to user_channel_path(mainplaylistFound.channel.user, mainplaylistFound.gallery)
+                           end
                         else
-                           redirect_to user_channel_path(mainplaylistFound.channel.user, mainplaylistFound.gallery)
+                           if(logged_in.pouch.privilege == "Admin")
+                              flash[:error] = "The director has not activated the game yet!"
+                              redirect_to mainplaylists_path
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         end
                      else
                         flash[:error] = "#{@mainplaylist.user.vname}'s has insufficient points to remove the mainplaylist!"
@@ -171,21 +179,26 @@ module MainplaylistsHelper
                            rate = Ratecost.find_by_name("Purchaserate")
                            tax = (price.amount * rate.amount)
                            if(logged_in.pouch.amount - price.amount >= 0)
-                              if(@mainplaylist.save)
-                                 logged_in.pouch.amount -= price.amount
-                                 @pouch = logged_in.pouch
-                                 @pouch.save
-                                 hoard = Dragonhoard.find_by_id(1)
-                                 hoard.profit += tax
-                                 @hoard = hoard
-                                 @hoard.save
-                                 economyTransaction("Sink", price.amount - tax, mainplaylistFound.user.id, "Points")
-                                 economyTransaction("Tax", tax, mainplaylistFound.user.id, "Points")
-                                 updateChannel(@mainplaylist.channel)
-                                 flash[:success] = "#{@mainplaylist.title} was successfully created."
-                                 redirect_to channel_mainplaylist_path(@channel, @mainplaylist)
+                              if(logged_in.gameinfo.startgame)
+                                 if(@mainplaylist.save)
+                                    logged_in.pouch.amount -= price.amount
+                                    @pouch = logged_in.pouch
+                                    @pouch.save
+                                    hoard = Dragonhoard.find_by_id(1)
+                                    hoard.profit += tax
+                                    @hoard = hoard
+                                    @hoard.save
+                                    economyTransaction("Sink", price.amount - tax, mainplaylistFound.user.id, "Points")
+                                    economyTransaction("Tax", tax, mainplaylistFound.user.id, "Points")
+                                    updateChannel(@mainplaylist.channel)
+                                    flash[:success] = "#{@mainplaylist.title} was successfully created."
+                                    redirect_to channel_mainplaylist_path(@channel, @mainplaylist)
+                                 else
+                                    render "new"
+                                 end
                               else
-                                 render "new"
+                                 flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                                 redirect_to edit_gameinfo_path(logged_in.gameinfo)
                               end
                            else
                               flash[:error] = "Insufficient funds to create a mainplaylist!"

@@ -10,7 +10,6 @@ module MonstersHelper
          elsif(type == "User")
             value = params[:user_id]
          elsif(type == "Monster")
-            #Add Knowledge here later
             value = params.require(:monster).permit(:name, :description, :hp, :atk, :def, :agility, 
             :mp, :matk, :mdef, :magi, :exp, :nightmare, :shinycraze, :party, :mischief, :rarity, :image,
             :remote_image_url, :image_cache, :ogg, :remote_ogg_url, :ogg_cache, :mp3,
@@ -182,16 +181,26 @@ module MonstersHelper
                      #Removes the content and decrements the owner's pouch
                      price = monsterFound.cost * 0.60
                      if(monsterFound.user.pouch.amount - price >= 0)
-                        monsterFound.user.pouch.amount -= price
-                        @pouch = monsterFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", price, monsterFound.user.id, "Points")
-                        @monster.destroy
-                        flash[:success] = "#{@monster.name} was successfully removed."
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to monsters_list_path
+                        if(monsterFound.user.gameinfo.startgame)
+                           monsterFound.user.pouch.amount -= price
+                           @pouch = monsterFound.user.pouch
+                           @pouch.save
+                           economyTransaction("Sink", price, monsterFound.user.id, "Points")
+                           @monster.destroy
+                           flash[:success] = "#{@monster.name} was successfully removed."
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to monsters_list_path
+                           else
+                              redirect_to user_monsters_path(monsterFound.user)
+                           end
                         else
-                           redirect_to user_monsters_path(monsterFound.user)
+                           if(logged_in.pouch.privilege == "Admin")
+                              flash[:error] = "The creator has not activated the game yet!"
+                              redirect_to monsters_list_path
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         end
                      else
                         flash[:error] = "#{@monster.user.vname}'s has insufficient points to remove the monster!"
@@ -355,20 +364,25 @@ module MonstersHelper
                            pouch = Pouch.find_by_user_id(monsterFound.user_id)
                            #Add dreyterrium cost later
                            if(pouch.amount - price >= 0)
-                              @monster = monsterFound
-                              @monster.save
-                              pouch.amount -= price
-                              @pouch = pouch
-                              @pouch.save
-                              hoard = Dragonhoard.find_by_id(1)
-                              hoard.profit += tax
-                              @hoard = hoard
-                              @hoard.save
-                              economyTransaction("Sink", price - tax, monsterFound.user.id, "Points")
-                              economyTransaction("Tax", tax, monsterFound.user.id, "Points")
-                              ContentMailer.content_approved(@monster, "Monster", price).deliver_now
-                              flash[:success] = "#{@monster.user.vname}'s monster #{@monster.name} was approved."
-                              redirect_to monsters_review_path
+                              if(monsterFound.user.gameinfo.startgame)
+                                 @monster = monsterFound
+                                 @monster.save
+                                 pouch.amount -= price
+                                 @pouch = pouch
+                                 @pouch.save
+                                 hoard = Dragonhoard.find_by_id(1)
+                                 hoard.profit += tax
+                                 @hoard = hoard
+                                 @hoard.save
+                                 economyTransaction("Sink", price - tax, monsterFound.user.id, "Points")
+                                 economyTransaction("Tax", tax, monsterFound.user.id, "Points")
+                                 ContentMailer.content_approved(@monster, "Monster", price).deliver_now
+                                 flash[:success] = "#{@monster.user.vname}'s monster #{@monster.name} was approved."
+                                 redirect_to monsters_review_path
+                              else
+                                 flash[:error] = "The creator has not activated the game yet!"
+                                 redirect_to monsters_review_path
+                              end
                            else
                               flash[:error] = "Insufficient funds to create a monster!"
                               redirect_to user_path(logged_in.id)

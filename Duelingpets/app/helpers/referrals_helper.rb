@@ -93,19 +93,24 @@ module ReferralsHelper
                         @referral = newReferral
                         if(type == "create")
                            if(errorFlag != 1 && errorFlag != 2)
-                              #Stores the referral
-                              @referral.save
-                              referralPoints = Fieldcost.find_by_name("Referral")
-                              pouch = Pouch.find_by_id(@referral.referred_by_id)
-                              pouch.amount += referralPoints.amount
-                              @pouch = pouch
-                              @pouch.save
-                              economyTransaction("Source", referralPoints.amount, pouch.user.id, "Points")
+                              if(logged_in.gameinfo.startgame)
+                                 #Stores the referral
+                                 @referral.save
+                                 referralPoints = Fieldcost.find_by_name("Referral")
+                                 pouch = Pouch.find_by_id(@referral.referred_by_id)
+                                 pouch.amount += referralPoints.amount
+                                 @pouch = pouch
+                                 @pouch.save
+                                 economyTransaction("Source", referralPoints.amount, pouch.user.id, "Points")
 
-                              #Emails the user about the new referral
-                              ContentMailer.content_created(@referral, "Referral", referralPoints.amount).deliver_now
-                              flash[:success] = "#{@referral.referred_by.vname} successfully referred someone!"
-                              redirect_to user_path(@user)
+                                 #Emails the user about the new referral
+                                 ContentMailer.content_created(@referral, "Referral", referralPoints.amount).deliver_now
+                                 flash[:success] = "#{@referral.referred_by.vname} successfully referred someone!"
+                                 redirect_to user_path(@user)
+                              else
+                                 flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                                 redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                              end
                            else
                               flash[:error] = "Referral name was invalid!"
                               render "new"
@@ -158,27 +163,32 @@ module ReferralsHelper
                else
                   logged_in = current_user
                   if(logged_in && logged_in.referral.nil?)
-                     #Creates the referral for discoveredit users
-                     newReferral = Referral.new
-                     newReferral.user_id = logged_in.id
-                     newReferral.created_on = currentTime
-                     newReferral.referred_by_id = 1
-                     @user = User.find_by_vname(logged_in.vname)
-                     @referral = newReferral
+                     if(logged_in.user.gameinfo.startgame)
+                        #Creates the referral for discoveredit users
+                        newReferral = Referral.new
+                        newReferral.user_id = logged_in.id
+                        newReferral.created_on = currentTime
+                        newReferral.referred_by_id = 1
+                        @user = User.find_by_vname(logged_in.vname)
+                        @referral = newReferral
 
-                     #Stores the referral
-                     @referral.save
-                     referralPoints = Fieldcost.find_by_name("Referral")
-                     pouch = Pouch.find_by_id(@referral.referred_by_id)
-                     pouch.amount += referralPoints.amount
-                     @pouch = pouch
-                     @pouch.save
-                     economyTransaction("Source", referralPoints.amount, pouch.user.id, "Points")
+                        #Stores the referral
+                        @referral.save
+                        referralPoints = Fieldcost.find_by_name("Referral")
+                        pouch = Pouch.find_by_id(@referral.referred_by_id)
+                        pouch.amount += referralPoints.amount
+                        @pouch = pouch
+                        @pouch.save
+                        economyTransaction("Source", referralPoints.amount, pouch.user.id, "Points")
 
-                     #Emails the user about the new referral
-                     ContentMailer.content_created(@referral, "Referral", referralPoints.amount).deliver_now
-                     flash[:success] = "#{@referral.referred_by.vname} successfully referred someone!"
-                     redirect_to user_path(@user)
+                        #Emails the user about the new referral
+                        ContentMailer.content_created(@referral, "Referral", referralPoints.amount).deliver_now
+                        flash[:success] = "#{@referral.referred_by.vname} successfully referred someone!"
+                        redirect_to user_path(@user)
+                     else
+                        flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                        redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                     end
                   else
                      redirect_to root_path
                   end

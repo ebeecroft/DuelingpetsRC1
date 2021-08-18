@@ -97,17 +97,27 @@ module PmsHelper
                   if(logged_in && (((logged_in.id == pmFound.user_id) || (logged_in.id == pmFound.pmbox.user_id)) || (logged_in.pouch.privilege == "Admin")))
                      cleanup = Fieldcost.find_by_name("PMcleanup")
                      if(pmFound.user.pouch.amount - cleanup.amount >= 0)
-                        #Removes the content and decrements the owner's pouch
-                        pmFound.user.pouch.amount -= cleanup.amount
-                        @pouch = pmFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", cleanup.amount, pmFound.user.id, "Points")
-                        flash[:success] = "#{pmFound.title} was successfully removed."
-                        @pm.destroy
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to pms_path
+                        if(pmFound.user.gameinfo.startgame)
+                           #Removes the content and decrements the owner's pouch
+                           pmFound.user.pouch.amount -= cleanup.amount
+                           @pouch = pmFound.user.pouch
+                           @pouch.save
+                           economyTransaction("Sink", cleanup.amount, pmFound.user.id, "Points")
+                           flash[:success] = "#{pmFound.title} was successfully removed."
+                           @pm.destroy
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to pms_path
+                           else
+                              redirect_to pmboxes_inbox_path
+                           end
                         else
-                           redirect_to pmboxes_inbox_path
+                           if(logged_in.pouch.privilege == "Admin")
+                              flash[:error] = "The user has not activated the game yet!"
+                              redirect_to pms_path
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         end
                      else
                         flash[:error] = "#{pmFound.user.vname}'s has insufficient points to remove the pm!"
@@ -176,22 +186,27 @@ module PmsHelper
                            rate = Ratecost.find_by_name("Purchaserate")
                            tax = (price.amount * rate.amount)
                            if(logged_in.pouch.amount - price.amount >= 0)
-                              if(@pm.save)
-                                 logged_in.pouch.amount -= price.amount
-                                 @pouch = logged_in.pouch
-                                 @pouch.save
-                                 hoard = Dragonhoard.find_by_id(1)
-                                 hoard.profit += tax
-                                 @hoard = hoard
-                                 @hoard.save
-                                 economyTransaction("Sink", price.amount - tax, logged_in.id, "Points")
-                                 economyTransaction("Tax", tax, logged_in.id, "Points")
-                                 url = "http://www.duelingpets.net/pmboxes/inbox"
-                                 CommunityMailer.messaging(@pm, "PM", url).deliver_now
-                                 flash[:success] = "#{@pm.title} was successfully created."
-                                 redirect_to pmboxes_outbox_path
+                              if(logged_in.gameinfo.startgame)
+                                 if(@pm.save)
+                                    logged_in.pouch.amount -= price.amount
+                                    @pouch = logged_in.pouch
+                                    @pouch.save
+                                    hoard = Dragonhoard.find_by_id(1)
+                                    hoard.profit += tax
+                                    @hoard = hoard
+                                    @hoard.save
+                                    economyTransaction("Sink", price.amount - tax, logged_in.id, "Points")
+                                    economyTransaction("Tax", tax, logged_in.id, "Points")
+                                    url = "http://www.duelingpets.net/pmboxes/inbox"
+                                    CommunityMailer.messaging(@pm, "PM", url).deliver_now
+                                    flash[:success] = "#{@pm.title} was successfully created."
+                                    redirect_to pmboxes_outbox_path
+                                 else
+                                    render "new"
+                                 end
                               else
-                                 render "new"
+                                 flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                                 redirect_to edit_gameinfo_path(logged_in.gameinfo)
                               end
                            else
                               flash[:error] = "Insufficient funds to create a PM!"
