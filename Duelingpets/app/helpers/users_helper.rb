@@ -408,9 +408,11 @@ module UsersHelper
                         if(userFound.pouch.dreyoreamount == 0 && userFound.pouch.firstdreyore)
                            userFound.pouch.firstdreyore = false
                         end
-                        economyTransaction("Source", points, userFound.id, "Points")
-                        @pouch = userFound.pouch
-                        @pouch.save
+                        if(userFound.gameinfo.startgame)
+                           economyTransaction("Source", points, userFound.id, "Points")
+                           @pouch = userFound.pouch
+                           @pouch.save
+                        end
                      else
                         #Flucates the price of dreyore
                         oreFound.extracted = 0
@@ -421,13 +423,20 @@ module UsersHelper
                         if(userFound.pouch.dreyoreamount == 0 && userFound.pouch.firstdreyore)
                            userFound.pouch.firstdreyore = false
                         end
-                        economyTransaction("Source", points, userFound.id, "Points")
-                        @pouch = userFound.pouch
-                        @pouch.save
+                        if(userFound.gameinfo.startgame)
+                           economyTransaction("Source", points, userFound.id, "Points")
+                           @pouch = userFound.pouch
+                           @pouch.save
+                        end
                      end
-                     @ore = oreFound
-                     @ore.save
-                     redirect_to user_path(userFound)
+                     if(userFound.gameinfo.startgame)
+                        @ore = oreFound
+                        @ore.save
+                        redirect_to user_path(userFound)
+                     else
+                        flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                        redirect_to edit_gameinfo_path(userFound.gameinfo)
+                     end
                   else
                      flash[:error] = "You don't have any dreyore to extract!"
                      redirect_to root_path
@@ -580,19 +589,24 @@ module UsersHelper
                      if((upgradechoice.to_i == 1 && level < cupgrade.freecap) || (upgradechoice.to_i == 2 && memlevel < cupgrade.membercap))
                         cost = cupgrade.price * level
                         if(@user.pouch.amount - cost >= 0)
-                           @user.pouch.amount -= cost
-                           @pouch = @user.pouch
-                           @pouch.save
-                           economyTransaction("Sink", cost, @user.id, "Points")
-                           #Maybe add a way for the dragonhoard to retrieve these points
-                           @pouchslot = @user.pouch.pouchslot
-                           @pouchslot.save
-                           if(upgradechoice.to_i == 1)
-                              flash[:success] = "#{upgrade} is now at free level #{level}"
+                           if(@user.gameinfo.startgame)
+                              @user.pouch.amount -= cost
+                              @pouch = @user.pouch
+                              @pouch.save
+                              economyTransaction("Sink", cost, @user.id, "Points")
+                              #Maybe add a way for the dragonhoard to retrieve these points
+                              @pouchslot = @user.pouch.pouchslot
+                              @pouchslot.save
+                              if(upgradechoice.to_i == 1)
+                                 flash[:success] = "#{upgrade} is now at free level #{level}"
+                              else
+                                 flash[:success] = "#{upgrade} is now at member level #{memlevel}"
+                              end
+                              redirect_to user_path(@user)
                            else
-                              flash[:success] = "#{upgrade} is now at member level #{memlevel}"
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(@user.gameinfo)
                            end
-                           redirect_to user_path(@user)
                         else
                            flash[:error] = "You don't have enough points to purchase this!"
                            redirect_to root_path

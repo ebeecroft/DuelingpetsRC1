@@ -73,18 +73,28 @@ module ShoutsHelper
             if((logged_in.pouch.privilege == "Admin" || logged_in.pouch.privilege == "Manager") || ((shoutFound.user_id == logged_in.id) || (shoutFound.shoutbox.user_id == logged_in.id)))
                cleanup = Fieldcost.find_by_name("Shoutcleanup")
                if(shoutFound.user.pouch.amount - cleanup.amount >= 0)
-                  #Removes the content and decrements the owner's pouch
-                  shoutFound.user.pouch.amount -= cleanup.amount
-                  @pouch = shoutFound.user.pouch
-                  @pouch.save
-                  economyTransaction("Sink", cleanup.amount, shoutFound.user.id, "Points")
-                  flash[:success] = "Shout was successfully removed!"
-                  @shout = shoutFound
-                  @shout.destroy
-                  if(logged_in.pouch.privilege == "Admin")
-                     redirect_to shouts_path
+                  if(shoutFound.user.gameinfo.startgame)
+                     #Removes the content and decrements the owner's pouch
+                     shoutFound.user.pouch.amount -= cleanup.amount
+                     @pouch = shoutFound.user.pouch
+                     @pouch.save
+                     economyTransaction("Sink", cleanup.amount, shoutFound.user.id, "Points")
+                     flash[:success] = "Shout was successfully removed!"
+                     @shout = shoutFound
+                     @shout.destroy
+                     if(logged_in.pouch.privilege == "Admin")
+                        redirect_to shouts_path
+                     else
+                        redirect_to user_path(shoutFound.shoutbox.user)
+                     end
                   else
-                     redirect_to user_path(shoutFound.shoutbox.user)
+                     if(logged_in.pouch.privilege == "Admin")
+                        flash[:error] = "The user has not activated the game yet!"
+                        redirect_to shouts_path
+                     else
+                        flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                        redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                     end
                   end
                else
                   flash[:error] = "#{shoutFound.user.vname}'s has insufficient points to remove the shout!"
@@ -203,23 +213,28 @@ module ShoutsHelper
                            rate = Ratecost.find_by_name("Purchaserate")
                            tax = (price.amount * rate.amount)
                            if(shoutFound.user.pouch.amount - price.amount >= 0)
-                              shoutFound.user.pouch.amount -= price.amount
-                              @pouch = shoutFound.user.pouch
-                              @pouch.save
-                              hoard = Dragonhoard.find_by_id(1)
-                              hoard.profit += tax
-                              @hoard = hoard
-                              @hoard.save
-                              shoutFound.reviewed = true
-                              shoutFound.reviewed_on = currentTime
-                              @shout = shoutFound
-                              @shout.save
-                              economyTransaction("Sink", price - tax, shoutFound.user.id, "Points")
-                              economyTransaction("Tax", tax, shoutFound.user.id, "Points")
-                              url = "None"
-                              CommunityMailer.shouts(@shout, "Approved", url).deliver_now
-                              flash[:success] = "#{@shout.user.vname}'s shout message #{@shout.message} was approved!"
-                              redirect_to shouts_review_path
+                              if(shoutFound.user.gameinfo.startgame)
+                                 shoutFound.user.pouch.amount -= price.amount
+                                 @pouch = shoutFound.user.pouch
+                                 @pouch.save
+                                 hoard = Dragonhoard.find_by_id(1)
+                                 hoard.profit += tax
+                                 @hoard = hoard
+                                 @hoard.save
+                                 shoutFound.reviewed = true
+                                 shoutFound.reviewed_on = currentTime
+                                 @shout = shoutFound
+                                 @shout.save
+                                 economyTransaction("Sink", price - tax, shoutFound.user.id, "Points")
+                                 economyTransaction("Tax", tax, shoutFound.user.id, "Points")
+                                 url = "None"
+                                 CommunityMailer.shouts(@shout, "Approved", url).deliver_now
+                                 flash[:success] = "#{@shout.user.vname}'s shout message #{@shout.message} was approved!"
+                                 redirect_to shouts_review_path
+                              else
+                                 flash[:error] = "The user hasn't started the game yet!"
+                                 redirect_to shouts_review_path
+                              end
                            else
                               flash[:error] = "Insufficient funds to create a shout!"
                               redirect_to shouts_review_path

@@ -90,17 +90,27 @@ module SubplaylistsHelper
                   if(logged_in && ((logged_in.id == subplaylistFound.user_id) || logged_in.pouch.privilege == "Admin"))
                      cleanup = Fieldcost.find_by_name("Subplaylistcleanup")
                      if(subplaylistFound.user.pouch.amount - cleanup.amount >= 0)
-                        #Removes the content and decrements the owner's pouch
-                        subplaylistFound.user.pouch.amount -= cleanup.amount
-                        @pouch = subplaylistFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", cleanup.amount, subplaylistFound.user.id, "Points")
-                        flash[:success] = "#{@subplaylist.title} was successfully removed."
-                        @subplaylist.destroy
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to subplaylists_path
+                        if(subplaylistFound.user.gameinfo.startgame)
+                           #Removes the content and decrements the owner's pouch
+                           subplaylistFound.user.pouch.amount -= cleanup.amount
+                           @pouch = subplaylistFound.user.pouch
+                           @pouch.save
+                           economyTransaction("Sink", cleanup.amount, subplaylistFound.user.id, "Points")
+                           flash[:success] = "#{@subplaylist.title} was successfully removed."
+                           @subplaylist.destroy
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to subplaylists_path
+                           else
+                              redirect_to channel_mainplaylist_path(subplaylistFound.mainplaylist.channel, subplaylist.mainplaylist)
+                           end
                         else
-                           redirect_to channel_mainplaylist_path(subplaylistFound.mainplaylist.channel, subplaylist.mainplaylist)
+                           if(logged_in.pouch.privilege == "Admin")
+                              flash[:error] = "The director has not activated the game yet!"
+                              redirect_to subplaylists_path
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         end
                      else
                         flash[:error] = "#{@subplaylist.user.vname}'s has insufficient points to remove the subplaylist!"
@@ -167,21 +177,26 @@ module SubplaylistsHelper
                            rate = Ratecost.find_by_name("Purchaserate")
                            tax = (price.amount * rate.amount)
                            if(logged_in.pouch.amount - price.amount >= 0)
-                              if(@subplaylist.save)
-                                 logged_in.pouch.amount -= price.amount
-                                 @pouch = logged_in.pouch
-                                 @pouch.save
-                                 hoard = Dragonhoard.find_by_id(1)
-                                 hoard.profit += tax
-                                 @hoard = hoard
-                                 @hoard.save
-                                 economyTransaction("Sink", price.amount - tax, subplaylistFound.user.id, "Points")
-                                 economyTransaction("Tax", tax, subplaylistFound.user.id, "Points")
-                                 updateChannel(@subplaylist.mainplaylist)
-                                 flash[:success] = "#{@subplaylist.title} was successfully created."
-                                 redirect_to mainplaylist_subplaylist_path(@mainplaylist, @subplaylist)
+                              if(logged_in.gameinfo.startgame)
+                                 if(@subplaylist.save)
+                                    logged_in.pouch.amount -= price.amount
+                                    @pouch = logged_in.pouch
+                                    @pouch.save
+                                    hoard = Dragonhoard.find_by_id(1)
+                                    hoard.profit += tax
+                                    @hoard = hoard
+                                    @hoard.save
+                                    economyTransaction("Sink", price.amount - tax, subplaylistFound.user.id, "Points")
+                                    economyTransaction("Tax", tax, subplaylistFound.user.id, "Points")
+                                    updateChannel(@subplaylist.mainplaylist)
+                                    flash[:success] = "#{@subplaylist.title} was successfully created."
+                                    redirect_to mainplaylist_subplaylist_path(@mainplaylist, @subplaylist)
+                                 else
+                                    render "new"
+                                 end
                               else
-                                 render "new"
+                                 flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                                 redirect_to edit_gameinfo_path(logged_in.gameinfo)
                               end
                            else
                               flash[:error] = "Insufficient funds to create a subplaylist!"

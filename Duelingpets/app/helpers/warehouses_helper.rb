@@ -227,152 +227,148 @@ module WarehousesHelper
                   petname = getWarehouseParams("Partnername")
                   description = getWarehouseParams("Partnerdescription")
                   validPurchase = (warehouseFound && ware && wareIndex)
+                  cost = 0
+                  emeralds = 0
+                  if(logged_in.partners.count > 0)
+                     cost = getWarecost(getWareItems(wareIndex, ware, "Den"), wareIndex, ware, "Den", "Point")
+                     emeralds = getWarecost(getWareItems(wareIndex, ware, "Den"), wareIndex, ware, "Den", "Emerald")
+                  end
+                  buyable = ((logged_in.pouch.amount - cost) >= 0 && (logged_in.pouch.emeraldamount - emeralds) >= 0)
+                  if(logged_in && logged_in.gaminfo.startgame && validPurcase && buyable)
+                     pet = Creature.find_by_id(getWareItems(wareIndex, ware, "Den"))
+                     petCount = logged_in.partners.count
+                     partner = storePartner(logged_in, pet)
+                     @partner = partner
+                     buildPartner = false
+                     if(petCount > 0 && @partner.save)
+                        logged_in.pouch.amount -= cost
+                        logged_in.pouch.emeraldamount -= emeralds
+                        @pouch = logged_in.pouch
+                        @pouch.save
+                        if(pet.user_id != logged_in.id)
+                           owner = Pouch.find_by_user_id(pet.user_id)
+                           points = (cost  * 0.20).round
+                           ems = (emeralds * 0.08).round
+                           owner.amount += points
+                           owner.emeraldamount += ems
+                           @owner = owner
+                           @owner.save
+                           profitP = cost - points
+                           profitE = emeralds - ems
+                           economyTransaction("Source", points, pet.creaturetype.name, owner.user.id, "Points")
+                           economyTransaction("Source", ems, pet.creaturetype.name, owner.user.id, "Emeralds")
+                        else
+                           profitP = cost
+                           profitE = emeralds
+                        end
+                        #Gives the points to the warehouse
+                        warehouseFound.profit += profitP
+                        warehouseFound.emeralds += profitE
+                        economyTransaction("Sink", cost, pet.creaturetype.name, logged_in.id, "Points")
+                        economyTransaction("Sink", emeralds, pet.creaturetype.name, logged_in.id, "Points")
+                        economyTransaction("Tax", profitP, pet.creaturetype.name, "None", "Points")
+                        economyTransaction("Tax", profitE, pet.creaturetype.name, "None", "Emeralds")
+                        @warehouse = warehouseFound
+                        @warehouse.save
+                        buildPartner = true
+                     elsif(petCount == 0 && @partner.save)
+                        buildPartner = true
+                     end
+                     
+                     if(buildPartner)
+                        #Builds the partners attributes
+                        newEquip = Equip.new(params[:equip])
+                        newEquip.partner_id = partner.id
+                        @equip = newEquip
+                        @equip.save
+                        newFight = Fight.new(params[:fight])
+                        newFight.partner_id = partner.id
+                        @fight = newFight
+                        @fight.save
+                           
+                        #Saves the updated warehouse inventory
+                        updateWares(wareIndex, ware, "Den")
+                        @wpetden = ware
+                        @wpetden.save
+                        flash[:success] = "Pet #{@partner.name} was added to the party!"
+                        redirect_to user_partner_path(partner.user, partner)
+                     else
+                        flash[:error] = "Partner name or description was empty or spaces were used instead of - as part of the name!"
+                        redirect_to warehouse_path(warehouseFound.name)
+                     end
+                  else
+                     if(logged_in && !logged.gameinfo.startgame)
+                        flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                        redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                     elsif(!buyable)
+                        flash[:error] = "The user didn't have enough points/emeralds to afford the pet!"
+                        redirect_to root_path
+                     else
+                        flash[:error] = "The pet the user selected was an invalid id!"
+                        redirect_to root_path
+                     end
+                  end                  
                else
                   wareIndex = getWarehouseParams("Slotindex")
                   ware = Witemshelf.find_by_id(getWarehouseParams("WshelfId"))
                   slotFound = Inventoryslot.find_by_id(getWarehouseParams("SlotId"))
                   validPurchase = (warehouseFound && slotFound && ware && wareIndex && (slotFound.inventory_id == logged_in.inventory.id))
-               end
-               
-               if(logged_in && validPurchase)
-                  cost = 0
-                  emeralds = 0
-                  if(type == "buypet")
-                     cost = getWarecost(getWareItems(wareIndex, ware, "Den"), wareIndex, ware, "Den", "Point")
-                     emeralds = getWarecost(getWareItems(wareIndex, ware, "Den"), wareIndex, ware, "Den", "Emerald")
-                  else
-                     cost = getWarecost(getWareItems(wareIndex, ware, "Shelf"), wareIndex, ware, "Shelf", "Point")
-                     emeralds = getWarecost(getWareItems(wareIndex, ware, "Shelf"), wareIndex, ware, "Shelf", "Emerald")
-                  end
+                  cost = getWarecost(getWareItems(wareIndex, ware, "Shelf"), wareIndex, ware, "Shelf", "Point")
+                  emeralds = getWarecost(getWareItems(wareIndex, ware, "Shelf"), wareIndex, ware, "Shelf", "Emerald")
                   buyable = ((logged_in.pouch.amount - cost) >= 0 && (logged_in.pouch.emeraldamount - emeralds) >= 0)
-                  if(buyable)
-                     if(type == "buypet")
-                        pet = Creature.find_by_id(getWareItems(wareIndex, ware, "Den"))
-                        petCount = logged_in.partners.count
-                        partner = storePartner(logged_in, pet)
-                        @partner = partner
-                        if(@partner.save)
-                           if(petCount > 0)
-                              logged_in.pouch.amount -= cost
-                              logged_in.pouch.emeraldamount -= emeralds
-                              @pouch = logged_in.pouch
-                              @pouch.save
-                              if(pet.user_id != logged_in.id)
-                                 owner = Pouch.find_by_user_id(pet.user_id)
-                                 points = (cost  * 0.20).round
-                                 ems = (emeralds * 0.08).round
-                                 owner.amount += points
-                                 owner.emeraldamount += ems
-                                 @owner = owner
-                                 @owner.save
-                                 warehouseFound.profit += (cost - points)
-                                 warehouseFound.emeralds += (emeralds - ems)
-                                 economyTransaction("Sink", cost, pet.creaturetype.name, logged_in.id, "Points")
-                                 economyTransaction("Sink", emeralds, pet.creaturetype.name, logged_in.id, "Points")
-                                 economyTransaction("Tax", (cost - points), pet.creaturetype.name, "None", "Points")
-                                 economyTransaction("Tax", (emeralds - ems), pet.creaturetype.name, "None", "Emeralds")
-                                 economyTransaction("Source", points, pet.creaturetype.name, owner.user.id, "Points")
-                                 economyTransaction("Source", ems, pet.creaturetype.name, owner.user.id, "Emeralds")
-                              else
-                                 warehouseFound.profit += cost
-                                 warehouseFound.emeralds += emeralds
-                                 economyTransaction("Sink", cost, pet.creaturetype.name, logged_in.id, "Points")
-                                 economyTransaction("Sink", emeralds, pet.creaturetype.name, logged_in.id, "Points")
-                                 economyTransaction("Tax", cost, pet.creaturetype.name, "None", "Points")
-                                 economyTransaction("Tax", emeralds, pet.creaturetype.name, "None", "Emeralds")
-                              end
-                              @warehouse = warehouseFound
-                              @warehouse.save
-                           end
-                           #Builds the partners equipbag
-                           newEquip = Equip.new(params[:equip])
-                           newEquip.partner_id = partner.id
-                           @equip = newEquip
-                           @equip.save
-
-                           #Builds the partners fight
-                           newFight = Fight.new(params[:fight])
-                           newFight.partner_id = partner.id
-                           @fight = newFight
-                           @fight.save
-                           
-                           #Saves the updated warehouse inventory
-                           updateWares(wareIndex, ware, "Den")
-                           @wpetden = ware
-                           @wpetden.save
-                           flash[:success] = "Pet #{@partner.name} was added to the party!"
-                           redirect_to user_partner_path(partner.user, partner)
-                        else
-                           flash[:error] = "Partner name or description was empty or spaces were used instead of - as part of the name!"
-                           redirect_to warehouse_path(warehouseFound.name)
-                        end
+                  room = storeitem(slotFound, getWareItems(wareIndex, ware, "Shelf"))
+                  if(logged_in && logged_in.gaminfo.startgame && validPurcase && buyable && room)
+                     #Buys item
+                     logged_in.pouch.amount -= cost
+                     logged_in.pouch.emeraldamount -= emeralds
+                     @pouch = logged_in.pouch
+                     @pouch.save
+                     updateWares(wareIndex, ware, "Shelf")
+                     @witemshelf = ware
+                     @witemshelf.save
+                     @inventoryslot = slotFound
+                     @inventoryslot.save
+                     item = Item.find_by_id(getWareItems(wareIndex, ware, "Shelf"))
+                     if(item.user_id != logged_in.id)
+                        owner = Pouch.find_by_user_id(item.user_id)
+                        points = (cost * 0.20).round
+                        ems = (emeralds * 0.08).round
+                        owner.amount += points
+                        owner.emeraldamount += ems
+                        @owner = owner
+                        @owner.save
+                        profitP = cost - points
+                        profitE = emeralds - ems
+                        economyTransaction("Source", points, item.itemtype.name, owner.user.id, "Points")
+                        economyTransaction("Source", ems, item.itemtype.name, owner.user.id, "Emeralds")
                      else
-                        room = storeitem(slotFound, getWareItems(wareIndex, ware, "Shelf"))
-                        if(room)
-                           #Buys item
-                           logged_in.pouch.amount -= cost
-                           logged_in.pouch.emeraldamount -= emeralds
-                           @pouch = logged_in.pouch
-                           @pouch.save
-                           updateWares(wareIndex, ware, "Shelf")
-                           @witemshelf = ware
-                           @witemshelf.save
-                           @inventoryslot = slotFound
-                           @inventoryslot.save
-                        
-                           #Eventually need to keep track of transactions
-                           item = Item.find_by_id(getWareItems(wareIndex, ware, "Shelf"))
-                           if(item.user_id != logged_in.id)
-                              owner = Pouch.find_by_user_id(item.user_id)
-                              points = (cost * 0.20).round
-                              ems = (emeralds * 0.08).round
-                              owner.amount += points
-                              owner.emeraldamount += ems
-                              @owner = owner
-                              @owner.save
-                              warehouseFound.profit += (cost - points)
-                              warehouseFound.emeralds += (emeralds - ems)
-                              economyTransaction("Sink", cost, item.itemtype.name, logged_in.id, "Points")
-                              economyTransaction("Sink", emeralds, item.itemtype.name, logged_in.id, "Points")
-                              economyTransaction("Tax", (cost - points), item.itemtype.name, "None", "Points")
-                              economyTransaction("Tax", (emeralds - ems), item.itemtype.name, "None", "Emeralds")
-                              economyTransaction("Source", points, item.itemtype.name, owner.user.id, "Points")
-                              economyTransaction("Source", ems, item.itemtype.name, owner.user.id, "Emeralds")
-                           else
-                              warehouseFound.profit += cost
-                              warehouseFound.emeralds += emeralds
-                              economyTransaction("Sink", cost, item.itemtype.name, logged_in.id, "Points")
-                              economyTransaction("Sink", emeralds, item.itemtype.name, logged_in.id, "Points")
-                              economyTransaction("Tax", cost, item.itemtype.name, "None", "Points")
-                              economyTransaction("Tax", emeralds, item.itemtype.name, "None", "Emeralds")
-                           end
-                           @warehouse = warehouseFound
-                           @warehouse.save
-                           flash[:success] = "Item #{item.name} was added to the inventory!"
-                           redirect_to user_inventory_path(@inventoryslot.inventory.user, @inventoryslot.inventory)
-                        else
-                           flash[:error] = "No room to store the item #{item.name}!"
-                           redirect_to user_path(logged_in.id)
-                        end
+                        profitP = cost
+                        profitE = emeralds
                      end
+                     #Gives the points to the warehouse
+                     warehouseFound.profit += profitP
+                     warehouseFound.emeralds += profitE
+                     economyTransaction("Sink", cost, item.itemtype.name, logged_in.id, "Points")
+                     economyTransaction("Sink", emeralds, item.itemtype.name, logged_in.id, "Points")
+                     economyTransaction("Tax", profitP, item.itemtype.name, "None", "Points")
+                     economyTransaction("Tax", profitE, item.itemtype.name, "None", "Emeralds")
+                     @warehouse = warehouseFound
+                     @warehouse.save
+                     flash[:success] = "Item #{item.name} was added to the inventory!"
+                     redirect_to user_inventory_path(@inventoryslot.inventory.user, @inventoryslot.inventory)
                   else
-                     msg = "Insufficient funds to "
-                     wareItem = nil
-                     if(type == "buypet")
-                        wareItem = Creature.find_by_id(getWareItems(wareIndex, ware, "Den"))
-                        msg2 = "adopt the creature"
-                        msg += msg2
+                     if(logged_in && !logged_in.gameinfo.startgame)
+                        flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                        redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                     else(!room)
+                        flash[:error] = "The user doesn't have enough room to store the item!"
+                     elsif(!buyable)
+                        flash[:error] = "The user didn't have enough points/emeralds to afford the item!"
                      else
-                        wareItem = Item.find_by_id(getWareItems(wareIndex, ware, "Shelf"))
-                        msg2 = "purchase the item"
-                        msg += msg2
+                        flash[:error] = "The item the user selected was an invalid id!"
                      end
-                     msg += " #{wareItem.name}"
-                     flash[:error] = msg
-                     redirect_to user_path(logged_in.id)
+                     redirect_to root_path
                   end
-               else
-                  redirect_to root_path
                end
             end
          end

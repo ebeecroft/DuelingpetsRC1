@@ -128,22 +128,27 @@ module UserupgradesHelper
             price = getUpgrades(buytype, "Cost", pouchFound, upgrade)
             message = "#{buytype}"
             if(price != 0 && (pouchFound.amount - price >= 0))
-               #Prints out the object that was purchased
-               tax = (price * 0.05).round
-               pouchFound.amount -= price
-               message1 = "#{buytype}"
-               level = getUpgrades(buytype, "Purchase", pouchFound, upgrade)
-               message2 = "#{level}"
-               @pouch = pouchFound
-               @pouch.save
-               hoard = Dragonhoard.find_by_id(1)
-               hoard.profit += tax
-               @hoard = hoard
-               @hoard.save
-               economyTransaction("Sink", price - tax, logged_in.id, "Points") #Might have emeralds later
-               economyTransaction("Tax", tax, logged_in.id, "Points")
-               flash[:success] = "Your " + message1 + " level is now: " + message2
-               redirect_to user_path(@pouch.user.vname)
+               if(logged_in.gameinfo.startgame)
+                  #Prints out the object that was purchased
+                  tax = (price * 0.05).round
+                  pouchFound.amount -= price
+                  message1 = "#{buytype}"
+                  level = getUpgrades(buytype, "Purchase", pouchFound, upgrade)
+                  message2 = "#{level}"
+                  @pouch = pouchFound
+                  @pouch.save
+                  hoard = Dragonhoard.find_by_id(1)
+                  hoard.profit += tax
+                  @hoard = hoard
+                  @hoard.save
+                  economyTransaction("Sink", price - tax, logged_in.id, "Points") #Might have emeralds later
+                  economyTransaction("Tax", tax, logged_in.id, "Points")
+                  flash[:success] = "Your " + message1 + " level is now: " + message2
+                  redirect_to user_path(@pouch.user.vname)
+               else
+                  flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                  redirect_to edit_gameinfo_path(@user.gameinfo)
+               end
             else
                if(price == 0)
                   message = "You have already upgraded this feature to the max."

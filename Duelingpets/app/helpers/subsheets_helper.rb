@@ -90,17 +90,27 @@ module SubsheetsHelper
                   if(logged_in && ((logged_in.id == subsheetFound.user_id) || logged_in.pouch.privilege == "Admin"))
                      cleanup = Fieldcost.find_by_name("Subsheetcleanup")
                      if(subsheetFound.user.pouch.amount - cleanup.amount >= 0)
-                        #Removes the content and decrements the owner's pouch
-                        subsheetFound.user.pouch.amount -= cleanup.amount
-                        @pouch = subsheetFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", cleanup.amount, subsheetFound.user.id, "Points")
-                        flash[:success] = "#{@subsheet.title} was successfully removed."
-                        @subsheet.destroy
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to subsheets_path
+                        if(subsheetFound.user.gameinfo.startgame)
+                           #Removes the content and decrements the owner's pouch
+                           subsheetFound.user.pouch.amount -= cleanup.amount
+                           @pouch = subsheetFound.user.pouch
+                           @pouch.save
+                           economyTransaction("Sink", cleanup.amount, subsheetFound.user.id, "Points")
+                           flash[:success] = "#{@subsheet.title} was successfully removed."
+                           @subsheet.destroy
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to subsheets_path
+                           else
+                              redirect_to jukebox_mainsheet_path(subsheetFound.mainsheet.jukebox, subsheet.mainsheet)
+                           end
                         else
-                           redirect_to jukebox_mainsheet_path(subsheetFound.mainsheet.jukebox, subsheet.mainsheet)
+                           if(logged_in.pouch.privilege == "Admin")
+                              flash[:error] = "The composer has not activated the game yet!"
+                              redirect_to subsheets_path
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         end
                      else
                         flash[:error] = "#{@subsheet.user.vname}'s has insufficient points to remove the subsheet!"
@@ -167,21 +177,26 @@ module SubsheetsHelper
                            rate = Ratecost.find_by_name("Purchaserate")
                            tax = (price.amount * rate.amount)
                            if(logged_in.pouch.amount - price.amount >= 0)
-                              if(@subsheet.save)
-                                 logged_in.pouch.amount -= price.amount
-                                 @pouch = logged_in.pouch
-                                 @pouch.save
-                                 hoard = Dragonhoard.find_by_id(1)
-                                 hoard.profit += tax
-                                 @hoard = hoard
-                                 @hoard.save
-                                 economyTransaction("Sink", price.amount - tax, newSubsheet.user.id, "Points")
-                                 economyTransaction("Tax", tax, newSubsheet.user.id, "Points")
-                                 updateJukebox(@subsheet.mainsheet)
-                                 flash[:success] = "#{@subsheet.title} was successfully created."
-                                 redirect_to mainsheet_subsheet_path(@mainsheet, @subsheet)
+                              if(logged_in.gameinfo.startgame)
+                                 if(@subsheet.save)
+                                    logged_in.pouch.amount -= price.amount
+                                    @pouch = logged_in.pouch
+                                    @pouch.save
+                                    hoard = Dragonhoard.find_by_id(1)
+                                    hoard.profit += tax
+                                    @hoard = hoard
+                                    @hoard.save
+                                    economyTransaction("Sink", price.amount - tax, newSubsheet.user.id, "Points")
+                                    economyTransaction("Tax", tax, newSubsheet.user.id, "Points")
+                                    updateJukebox(@subsheet.mainsheet)
+                                    flash[:success] = "#{@subsheet.title} was successfully created."
+                                    redirect_to mainsheet_subsheet_path(@mainsheet, @subsheet)
+                                 else
+                                    render "new"
+                                 end
                               else
-                                 render "new"
+                                 flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                                 redirect_to edit_gameinfo_path(logged_in.gameinfo)
                               end
                            else
                               flash[:error] = "Insufficient funds to create a subsheet!"

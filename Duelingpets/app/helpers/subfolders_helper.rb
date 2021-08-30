@@ -90,17 +90,27 @@ module SubfoldersHelper
                   if(logged_in && ((logged_in.id == subfolderFound.user_id) || logged_in.pouch.privilege == "Admin"))
                      cleanup = Fieldcost.find_by_name("Subfoldercleanup")
                      if(subfolderFound.user.pouch.amount - cleanup.amount >= 0)
-                        #Removes the content and decrements the owner's pouch
-                        subfolderFound.user.pouch.amount -= cleanup.amount
-                        @pouch = subfolderFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", cleanup.amount, subfolderFound.user.id, "Points")
-                        flash[:success] = "#{@subfolder.title} was successfully removed."
-                        @subfolder.destroy
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to subfolders_path
+                        if(subfolderFound.user.gameinfo.startgame)
+                           #Removes the content and decrements the owner's pouch
+                           subfolderFound.user.pouch.amount -= cleanup.amount
+                           @pouch = subfolderFound.user.pouch
+                           @pouch.save
+                           economyTransaction("Sink", cleanup.amount, subfolderFound.user.id, "Points")
+                           flash[:success] = "#{@subfolder.title} was successfully removed."
+                           @subfolder.destroy
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to subfolders_path
+                           else
+                              redirect_to gallery_mainfolder_path(subfolderFound.mainfolder.gallery, subfolder.mainfolder)
+                           end
                         else
-                           redirect_to gallery_mainfolder_path(subfolderFound.mainfolder.gallery, subfolder.mainfolder)
+                           if(logged_in.pouch.privilege == "Admin")
+                              flash[:error] = "The artist has not activated the game yet!"
+                              redirect_to subfolders_path
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         end
                      else
                         flash[:error] = "#{@subfolder.user.vname}'s has insufficient points to remove the subfolder!"
@@ -167,21 +177,26 @@ module SubfoldersHelper
                            rate = Ratecost.find_by_name("Purchaserate")
                            tax = (price.amount * rate.amount)
                            if(logged_in.pouch.amount - price.amount >= 0)
-                              if(@subfolder.save)
-                                 logged_in.pouch.amount -= price.amount
-                                 @pouch = logged_in.pouch
-                                 @pouch.save
-                                 hoard = Dragonhoard.find_by_id(1)
-                                 hoard.profit += tax
-                                 @hoard = hoard
-                                 @hoard.save
-                                 economyTransaction("Sink", price.amount - tax, subfolderFound.user.id, "Points")
-                                 economyTransaction("Tax", tax, subfolderFound.user.id, "Points")
-                                 updateGallery(@subfolder.mainfolder)
-                                 flash[:success] = "#{@subfolder.title} was successfully created."
-                                 redirect_to mainfolder_subfolder_path(@mainfolder, @subfolder)
+                              if(logged_in.gameinfo.startgame)
+                                 if(@subfolder.save)
+                                    logged_in.pouch.amount -= price.amount
+                                    @pouch = logged_in.pouch
+                                    @pouch.save
+                                    hoard = Dragonhoard.find_by_id(1)
+                                    hoard.profit += tax
+                                    @hoard = hoard
+                                    @hoard.save
+                                    economyTransaction("Sink", price.amount - tax, subfolderFound.user.id, "Points")
+                                    economyTransaction("Tax", tax, subfolderFound.user.id, "Points")
+                                    updateGallery(@subfolder.mainfolder)
+                                    flash[:success] = "#{@subfolder.title} was successfully created."
+                                    redirect_to mainfolder_subfolder_path(@mainfolder, @subfolder)
+                                 else
+                                    render "new"
+                                 end
                               else
-                                 render "new"
+                                 flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                                 redirect_to edit_gameinfo_path(logged_in.gameinfo)
                               end
                            else
                               flash[:error] = "Insufficient funds to create a subfolder!"

@@ -101,17 +101,27 @@ module SoundsHelper
                   if(logged_in && ((logged_in.id == soundFound.user_id) || logged_in.pouch.privilege == "Admin"))
                      cleanup = Fieldcost.find_by_name("Soundcleanup")
                      if(soundFound.user.pouch.amount - cleanup.amount >= 0)
-                        #Removes the content and decrements the owner's pouch
-                        soundFound.user.pouch.amount -= cleanup.amount
-                        @pouch = soundFound.user.pouch
-                        @pouch.save
-                        economyTransaction("Sink", cleanup.amount, soundFound.user.id, "Points")
-                        flash[:success] = "#{@sound.title} was successfully removed."
-                        @sound.destroy
-                        if(logged_in.pouch.privilege == "Admin")
-                           redirect_to sounds_path
+                        if(soundFound.user.gameinfo.startgame)
+                           #Removes the content and decrements the owner's pouch
+                           soundFound.user.pouch.amount -= cleanup.amount
+                           @pouch = soundFound.user.pouch
+                           @pouch.save
+                           economyTransaction("Sink", cleanup.amount, soundFound.user.id, "Points")
+                           flash[:success] = "#{@sound.title} was successfully removed."
+                           @sound.destroy
+                           if(logged_in.pouch.privilege == "Admin")
+                              redirect_to sounds_path
+                           else
+                              redirect_to mainsheet_subsheet_path(soundFound.subsheet.mainsheet, soundFound.subsheet)
+                           end
                         else
-                           redirect_to mainsheet_subsheet_path(soundFound.subsheet.mainsheet, soundFound.subsheet)
+                           if(logged_in.pouch.privilege == "Admin")
+                              flash[:error] = "The composer has not activated the game yet!"
+                              redirect_to sounds_path
+                           else
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                           end
                         end
                      else
                         flash[:error] = "#{@sound.user.vname}'s has insufficient points to remove the sound!"
@@ -259,23 +269,28 @@ module SoundsHelper
                   if(soundFound)
                      if((logged_in.pouch.privilege == "Admin") || ((logged_in.pouch.privilege == "Keymaster") || (logged_in.pouch.privilege == "Reviewer")))
                         if(type == "approve")
-                           soundFound.reviewed = true
-                           soundFound.reviewed_on = currentTime
-                           updateJukebox(soundFound.subsheet)
+                           if(soundFound.user.gameinfo.startgame)
+                              soundFound.reviewed = true
+                              soundFound.reviewed_on = currentTime
+                              updateJukebox(soundFound.subsheet)
 
-                           #Adds the points to the user's pouch
-                           soundpoints = Fieldcost.find_by_name("Sound")
-                           pointsForSound = soundpoints.amount
-                           @sound = soundFound
-                           @sound.save
-                           pouch = Pouch.find_by_user_id(@sound.user_id)
-                           pouch.amount += pointsForSound
-                           @pouch = pouch
-                           @pouch.save
-                           economyTransaction("Source", pointsForSound, soundFound.user.id, "Points")
-                           ContentMailer.content_approved(@sound, "Sound", pointsForSound).deliver_now
-                           flash[:success] = "#{@sound.user.vname}'s sound #{@sound.title} was approved."
-                           redirect_to sounds_review_path
+                              #Adds the points to the user's pouch
+                              soundpoints = Fieldcost.find_by_name("Sound")
+                              pointsForSound = soundpoints.amount
+                              @sound = soundFound
+                              @sound.save
+                              pouch = Pouch.find_by_user_id(@sound.user_id)
+                              pouch.amount += pointsForSound
+                              @pouch = pouch
+                              @pouch.save
+                              economyTransaction("Source", pointsForSound, soundFound.user.id, "Points")
+                              ContentMailer.content_approved(@sound, "Sound", pointsForSound).deliver_now
+                              flash[:success] = "#{@sound.user.vname}'s sound #{@sound.title} was approved."
+                              redirect_to sounds_review_path
+                           else
+                              flash[:error] = "The composer hasn't started the game yet!"
+                              redirect_to sounds_review_path
+                           end
                         else
                            @sound = soundFound
                            ContentMailer.content_denied(@sound, "Sound").deliver_now

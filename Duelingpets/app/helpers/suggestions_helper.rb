@@ -69,18 +69,27 @@ module SuggestionsHelper
                elsif(type == "destroy")
                   cleanup = Fieldcost.find_by_name("Suggestioncleanup")
                   if(suggestionFound.user.pouch.amount - cleanup.amount >= 0)
-                     #Removes the content and decrements the owner's pouch
-                     suggestionFound.user.pouch.amount -= cleanup.amount
-                     @pouch = suggestionFound.user.pouch
-                     @pouch.save
-                     economyTransaction("Sink", cleanup.amount, suggestionFound.user.id, "Points")
-                     flash[:success] = "#{@suggestion.name} was successfully removed."
-                     @suggestion.destroy
-                     if(logged_in.pouch.privilege == "Admin")
-                        redirect_to suggestions_path
+                     if(suggestionFound.user.gameinfo.startgame)
+                        #Removes the content and decrements the owner's pouch
+                        suggestionFound.user.pouch.amount -= cleanup.amount
+                        @pouch = suggestionFound.user.pouch
+                        @pouch.save
+                        economyTransaction("Sink", cleanup.amount, suggestionFound.user.id, "Points")
+                        flash[:success] = "#{@suggestion.name} was successfully removed."
+                        @suggestion.destroy
+                        if(logged_in.pouch.privilege == "Admin")
+                           redirect_to suggestions_path
+                        else
+                           redirect_to suggestions_path
+                        end
                      else
-                        redirect_to suggestions_path
-                        #redirect_to mainplaylist_subplaylist_path(movieFound.subplaylist.mainplaylist, movieFound.subplaylist)
+                        if(logged_in.pouch.privilege == "Admin")
+                           flash[:error] = "The user has not activated the game yet!"
+                           redirect_to suggestions_path
+                        else
+                           flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                           redirect_to edit_gameinfo_path(logged_in.gameinfo)
+                        end
                      end
                   else
                      flash[:error] = "#{@suggestion.user.vname}'s has insufficient points to remove the suggestion!"
@@ -88,7 +97,6 @@ module SuggestionsHelper
                         redirect_to suggestions_path
                      else
                         redirect_to suggestions_path
-                        #redirect_to mainplaylist_subplaylist_path(movieFound.subplaylist.mainplaylist, movieFound.subplaylist)
                      end
                   end
                end
@@ -148,17 +156,22 @@ module SuggestionsHelper
                         @user = userFound
 
                         if(type == "create")
-                           if(@suggestion.save)
-                              suggestion = Fieldcost.find_by_name("Suggestion")
-                              logged_in.pouch.amount += suggestion.amount
-                              @pouch = logged_in.pouch
-                              @pouch.save
-                              economyTransaction("Source", suggestion.amount, newSuggestion.user_id, "Points")
-                              ContentMailer.content_created(@suggestion, "Suggestion", suggetion.amount).deliver_now
-                              flash[:success] = "Suggestion #{@suggestion.title} was successfully created."
-                              redirect_to suggestions_path
+                           if(logged_in.gameinfo.startgame)
+                              if(@suggestion.save)
+                                 suggestion = Fieldcost.find_by_name("Suggestion")
+                                 logged_in.pouch.amount += suggestion.amount
+                                 @pouch = logged_in.pouch
+                                 @pouch.save
+                                 economyTransaction("Source", suggestion.amount, newSuggestion.user_id, "Points")
+                                 ContentMailer.content_created(@suggestion, "Suggestion", suggetion.amount).deliver_now
+                                 flash[:success] = "Suggestion #{@suggestion.title} was successfully created."
+                                 redirect_to suggestions_path
+                              else
+                                 render "new"
+                              end
                            else
-                              render "new"
+                              flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
+                              redirect_to edit_gameinfo_path(logged_in.gameinfo)
                            end
                         end
                      else
