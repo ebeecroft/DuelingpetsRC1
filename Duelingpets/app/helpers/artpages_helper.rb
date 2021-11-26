@@ -21,48 +21,64 @@ module ArtpagesHelper
             redirect_to root_path
          else
             logoutExpiredUsers
-            if(current_user && current_user.pouch.privilege == "Admin")
-               if(type == "index")
-                  removeTransactions
-                  allArts = Artpage.order("created_on desc")
+            removeTransactions #Repurpose this to create pages!
+            staff = (logged_in && logged_in.pouch.privilege == "Admin" || logged_in.pouch.privilege == "Keymaster")
+            if(type == "index")
+               #Staff only
+               if(staff)
+                  allPages = Artpage.order("created_on desc")
                   @artpages = Kaminari.paginate_array(allArts).page(getArtpageParams("Page")).per(10)
-               elsif(type == "new" || type == "create")
-                  newArt = Artpage.new
+               else
+                  flash[:error] = "This page is restricted to Staff only!"
+                  redirect_to root_path
+               end
+            elsif(type == "new" || type == "create")
+               #Staff only
+               if(staff)
+                  #Creates the specified page
+                  newPage = Artpage.new
                   if(type == "create")
-                     newArt = Artpage.new(getArtpageParams("Artpage"))
-                     newArt.created_on = currentTime
+                     newPage = Artpage.new(getArtpageParams("Artpage"))
+                     newPage.created_on = currentTime
                   end
-                  @artpage = newArt
+                  @artpage = newPage
                   if(type == "create")
                      if(@artpage.save)
-                        flash[:success] = "The artpage #{@artpage.name} has been successfully created."
+                        flash[:success] = "The page #{@artpage.name} has been successfully created."
                         redirect_to artpages_path
                      else
                         render "new"
                      end
                   end
-               elsif(type == "edit" || type == "update" || type == "destroy")
-                  artFound = Artpage.find_by_id(getArtpageParams("Id"))
-                  if(artFound)
-                     @artpage = artFound
-                     if(type == "update")
-                        if(@artpage.update_attributes(getArtpageParams("Artpage")))
-                           flash[:success] = "The artpage #{@artpage.name} was successfully updated."
-                           redirect_to artpages_path
-                        else
-                           render "edit"
-                        end
-                     elsif(type == "destroy")
-                        flash[:success] = "The artpage #{@artpage.name} was successfully removed."
-                        @artpage.destroy
-                        redirect_to artpages_path
-                     end
-                  else
-                     render "webcontrols/missingpage"
-                  end
+               else
+                  flash[:error] = "This page is restricted to Staff only!"
+                  redirect_to root_path
                end
-            else
-               redirect_to root_path
+            elsif(type == "edit" || type == "update" || type == "destroy")
+               #Staff only
+               pageFound = Artpage.find_by_id(getArtpageParams("Id"))
+               if(staff && pageFound)
+                  @artpage = pageFound
+                  if(type == "update")
+                     if(@artpage.update_attributes(getArtpageParams("Artpage")))
+                        flash[:success] = "The page #{@artpage.name} was successfully updated."
+                        redirect_to artpages_path
+                     else
+                        render "edit"
+                     end
+                  elsif(type == "destroy")
+                     flash[:success] = "The page #{@artpage.name} was successfully removed."
+                     @artpage.destroy
+                     redirect_to artpages_path
+                  end
+               else
+                  if(!pageFound)
+                     flash[:error] = "Page doesn't exist!"
+                  else
+                     flash[:error] = "This page is restricted to Staff only!"
+                  end
+                  redirect_to root_path
+               end
             end
          end
       end

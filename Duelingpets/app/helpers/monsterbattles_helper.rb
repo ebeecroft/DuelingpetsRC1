@@ -262,12 +262,15 @@ module MonsterbattlesHelper
                      partnerFound.inbattle = true
                      
                      #Stores the Monster physical stats
+                     boosts = `public/Resources/Code/monboost/calc`
+                     monAttr = boosts.split(",")
+                     hpBoost, defBoost, agiBoost, atkBoost = monAttr.map{|str| str.to_i}
                      newBattle.monster_plevel = (monsterFound.level - 1)
-                     newBattle.monster_chp = getMonsterStats(monsterFound, "HP")
-                     newBattle.monster_hp = getMonsterStats(monsterFound, "HP")
-                     newBattle.monster_atk = getMonsterStats(monsterFound, "Atk")
-                     newBattle.monster_def = getMonsterStats(monsterFound, "Def")
-                     newBattle.monster_agility = getMonsterStats(monsterFound, "Agi")
+                     newBattle.monster_chp = getMonsterStats(monsterFound, "HP") + hpBoost
+                     newBattle.monster_hp = getMonsterStats(monsterFound, "HP") + hpBoost
+                     newBattle.monster_atk = getMonsterStats(monsterFound, "Atk") + atkBoost
+                     newBattle.monster_def = getMonsterStats(monsterFound, "Def") + defBoost
+                     newBattle.monster_agility = getMonsterStats(monsterFound, "Agi") + agiBoost
                      
                      #Stores the Monster magical stats
                      newBattle.monster_mlevel = (monsterFound.level - 1)

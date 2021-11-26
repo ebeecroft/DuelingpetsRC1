@@ -138,18 +138,21 @@ module InventoryslotsHelper
                         price = Fieldcost.find_by_name("Inventoryslot")
                         rate = Ratecost.find_by_name("Purchaserate")
                         tax = (price.amount * rate.amount).round
-                        if(logged_in.pouch.amount - price.amount >= 0)
+                        slotCount = inventoryFound.inventoryslots.count
+                        if(slotCount == 0 || logged_in.pouch.amount - price.amount >= 0)
                            if(logged_in.gameinfo.startgame)
                               if(@inventoryslot.save)
-                                 logged_in.pouch.amount -= price.amount
-                                 @pouch = logged_in.pouch
-                                 @pouch.save
-                                 hoard = Dragonhoard.find_by_id(1)
-                                 hoard.profit += tax
-                                 @hoard = hoard
-                                 @hoard.save
-                                 economyTransaction("Sink", price.amount - tax, inventoryFound.user.id, "Points")
-                                 economyTransaction("Tax", tax, inventoryFound.user.id, "Points")
+                                 if(slotCount > 0)
+                                    logged_in.pouch.amount -= price.amount
+                                    @pouch = logged_in.pouch
+                                    @pouch.save
+                                    hoard = Dragonhoard.find_by_id(1)
+                                    hoard.profit += tax
+                                    @hoard = hoard
+                                    @hoard.save
+                                    economyTransaction("Sink", price.amount - tax, inventoryFound.user.id, "Points")
+                                    economyTransaction("Tax", tax, inventoryFound.user.id, "Points")
+                                 end
                                  flash[:success] = "#{@inventoryslot.name} was successfully created."
                                  redirect_to user_inventory_path(@inventory.user, @inventory)
                               else

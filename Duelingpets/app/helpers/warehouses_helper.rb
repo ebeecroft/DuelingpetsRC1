@@ -234,7 +234,7 @@ module WarehousesHelper
                      emeralds = getWarecost(getWareItems(wareIndex, ware, "Den"), wareIndex, ware, "Den", "Emerald")
                   end
                   buyable = ((logged_in.pouch.amount - cost) >= 0 && (logged_in.pouch.emeraldamount - emeralds) >= 0)
-                  if(logged_in && logged_in.gaminfo.startgame && validPurcase && buyable)
+                  if(logged_in && logged_in.gameinfo.startgame && validPurchase && buyable)
                      pet = Creature.find_by_id(getWareItems(wareIndex, ware, "Den"))
                      petCount = logged_in.partners.count
                      partner = storePartner(logged_in, pet)
@@ -297,7 +297,7 @@ module WarehousesHelper
                         redirect_to warehouse_path(warehouseFound.name)
                      end
                   else
-                     if(logged_in && !logged.gameinfo.startgame)
+                     if(logged_in && !logged_in.gameinfo.startgame)
                         flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
                         redirect_to edit_gameinfo_path(logged_in.gameinfo)
                      elsif(!buyable)
@@ -317,7 +317,7 @@ module WarehousesHelper
                   emeralds = getWarecost(getWareItems(wareIndex, ware, "Shelf"), wareIndex, ware, "Shelf", "Emerald")
                   buyable = ((logged_in.pouch.amount - cost) >= 0 && (logged_in.pouch.emeraldamount - emeralds) >= 0)
                   room = storeitem(slotFound, getWareItems(wareIndex, ware, "Shelf"))
-                  if(logged_in && logged_in.gaminfo.startgame && validPurcase && buyable && room)
+                  if(logged_in && logged_in.gameinfo.startgame && validPurchase && buyable && room)
                      #Buys item
                      logged_in.pouch.amount -= cost
                      logged_in.pouch.emeraldamount -= emeralds
@@ -360,7 +360,7 @@ module WarehousesHelper
                      if(logged_in && !logged_in.gameinfo.startgame)
                         flash[:error] = "The game hasn't started yet you silly squirrel. LOL!"
                         redirect_to edit_gameinfo_path(logged_in.gameinfo)
-                     else(!room)
+                     elsif(!room)
                         flash[:error] = "The user doesn't have enough room to store the item!"
                      elsif(!buyable)
                         flash[:error] = "The user didn't have enough points/emeralds to afford the item!"

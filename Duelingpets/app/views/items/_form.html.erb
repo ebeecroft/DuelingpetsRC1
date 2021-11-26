@@ -46,39 +46,14 @@
      <%= form.text_field :remote_itemart_url %>
      <%= form.hidden_field :itemart_cache %>
   </div>
-  <br>
-  <div class="pageformat">
-     <%= form.label :durability %>
-     <%= form.number_field :durability %>
-  </div>
-  <br>
-  <div class="pageformat">
-     <%= form.label :rarity %>
-     <%= form.number_field :rarity %>
-  </div>
-  <br>
-  <div class="pageformat">
-     <%= form.label :emeraldcost %>
-     <%= form.number_field :emeraldcost %>
-  </div>
-  <br>
-  <p class="pageformat">Stats</p>
-  <% if @itemtype.name == "Food" %>
+  <% if @itemtype.name == "Food" || @itemtype.name == "Drink" || @itemtype.name == "Toy" || @itemtype.name == "HPheal" || @itemtype.name == "MPheal" %>
+     <br>
      <div class="pageformat">
-        <%= form.label :hunger %>
-        <%= form.number_field :hunger %>
+        <%= form.label :value, "How much the consumable restores?" %>
+        <%= form.number_field :value %>
      </div>
-  <% elsif @itemtype.name == "Drink" %>
-     <div class="pageformat">
-        <%= form.label :thirst %>
-        <%= form.number_field :thirst %>
-     </div>
-  <% elsif @itemtype.name == "Toy" %>
-     <div class="pageformat">
-        <%= form.label :fun %>
-        <%= form.number_field :fun %>
-     </div>
-  <% elsif @itemtype.name == "Weapon" || @itemtype.name == "Armor" %>
+  <% else %>
+     <br>
      <div class="pageformat">
         <%= form.label :atk %>
         <%= form.number_field :atk %>
@@ -93,22 +68,17 @@
         <%= form.label :agility %>
         <%= form.number_field :agility %>
      </div>
-  <% elsif @itemtype.name == "Magicweapon" || @itemtype.name == "Magicarmor" %>
-     <div class="pageformat">
-        <%= form.label :matk %>
-        <%= form.number_field :matk %>
-     </div>
-     <br>
-     <div class="pageformat">
-        <%= form.label :mdef %>
-        <%= form.number_field :mdef %>
-     </div>
-     <br>
-     <div class="pageformat">
-        <%= form.label :magi %>
-        <%= form.number_field :magi %>
-     </div>
   <% end %>
+  <br>
+  <div class="pageformat">
+     <%= form.label :rarity %>
+     <%= form.number_field :rarity %>
+  </div>
+  <br>
+  <div class="pageformat">
+     <%= form.label :emeraldcost %>
+     <%= form.number_field :emeraldcost %>
+  </div>
   <br>
   <div class="pageformat">
     <%= form.submit class: "button submitbutton" %>

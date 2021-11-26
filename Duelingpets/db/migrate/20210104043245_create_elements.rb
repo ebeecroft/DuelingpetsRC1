@@ -8,6 +8,10 @@ class CreateElements < ActiveRecord::Migration[5.2]
       t.datetime :updated_on
       t.datetime :reviewed_on
       t.integer :user_id
+      t.integer :estrong_id
+      t.integer :emild_id
+      t.integer :eweak_id
+      t.integer :esweak_id
       t.boolean :reviewed, default: false
       t.boolean :pointsreceived, default: false
 

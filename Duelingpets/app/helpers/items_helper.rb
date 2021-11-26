@@ -87,19 +87,36 @@ module ItemsHelper
          flash[:error] = message
       end
 
-      def getPetCalc(item)
-         if(!item.hp.nil? && !item.atk.nil? && !item.def.nil? && !item.agility.nil? && !item.strength.nil? && !item.mp.nil? && !item.matk.nil? && !item.mdef.nil? && !item.magi.nil? && !item.mstr.nil? && !item.hunger.nil? && !item.thirst.nil? && !item.fun.nil? && !item.durability.nil? && !item.rarity.nil? && !item.itemtype.basecost.nil?)
+      #def getPetCalc(item)
+      #   if(!item.hp.nil? && !item.atk.nil? && !item.def.nil? && !item.agility.nil? && !item.strength.nil? && !item.mp.nil? && !item.matk.nil? && !item.mdef.nil? && !item.magi.nil? && !item.mstr.nil? && !item.hunger.nil? && !item.thirst.nil? && !item.fun.nil? && !item.durability.nil? && !item.rarity.nil? && !item.itemtype.basecost.nil?)
             #Application that calculates cost
-            results = `public/Resources/Code/itemcalc/calc #{item.hp} #{item.atk} #{item.def} #{item.agility} #{item.strength} #{item.mp} #{item.matk} #{item.mdef} #{item.magi} #{item.mstr} #{item.hunger} #{item.thirst} #{item.fun} #{item.durability} #{item.rarity} #{item.itemtype.basecost}`
-            itemAttributes = results
-            itemCost = itemAttributes
-            @item = item
-            @item.cost = itemCost
+      #      results = `public/Resources/Code/itemcalc/calc #{item.hp} #{item.atk} #{item.def} #{item.agility} #{item.strength} #{item.mp} #{item.matk} #{item.mdef} #{item.magi} #{item.mstr} #{item.hunger} #{item.thirst} #{item.fun} #{item.durability} #{item.rarity} #{item.itemtype.basecost}`
+      #      itemAttributes = results
+      #      itemCost = itemAttributes
+      #      @item = item
+      #      @item.cost = itemCost
+      #   else
+      #      @item.cost = -5
+      #   end
+      #end
+      
+      def getItemCalc(item, type)
+         consumables = (type == "Toy" || type == "Food" || type == "Drink" || type == "HPheal" || type == "MPheal")
+         if(consumables)
+            results = `public/Resources/Code/itembuilder/calc #{item.itemtype} #{value}`
+            if(type == "Food" || type == "Drink")
+               hp, fun, str, durability, cost = results.split(",").map{|str| str.to_i} #Applies for Food and drink
+            elsif(type == "Toys")
+               durability, hunger, thirst, str, cost = results.split(",").map{|str| str.to_i} #Applies for toys
+            else
+               hunger, thirst, fun, str, cost = results.split(",").map{|str| str.to_i} #HPheal, and MPheal
+            end
          else
-            @item.cost = -5
+            results = `public/Resources/Code/itembuilder/calc #{item.itemtype} #{item.atk} #{item.def} #{item.agi}`
+            attack, defense, agility, str, durability, cost = results.split(",").map{|str| str.to_i}
          end
       end
-
+      
       def indexCommons
          if(optional)
             userFound = User.find_by_vname(optional)
@@ -256,7 +273,7 @@ module ItemsHelper
                         @user = userFound
 
                         if(type == "create")
-                           getPetCalc(@item)
+                           getItemCalc(@item, @item.itemtype.name)
                            if(@item.cost >= 0)
                               if(@item.save)
                                  url = "http://www.duelingpets.net/items/review"

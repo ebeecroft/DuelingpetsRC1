@@ -127,7 +127,7 @@ module CreaturesHelper
             allCreatures = Creature.order("reviewed_on desc, created_on desc")
             creaturesReviewed = allCreatures.select{|creature| (current_user && creature.user_id == current_user.id) || creature.reviewed}
          end
-         @creatures = Kaminari.paginate_array(creaturesReviewed).page(getCreatureParams("Page")).per(10)
+         @creatures = Kaminari.paginate_array(creaturesReviewed).page(getCreatureParams("Page")).per(12)
       end
 
       def optional
@@ -332,13 +332,13 @@ module CreaturesHelper
                   if(type == "review")
                      if(logged_in.pouch.privilege == "Admin" || ((logged_in.pouch.privilege == "Keymaster") || (logged_in.pouch.privilege == "Reviewer")))
                         creaturesToReview = allCreatures.select{|creature| !creature.reviewed}
-                        @creatures = Kaminari.paginate_array(creaturesToReview).page(getCreatureParams("Page")).per(10)
+                        @creatures = Kaminari.paginate_array(creaturesToReview).page(getCreatureParams("Page")).per(12)
                      else
                         redirect_to root_path
                      end
                   else
                      if(logged_in.pouch.privilege == "Admin")
-                        @creatures = allCreatures.page(getCreatureParams("Page")).per(10)
+                        @creatures = allCreatures.page(getCreatureParams("Page")).per(12)
                      else
                         redirect_to root_path
                      end

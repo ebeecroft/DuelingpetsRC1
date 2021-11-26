@@ -665,16 +665,19 @@ module WarehouseretrievalHelper
 
       def storePartner(logged_in, creature)
          #Creating the partner entry
+         boosts = `public/Resources/Code/petboost/calc`
+         petAttr = boosts.split(",")
+         hpBoost, defBoost, strBoost, agiBoost, atkBoost = petAttr.map{|str| str.to_i}
          newPartner = logged_in.partners.new(getWarehouseParams("Partner"))
          newPartner.adopted_on = currentTime
          newPartner.updated_on = currentTime
          newPartner.plevel = (creature.level - 1)
-         newPartner.chp = getCreatureStats(creature, "HP")
-         newPartner.hp = getCreatureStats(creature, "HP")
-         newPartner.atk = getCreatureStats(creature, "Atk")
-         newPartner.def = getCreatureStats(creature, "Def")
-         newPartner.agility = getCreatureStats(creature, "Agi")
-         newPartner.strength = getCreatureStats(creature, "Str")
+         newPartner.chp = getCreatureStats(creature, "HP") + hpBoost
+         newPartner.hp = getCreatureStats(creature, "HP") + hpBoost
+         newPartner.atk = getCreatureStats(creature, "Atk") + atkBoost
+         newPartner.def = getCreatureStats(creature, "Def") + defBoost
+         newPartner.agility = getCreatureStats(creature, "Agi") + agiBoost
+         newPartner.strength = getCreatureStats(creature, "Str") + strBoost
          newPartner.mlevel = (creature.level - 1)
          newPartner.cmp = getCreatureStats(creature, "MP")
          newPartner.mp = getCreatureStats(creature, "MP")
